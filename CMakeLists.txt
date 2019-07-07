@@ -7,9 +7,10 @@ set(CMAKE_CXX_STANDARD 11)
 if( ${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm" )
 	SET(CMAKE_C_FLAGS "-mfloat-abi=hard -march=armv8-a+simd -s -Os -O3")
 	SET(CMAKE_CXX_FLAGS "-mfloat-abi=hard -march=armv8-a+simd -Os -O3")
-	include_directories(src/include /home/screemer/x-tools/armv8-sony-linux-gnueabihf/armv8-sony-linux-gnueabihf/sysroot/usr/include)
+	include_directories(src/include src/include/SDL src/include/SDL2 src/include/smpeg /home/screemer/x-tools/armv8-sony-linux-gnueabihf/armv8-sony-linux-gnueabihf/sysroot/usr/include)
 	link_directories(/home/screemer/x-tools/armv8-sony-linux-gnueabihf/armv8-sony-linux-gnueabihf/sysroot/usr/lib$)
 else()
+	include_directories(src/include /usr/include/SDL /usr/include/SDL2 /usr/include/smpeg)
 	if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
 		if ( "$ENV{MEM_DEBUG}" STREQUAL "1" )
 			message("Enabling additional memory debugging")
@@ -78,6 +79,8 @@ add_executable(
         src/code/gui/gui_font.h
         src/code/gui/gui_font.cpp
         src/code/gui/gui_font_wrapper.h
+        src/code/gui/gui_SDL_Movie.h
+        src/code/gui/gui_SDL_Movie.cpp
 		src/code/ver_migration.cpp
 		src/code/ver_migration.h
         src/code/engine/coverdb.cpp
