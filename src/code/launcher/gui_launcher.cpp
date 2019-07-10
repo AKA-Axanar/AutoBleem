@@ -1123,18 +1123,29 @@ void GuiLauncher::loop() {
                                 if (!editor->internal) {
 
                                     gameIni.load(carouselGames[selGame]->folder + "Game.ini");
+                                    cout << "in gui_launcher, loaded local gameIni: " << endl;
+                                    gameIni.print();
                                     string folderNoLast =
                                             carouselGames[selGame]->folder.substr(0, carouselGames[selGame]->folder.size() - 1);
                                     gameIni.entry = folderNoLast.substr(folderNoLast.find_last_of("//") + 1);
                                     editor->gameIni = gameIni;
+                                    cout << "in gui_launcher, gui_editor gameIni: " << endl;
+                                    gameIni.print();
                                 } else {
                                     editor->gameData = carouselGames[selGame];
                                 }
 
                                 editor->show();
+
                                 if (!editor->internal) {
                                     if (editor->changes) {
+                                        cout << "in gui_launcher, after calling gui_editor local gameIni: " << endl;
+                                        gameIni.print();
+                                        cout << "in gui_launcher, after calling gui_editor gui_eiditor gameIni: " << endl;
+                                        gameIni.print();
                                         gameIni.load(carouselGames[selGame]->folder + "Game.ini");
+                                        cout << "in gui_launcher, after reloading local gameIni: " << endl;
+                                        gameIni.print();
                                         gui->db->updateTitle(carouselGames[selGame]->gameId, gameIni.values["title"]);
                                     }
                                     gui->db->refreshGame(carouselGames[selGame]);

@@ -11,6 +11,7 @@
 #include <SDL2/SDL_image.h>
 #include "../lang.h"
 #include <sstream>
+#include <iostream>
 
 using namespace std;
 
@@ -55,7 +56,7 @@ void GuiEditor::processOptionChange(bool direction) {
                         gameIni.values["favorite"] = "0";
                     }
                 }
-                gameIni.save(gameIni.path);
+                //gameIni.save(gameIni.path);
             }
             break;
 
@@ -70,7 +71,7 @@ void GuiEditor::processOptionChange(bool direction) {
                         gameIni.values["automation"] = "1";
                     }
                 }
-                gameIni.save(gameIni.path);
+                //gameIni.save(gameIni.path);
             }
             break;
 
@@ -88,9 +89,9 @@ void GuiEditor::processOptionChange(bool direction) {
 
             processor->replace(gameIni.entry, path, "gpu_neon.enhancement_enable",
                                "gpu_neon.enhancement_enable = " + gameIni.values["highres"], internal);
-            if (!internal) {
-                gameIni.save(gameIni.path);
-            }
+            //if (!internal) {
+                //gameIni.save(gameIni.path);
+            //}
 
             refreshData();
             break;
@@ -387,7 +388,7 @@ void GuiEditor::render() {
         }
     }
 
-    guiMenu += " |@O| " + _("Go back") + "|";
+    guiMenu += " |@X| " + _("OK") + "     " + " |@O| " + _("Cancel") + "|";
 
     gui->renderStatus(guiMenu);
 
@@ -407,10 +408,24 @@ void GuiEditor::render() {
 //*******************************
 void GuiEditor::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
+
+    auto save_gameIni = gameIni;    // save gameIni so it can be restored on Cancel
+    cout << "inside gui_editor, save_gameIni: " << endl;
+    gameIni.print();
+
+    bool waitForButtonToBeReleased = true;
     bool menuVisible = true;
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
+
+        if (waitForButtonToBeReleased) {
+            if (SDL_PollEvent(&e) && e.type == SDL_KEYDOWN)
+                continue;   // wait until the button that was pressed is released
+            else
+                waitForButtonToBeReleased = false;
+        }
+
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
@@ -484,7 +499,7 @@ void GuiEditor::loop() {
                                             Util::separator() + "memcards";
                                     memcard->storeToRepo(savePath, result);
                                     gameIni.values["memcard"] = result;
-                                    gameIni.save(gameIni.path);
+                                    //gameIni.save(gameIni.path);
                                 }
                                 render();
                             };
@@ -504,10 +519,10 @@ void GuiEditor::loop() {
                             if (selector->selected != -1)
                                 if (selector->selected == 0) {
                                     gameIni.values["memcard"] = "SONY";
-                                    gameIni.save(gameIni.path);
+                                    //gameIni.save(gameIni.path);
                                 } else {
                                     gameIni.values["memcard"] = selector->cards[selector->selected];
-                                    gameIni.save(gameIni.path);
+                                    //gameIni.save(gameIni.path);
                                 }
                             delete (selector);
                         } else {
@@ -518,9 +533,28 @@ void GuiEditor::loop() {
 
                     if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
+//                        if (changes)
+//                            gameIni.load(gameIni.path); // restore the original settings
+                        if (!internal) {
+                            cout << "inside gui_editor, before canceling, gameIni: " << endl;
+                            gameIni.print();
+                            gameIni = save_gameIni; // restore the original settings
+                            cout << "inside gui_editor, canceling, restored from save_gameIni: " << endl;
+                            gameIni.print();
+                        }
                         cover = nullptr;
                         menuVisible = false;
+                    };
 
+                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS, &e)) {
+                        Mix_PlayChannel(-1, gui->cancel, 0);
+                        if (!internal) {
+                            cout << "inside gui_editor, about to save gameIni: " << endl;
+                            gameIni.print();
+                            gameIni.save(gameIni.path);
+                        }
+                        cover = nullptr;
+                        menuVisible = false;
                     };
 
                     if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE, &e)) {
@@ -541,7 +575,7 @@ void GuiEditor::loop() {
                             if (!internal) {
                                 gameIni.values["title"] = result;
                                 gameIni.values["automation"] = "0";
-                                gameIni.save(gameIni.path);
+                                //gameIni.save(gameIni.path);
                                 changes = true;
                             } else {
                                 lastName = result;
