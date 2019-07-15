@@ -55,7 +55,6 @@ int scanGames(string path, string dbpath) {
         return EXIT_FAILURE;
     }
 
-    scanner->detectAndSortGamefiles(path);
     scanner->scanDirectory(path);
     scanner->updateDB(gui->db);
 
@@ -98,7 +97,8 @@ int main(int argc, char *argv[]) {
     memcardOperation->restoreAll(path + Util::separator() + "!SaveStates");
     delete memcardOperation;
 
-    if (scanner->isFirstRun(path, db)) {
+    bool thereAreGameFilesInGamesDir = scanner->areThereGameFilesInGamesDir(path);
+    if (scanner->isFirstRun(path, db) || thereAreGameFilesInGamesDir) {
         scanner->forceScan = true;
     }
 
@@ -109,6 +109,8 @@ int main(int argc, char *argv[]) {
         gui->menuSelection();
         gui->saveSelection();
         if (gui->menuOption == MENU_OPTION_SCAN) {
+            if (thereAreGameFilesInGamesDir)
+                scanner->copyGameFilesInGamesDirToSubDirs(path);
             scanGames(path, dbpath);
             if (gui->forceScan) {
                 gui->forceScan = false;
@@ -118,6 +120,9 @@ int main(int argc, char *argv[]) {
         }
 
         if (gui->menuOption == MENU_OPTION_START) {
+#if defined(__x86_64__) || defined(_M_X64)
+            cout << "I'm sorry Dave I'm afraid I can't do that on this system." << endl;
+#else
             cout << "Starting game" << endl;
             gui->finish();
 
@@ -152,6 +157,7 @@ int main(int argc, char *argv[]) {
             gui->startingGame = false;
 
             gui->display(false, path, db, true);
+#endif
         }
     }
     db->disconnect();

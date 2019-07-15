@@ -317,7 +317,7 @@ void Scanner::repairBrokenCueFiles(const string & path) {
 //*******************************
 // Scanner::getImageType
 //*******************************
-int Scanner::getImageType(string path) {
+ImageType Scanner::getImageType(string path) {
     bool hasASubDir {false};
     for (const DirEntry & entry: Util::diru(path)) {
         if (entry.isDir)
@@ -328,6 +328,12 @@ int Scanner::getImageType(string path) {
             }
             if (Util::matchExtension(entry.name, EXT_PBP)) {
                 return IMAGE_PBP;
+            }
+            if (Util::matchExtension(entry.name, EXT_IMG)) {
+                return IMAGE_IMG;
+            }
+            if (Util::matchExtension(entry.name, EXT_ISO)) {
+                return IMAGE_ISO;
             }
         }
     }
@@ -397,12 +403,12 @@ void Scanner::scanDirectory(const string & _path) {
 
         string gameIniPath = gameDataPath + GAME_INI;
 
-        int gameType = getImageType(gameDataPath);
-        if (gameType == IMAGE_CUE_BIN || gameType == IMAGE_PBP) {
+        ImageType gameType = getImageType(gameDataPath);
+        if (imageTypeIsAGameFile(gameType)) {
 			game->imageType = gameType;
 			game->gameDataFound = true;
 
-			if (game->imageType == IMAGE_CUE_BIN) // only cue/bin
+			if (imageTypeIsAGameFileThatUsesACueFile(game->imageType)) // only cue/bin
 			{
 				repairMissingCue(gameDataPath, entry.name);
 				repairBrokenCueFiles(gameDataPath);
@@ -498,18 +504,36 @@ void Scanner::scanDirectory(const string & _path) {
 }
 
 //*******************************
-// Scanner::detectAndSortGamefiles
+// Scanner::areThereGameFilesInGamesDir
 //*******************************
-/*
- * Searching for games with supported extension and create associated folders
- */
-void Scanner::detectAndSortGamefiles(const string & path){
+bool Scanner::areThereGameFilesInGamesDir(const string & path) {
+    vector<string> extensions;
+    extensions.push_back("pbp");
+    extensions.push_back("bin");
+    extensions.push_back("cue");
+    extensions.push_back("img");
+    extensions.push_back("iso");
+
+    //Getting all files in Games Dir
+    vector<DirEntry> globalFileList = Util::diru(path);
+    vector<DirEntry> fileList = Util::getFilesWithExtension(path, globalFileList, extensions);
+
+    return fileList.size() > 0;
+}
+
+//*******************************
+// Scanner::copyGameFilesInGamesDirToSubDirs
+//*******************************
+// Search for games with supported extension and move to sub-dir
+// returns true is any files moved into sub-dirs
+bool Scanner::copyGameFilesInGamesDirToSubDirs(const string & path){
+    bool ret = false;
     string fileExt;
     string filenameWE;
     vector<string> extensions;
     vector<string> binList;
     shared_ptr<Gui> splash(Gui::getInstance());
-    splash->logText(_("Sorting..."));
+    splash->logText(_("Moving..."));
     extensions.push_back("iso");
     extensions.push_back("pbp");
     extensions.push_back("cue");
@@ -520,7 +544,7 @@ void Scanner::detectAndSortGamefiles(const string & path){
 
     //On first run, we won't process bin/img files, as cue file may handle a part of them
     for (const auto &entry : fileList){
-        splash->logText(_("Sorting :") + " " + entry.name);
+        splash->logText(_("Moving :") + " " + entry.name);
         fileExt = Util::getFileExtension(entry.name);
         filenameWE = Util::getFileNameWithoutExtension(entry.name);
         //Checking if file exists
@@ -534,14 +558,16 @@ void Scanner::detectAndSortGamefiles(const string & path){
                     rename((path + "/" + entry.name).c_str(), (path + "/" + filenameWE + "/" + entry.name).c_str());
                     //Move bin files
                     for (const auto &bin : binList){
-                        splash->logText(_("Sorting :") + " " + bin);
+                        splash->logText(_("Moving :") + " " + bin);
                         rename((path + "/" + bin).c_str(), (path + "/" + filenameWE + "/" + bin).c_str());
                     }
+                    ret = true;
                 }
             }else{
                 Util::createDir(path + "/" + filenameWE);
 
                 rename((path + "/" + entry.name).c_str(),(path + "/" + filenameWE + "/" + entry.name).c_str());
+                ret = true;
             }
         }
     }
@@ -552,13 +578,15 @@ void Scanner::detectAndSortGamefiles(const string & path){
     extensions.push_back("bin");
     fileList = Util::getFilesWithExtension(path, globalFileList, extensions);
     for (const auto &entry : fileList){
-        splash->logText(_("Sorting :") + " " + entry.name);
+        splash->logText(_("Moving :") + " " + entry.name);
         fileExt = Util::getFileExtension(entry.name);
         filenameWE = Util::getFileNameWithoutExtension(entry.name);
         //Checking if file exists
         if(access((path + "/" + entry.name).c_str(),F_OK) != -1){
             Util::createDir(path + "/" + filenameWE);
             rename((path + "/" + entry.name).c_str(), (path + "/" + filenameWE + "/" + entry.name).c_str());
+            ret = true;
         }
     }
+    return ret; // true if any game files moved into a sub-dir
 }
