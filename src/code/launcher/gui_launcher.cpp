@@ -105,7 +105,7 @@ void GuiLauncher::appendGames_SET_INTERNAL(PsGames &gamesList) {
 // GuiLauncher::switchSet
 //*******************************
 void GuiLauncher::switchSet(int newSet, bool noForce) {
-    cout << "Switching to Set: " << currentSet << endl;
+    cout << "Switching to Set: " << gui->currentSet << endl;
     // clear the carousel text
     if (!carouselGames.empty()) {
         for (auto &game : carouselGames) {
@@ -116,21 +116,21 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {
     // get fresh list of games for this set
     PsGames gamesList;
 
-    if (currentSet == SET_ALL) {
+    if (gui->currentSet == SET_ALL) {
         getGames_SET_SUBDIR(0, gamesList);   // get the games in row 0 = /Games and on down
-    } else if (currentSet == SET_EXTERNAL) {
+    } else if (gui->currentSet == SET_EXTERNAL) {
         getGames_SET_SUBDIR(currentGameDirIndex, gamesList);    // get the games in the current subdir of /Games and on down
 
-    } else if (currentSet == SET_FAVORITE) {
+    } else if (gui->currentSet == SET_FAVORITE) {
         getGames_SET_FAVORITE(gamesList);
 
-    } else if (currentSet == SET_RETROARCH) {
+    } else if (gui->currentSet == SET_RETROARCH) {
         cout << "Getting foreign games" << endl;
-        raIntegrator.getGames(&gamesList, retroarch_playlist_name);
+        raIntegrator.getGames(&gamesList, gui->retroarch_playlist_name);
     }
 
     if (gui->cfg.inifile.values["origames"] == "true")
-        if (currentSet == SET_ALL || currentSet == SET_INTERNAL) {
+        if (gui->currentSet == SET_ALL || gui->currentSet == SET_INTERNAL) {
             appendGames_SET_INTERNAL(gamesList);
         }
 
@@ -163,7 +163,7 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {
     }
 
     if (!noForce) {
-        if (currentSet == SET_RETROARCH) {
+        if (gui->currentSet == SET_RETROARCH) {
             forceSettingsOnly();
         }
     }
@@ -184,16 +184,16 @@ void GuiLauncher::showSetName() {
     if (str != "")
         timeout = stoi(str.c_str()) * TicksPerSecond;
 
-    if (currentSet == SET_RETROARCH) {
-        string playlist = DirEntry::getFileNameWithoutExtension(retroarch_playlist_name);
+    if (gui->currentSet == SET_RETROARCH) {
+        string playlist = DirEntry::getFileNameWithoutExtension(gui->retroarch_playlist_name);
         notificationLines[0].setText(_("Showing:") + " " + playlist + " " + numGames,
                                      timeout);   // line starts at 0 for top
     }
-    else if (currentSet == SET_EXTERNAL) {
+    else if (gui->currentSet == SET_EXTERNAL) {
         // currentGameDirIndex starts at 0 for top row = /Games
-        notificationLines[0].setText(setNames[currentSet] + currentGameDirName + numGames, timeout);
+        notificationLines[0].setText(setNames[gui->currentSet] + currentGameDirName + numGames, timeout);
     } else {
-        notificationLines[0].setText(setNames[currentSet] + numGames, timeout);   // 0 = top row = /Games
+        notificationLines[0].setText(setNames[gui->currentSet] + numGames, timeout);   // 0 = top row = /Games
     }
 }
 
@@ -264,11 +264,11 @@ void GuiLauncher::loadAssets() {
     vector<string> texts = {_("Customize AutoBleem settings"), _("Edit game parameters"),
                             _("Edit Memory Card information"), _("Resume game from saved state point")};
 
-    currentSet = gui->lastSet;
+    gui->currentSet = gui->lastSet;
     currentGameDirIndex = gui->lastGameDirIndex;
     if (gui->lastPlaylist!= "")
     {
-        retroarch_playlist_name = gui->lastPlaylist;
+        gui->retroarch_playlist_name = gui->lastPlaylist;
         gui->lastPlaylist = "";
     }
 
@@ -297,7 +297,7 @@ void GuiLauncher::loadAssets() {
     frontElemets.clear();
     carouselGames.clear();
     carouselPositions.initCoverPositions();
-    switchSet(currentSet,true);
+    switchSet(gui->currentSet,true);
     showSetName();
 
     gameName = "";
@@ -447,7 +447,7 @@ void GuiLauncher::loadAssets() {
     frontElemets.push_back(sselector);
 
     //switchSet(currentSet,false);
-    if (currentSet==SET_RETROARCH)
+    if (gui->currentSet==SET_RETROARCH)
     {
         forceSettingsOnly();
     }

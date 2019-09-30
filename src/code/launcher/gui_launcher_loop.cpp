@@ -299,7 +299,7 @@ void GuiLauncher::loop_joyButtonDown() {
 //*******************************
 void GuiLauncher::loop_chooseGameDir() {
     L1_shift = false;
-    if (state == STATE_GAMES && currentSet == SET_EXTERNAL) {
+    if (state == STATE_GAMES && gui->currentSet == SET_EXTERNAL) {
         // pop game dir menu
         powerOffShift = false;
         GameRowInfos gameRowInfos;
@@ -327,7 +327,7 @@ void GuiLauncher::loop_chooseGameDir() {
 
         if (cancelled)
             return;
-        switchSet(currentSet,true);
+        switchSet(gui->currentSet,true);
         menuHead->setText(headers[0], fgR, fgG, fgB);
         menuText->setText(texts[0], fgR, fgG, fgB);
         showSetName();
@@ -360,7 +360,7 @@ void GuiLauncher::loop_chooseRAGameSystem() {
     int nextSel = 0;
     int i = 0;
     for (string plist:playlists->playlists) {
-        if (plist == retroarch_playlist_name) {
+        if (plist == gui->retroarch_playlist_name) {
             nextSel = i;
             break;
         }
@@ -378,9 +378,10 @@ void GuiLauncher::loop_chooseRAGameSystem() {
     if (cancelled)
         return;
 
-    retroarch_playlist_name = raPlaylists[selected];
-    currentSet = SET_RETROARCH;
-    switchSet(currentSet,false);
+    gui->retroarch_playlist_name = raPlaylists[selected];
+    gui->currentSet = SET_RETROARCH;
+    switchSet(gui->currentSet,false);
+    loadAssets();
     menuHead->setText(headers[0], fgR, fgG, fgB);
     menuText->setText(texts[0], fgR, fgG, fgB);
     showSetName();
@@ -399,8 +400,8 @@ void GuiLauncher::loop_selectButtonDown() {
     if (state == STATE_GAMES) {
         Mix_PlayChannel(-1, gui->cursor, 0);
 
-        int previousSet = currentSet;
-        currentSet++;
+        int previousSet = gui->currentSet;
+        gui->currentSet++;
         if (previousSet == SET_RETROARCH) {
             showAllOptions();
             menuHead->setText(headers[0], fgR, fgG, fgB);
@@ -408,12 +409,12 @@ void GuiLauncher::loop_selectButtonDown() {
         }
 
         if (gui->cfg.inifile.values["origames"] != "true") {
-            if (currentSet == SET_INTERNAL) {
-                currentSet = SET_EXTERNAL;
+            if (gui->currentSet == SET_INTERNAL) {
+                gui->currentSet = SET_EXTERNAL;
             }
         }
-        if (currentSet > SET_LAST) currentSet = 0;
-        switchSet(currentSet,false);
+        if (gui->currentSet > SET_LAST) gui->currentSet = 0;
+        switchSet(gui->currentSet,false);
         showSetName();
         if (selGame != -1) {
             updateMeta();
@@ -510,7 +511,7 @@ void GuiLauncher::loop_squareButtonDown() {
             gui->runningGame = carouselGames[selGame];
             gui->lastSelIndex = selGame;
             gui->resumepoint = -1;
-            gui->lastSet = currentSet;
+            gui->lastSet = gui->currentSet;
             gui->lastGameDirIndex = currentGameDirIndex;
             menuVisible = false;
 
@@ -549,7 +550,7 @@ void GuiLauncher::loop_crossButtonDown_STATE_GAMES() {
     gui->runningGame = carouselGames[selGame];
     gui->lastSelIndex = selGame;
     gui->resumepoint = -1;
-    gui->lastSet = currentSet;
+    gui->lastSet = gui->currentSet;
     gui->lastGameDirIndex = currentGameDirIndex;
     menuVisible = false;
 
@@ -557,7 +558,7 @@ void GuiLauncher::loop_crossButtonDown_STATE_GAMES() {
     if (gui->runningGame->foreign)
     {
         gui->emuMode = EMU_RETROARCH;
-        gui->lastPlaylist = retroarch_playlist_name;
+        gui->lastPlaylist = gui->retroarch_playlist_name;
     }
 }
 
@@ -585,7 +586,7 @@ void GuiLauncher::loop_crossButtonDown_STATE_SET() {
 //*******************************
 void GuiLauncher::loop_crossButtonDown_STATE_SET__OPT_AB_SETTINGS() {
     Mix_PlayChannel(-1, gui->cursor, 0);
-    int lastSet = currentSet;
+    int lastSet = gui->currentSet;
     int lastGameDirIndex = currentGameDirIndex;
     int lastGame = selGame;
     GuiOptions *option = new GuiOptions(renderer);
@@ -597,18 +598,18 @@ void GuiLauncher::loop_crossButtonDown_STATE_SET__OPT_AB_SETTINGS() {
         freeAssets();
         loadAssets();
         gui->resumingGui = false;
-        currentSet = lastSet;
+        gui->currentSet = lastSet;
         currentGameDirIndex = lastGameDirIndex;
         selGame = lastGame;
         bool resetCarouselPosition = false;
         if (gui->cfg.inifile.values["origames"] != "true") {
-            if (currentSet == SET_INTERNAL) {
-                currentSet = SET_ALL;
+            if (gui->currentSet == SET_INTERNAL) {
+                gui->currentSet = SET_ALL;
                 resetCarouselPosition = true;
             }
         }
 
-        switchSet(currentSet,false);
+        switchSet(gui->currentSet,false);
         showSetName();
 
         if (resetCarouselPosition) {
@@ -677,7 +678,7 @@ void GuiLauncher::loop_crossButtonDown_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
             gui->db->updateTitle(carouselGames[selGame]->gameId, gameIni.values["title"]);
         }
         gui->db->refreshGame(carouselGames[selGame]);
-        if (currentSet == SET_FAVORITE && editor->gameIni.values["favorite"] == "0") {
+        if (gui->currentSet == SET_FAVORITE && editor->gameIni.values["favorite"] == "0") {
             gui->lastSet = SET_FAVORITE;
             loadAssets();
         }
@@ -798,7 +799,7 @@ void GuiLauncher::loop_crossButtonDown_STATE_RESUME() {
             gui->runningGame = carouselGames[selGame];
             gui->lastSelIndex = selGame;
             gui->resumepoint = slot;
-            gui->lastSet = currentSet;
+            gui->lastSet = gui->currentSet;
             gui->lastGameDirIndex = currentGameDirIndex;
             sselector->cleanSaveStateImages();
             gui->emuMode = EMU_PCSX;

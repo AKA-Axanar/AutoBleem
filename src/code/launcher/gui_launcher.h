@@ -25,15 +25,6 @@
 #define STATE_RESUME   2
 #define STATE_INFO     3
 
-// if you add a new set also update setNames in gui_launcher.cpp
-#define SET_ALL      0
-#define SET_INTERNAL 1
-#define SET_EXTERNAL 2
-#define SET_FAVORITE 3
-#define SET_LAST 3
-
-#define SET_RETROARCH -1
-
 extern const SDL_Color brightWhite;
 
 //******************
@@ -92,7 +83,6 @@ public:
 
     shared_ptr<Gui> gui;
 
-    int currentSet=SET_ALL;
     void switchSet(int newSet, bool noForce);
     void showSetName();
 
@@ -146,8 +136,6 @@ public:
     std::string serial;
     std::string region;
     std::string players;
-
-    std::string retroarch_playlist_name="";
 
     bool staticMeta=false;
     bool gameInfoVisible = true;

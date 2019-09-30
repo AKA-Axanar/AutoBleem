@@ -19,6 +19,15 @@
 //#include "gui_font_wrapper.h"
 #include "gui_font.h"
 
+// if you add a new set also update setNames in gui_launcher.cpp
+#define SET_ALL      0
+#define SET_INTERNAL 1
+#define SET_EXTERNAL 2
+#define SET_FAVORITE 3
+#define SET_LAST 3
+
+#define SET_RETROARCH -1
+
 #define PCS_DEADZONE     32000
 #define PCS_BTN_L2       4
 #define PCS_BTN_R2       5
@@ -50,6 +59,9 @@ public:
     Fonts fonts;
 
     Config cfg;
+
+    int currentSet = SET_ALL;
+    std::string retroarch_playlist_name = "";
 
     std::string getCurrentThemePath();
     std::string getCurrentThemeImagePath();
@@ -152,8 +164,10 @@ public:
     void exportDBToRetroarch();
 
     MenuOption menuOption = MENU_OPTION_SCAN;
+
     int lastSet = 0;
     int lastGameDirIndex = 0;
+    string lastPlaylist = "";
 
     SDL_Rect backgroundRect;
     SDL_Rect logoRect;
@@ -193,7 +207,6 @@ public:
     bool startingGame = false;
     bool resumingGui = false;
     int lastSelIndex = 0;
-    string lastPlaylist = "";
     PsGamePtr runningGame;
     int emuMode = EMU_PCSX;
     int resumepoint = -1;

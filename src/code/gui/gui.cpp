@@ -68,11 +68,20 @@ GuiBase::~GuiBase() {
 //*******************************
 string GuiBase::getCurrentThemePath() {
 #if defined(__x86_64__) || defined(_M_X64)
-    string path = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
-    if (!DirEntry::exists(path)) {
-        path = "./sony";
+    string themePath;
+    string raThemePath = Env::getPathToRetroarchDir() + sep + "themes" + sep + retroarch_playlist_name;
+    raThemePath = DirEntry::getFileNameWithoutExtension(raThemePath);
+    string normalThemePath = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
+
+    if (currentSet == SET_RETROARCH && DirEntry::exists(raThemePath)) {
+        themePath = raThemePath;
+    } else
+        themePath = normalThemePath;
+
+    if (!DirEntry::exists(themePath)) {
+        themePath = "./sony";
     }
-    return path;
+    return themePath;
 #else
     string path =  "/media/themes/" + cfg.inifile.values["theme"] + "";
     if (!DirEntry::exists(path))
