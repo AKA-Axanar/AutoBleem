@@ -320,7 +320,7 @@ void GuiLauncher::loop_chooseGameDir() {
 
     if (cancelled)
         return;
-    switchSet(currentSet,true);
+    switchSet(gui->currentSet,true);
     menuHead->setText(headers[0], fgR, fgG, fgB);
     menuText->setText(texts[0], fgR, fgG, fgB);
     showSetName();
@@ -350,7 +350,7 @@ void GuiLauncher::loop_chooseRAPlaylist() {
     int nextSel = 0;
     int i = 0;
     for (string plist:playlists->playlists) {
-        if (plist == currentRAPlaylistName) {
+        if (plist == gui->currentRAPlaylistName) {
             nextSel = i;
             break;
         }
@@ -369,9 +369,10 @@ void GuiLauncher::loop_chooseRAPlaylist() {
         return;
 
     currentRAPlaylistIndex = selected;
-    currentRAPlaylistName = raPlaylists[selected];
-    currentSet = SET_RETROARCH;
-    switchSet(currentSet,false);
+    gui->currentRAPlaylistName = raPlaylists[selected];
+    gui->currentSet = SET_RETROARCH;
+    loadAssets();
+    switchSet(gui->currentSet,false);
     menuHead->setText(headers[0], fgR, fgG, fgB);
     menuText->setText(texts[0], fgR, fgG, fgB);
     showSetName();
@@ -389,9 +390,9 @@ void GuiLauncher::loop_chooseRAPlaylist() {
 void GuiLauncher::loop_selectButtonPressed() {
     if (state == STATE_GAMES) {
         if (powerOffShift) {
-            if (currentSet == SET_EXTERNAL)
+            if (gui->currentSet == SET_EXTERNAL)
                 loop_chooseGameDir();
-            else if (currentSet == SET_RETROARCH)
+            else if (gui->currentSet == SET_RETROARCH)
                 loop_chooseRAPlaylist();
             else
                 return; // if L2 is pressed then Select should only work if current_set is SET_EXTERNAL or SET_RETROARCH
@@ -400,8 +401,8 @@ void GuiLauncher::loop_selectButtonPressed() {
             // switch to next Select Mode
             Mix_PlayChannel(-1, gui->cursor, 0);
 
-            int previousSet = currentSet;
-            currentSet++;
+            int previousSet = gui->currentSet;
+            gui->currentSet++;
             if (previousSet == SET_RETROARCH) {
                 showAllOptions();
                 menuHead->setText(headers[0], fgR, fgG, fgB);
@@ -409,12 +410,12 @@ void GuiLauncher::loop_selectButtonPressed() {
             }
 
             if (gui->cfg.inifile.values["origames"] != "true") {
-                if (currentSet == SET_INTERNAL) {
-                    currentSet = SET_EXTERNAL;
+                if (gui->currentSet == SET_INTERNAL) {
+                    gui->currentSet = SET_EXTERNAL;
                 }
             }
-            if (currentSet > SET_LAST) currentSet = 0;
-            switchSet(currentSet,false);
+            if (gui->currentSet > SET_LAST) gui->currentSet = 0;
+            switchSet(gui->currentSet,false);
             showSetName();
             if (selGameIndex != -1) {
                 updateMeta();
@@ -512,7 +513,7 @@ void GuiLauncher::loop_squareButtonPressed() {
             gui->runningGame = carouselGames[selGameIndex];
             gui->lastSelIndex = selGameIndex;
             gui->resumepoint = -1;
-            gui->lastSet = currentSet;
+            gui->lastSet = gui->currentSet;
             gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
             gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
             menuVisible = false;
@@ -552,7 +553,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
     gui->runningGame = carouselGames[selGameIndex];
     gui->lastSelIndex = selGameIndex;
     gui->resumepoint = -1;
-    gui->lastSet = currentSet;
+    gui->lastSet = gui->currentSet;
     gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
     gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
     menuVisible = false;
@@ -562,7 +563,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
     {
         gui->emuMode = EMU_RETROARCH;
         gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
-        gui->lastRAPlaylistName = currentRAPlaylistName;
+        gui->lastRAPlaylistName = gui->currentRAPlaylistName;
     }
 }
 
@@ -590,7 +591,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET() {
 //*******************************
 void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
     Mix_PlayChannel(-1, gui->cursor, 0);
-    int lastSet = currentSet;
+    int lastSet = gui->currentSet;
     int lastUSBGameDirIndex = currentUSBGameDirIndex;
     int lastRAPlaylistIndex = currentRAPlaylistIndex;
     int lastGame = selGameIndex;
@@ -603,19 +604,19 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
         freeAssets();
         loadAssets();
         gui->resumingGui = false;
-        currentSet = lastSet;
+        gui->currentSet = lastSet;
         currentUSBGameDirIndex = lastUSBGameDirIndex;
         currentRAPlaylistIndex = lastRAPlaylistIndex;
         selGameIndex = lastGame;
         bool resetCarouselPosition = false;
         if (gui->cfg.inifile.values["origames"] != "true") {
-            if (currentSet == SET_INTERNAL) {
-                currentSet = SET_ALL;
+            if (gui->currentSet == SET_INTERNAL) {
+                gui->currentSet = SET_ALL;
                 resetCarouselPosition = true;
             }
         }
 
-        switchSet(currentSet,false);
+        switchSet(gui->currentSet,false);
         showSetName();
 
         if (resetCarouselPosition) {
@@ -684,7 +685,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
             gui->db->updateTitle(carouselGames[selGameIndex]->gameId, gameIni.values["title"]);
         }
         gui->db->refreshGame(carouselGames[selGameIndex]);
-        if (currentSet == SET_FAVORITE && editor->gameIni.values["favorite"] == "0") {
+        if (gui->currentSet == SET_FAVORITE && editor->gameIni.values["favorite"] == "0") {
             gui->lastSet = SET_FAVORITE;
             loadAssets();
         }
@@ -805,7 +806,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
             gui->runningGame = carouselGames[selGameIndex];
             gui->lastSelIndex = selGameIndex;
             gui->resumepoint = slot;
-            gui->lastSet = currentSet;
+            gui->lastSet = gui->currentSet;
             gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
             gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
             sselector->cleanSaveStateImages();

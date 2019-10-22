@@ -114,33 +114,34 @@ void GuiLauncher::appendGames_SET_INTERNAL(PsGames* gamesList) {
 // GuiLauncher::switchSet
 //*******************************
 void GuiLauncher::switchSet(int newSet, bool noForce) {
-    cout << "Switching to Set: " << currentSet << endl;
+    cout << "Switching to Set: " << gui->currentSet << endl;
     // clear the carousel text
     if (!carouselGames.empty()) {
         for (auto &game : carouselGames) {
             game.freeTex();
         }
     }
+
     cout << "Reloading games list" << endl;
     // get fresh list of games for this set
     PsGames gamesList;
 
-    if (currentSet == SET_ALL) {
+    if (gui->currentSet == SET_ALL) {
         getGames_SET_SUBDIR(0, &gamesList);   // get the games in row 0 = /Games and on down
 
-    } else if (currentSet == SET_EXTERNAL) {
+    } else if (gui->currentSet == SET_EXTERNAL) {
         getGames_SET_SUBDIR(currentUSBGameDirIndex, &gamesList);    // get the games in the current subdir of /Games and on down
 
-    } else if (currentSet == SET_RETROARCH) {
-        getGames_SET_RETROARCH(currentRAPlaylistName, &gamesList);
+    } else if (gui->currentSet == SET_RETROARCH) {
+        getGames_SET_RETROARCH(gui->currentRAPlaylistName, &gamesList);
 
-    } else if (currentSet == SET_FAVORITE) {
+    } else if (gui->currentSet == SET_FAVORITE) {
         getGames_SET_FAVORITE(&gamesList);
 
     }
 
     if (gui->cfg.inifile.values["origames"] == "true")
-        if (currentSet == SET_ALL || currentSet == SET_INTERNAL) {
+        if (gui->currentSet == SET_ALL || gui->currentSet == SET_INTERNAL) {
             appendGames_SET_INTERNAL(&gamesList);
         }
 
@@ -173,7 +174,7 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {
     }
 
     if (!noForce) {
-        if (currentSet == SET_RETROARCH) {
+        if (gui->currentSet == SET_RETROARCH) {
             forceSettingsOnly();
         }
     }
@@ -195,15 +196,15 @@ void GuiLauncher::showSetName() {
     if (str != "")
         timeout = stoi(str.c_str()) * TicksPerSecond;
 
-    if (currentSet == SET_RETROARCH) {
-        string playlist = DirEntry::getFileNameWithoutExtension(currentRAPlaylistName);
-        notificationLines[0].setText(setNames[currentSet] + playlist + " " + numGames, timeout);
+    if (gui->currentSet == SET_RETROARCH) {
+        string playlist = DirEntry::getFileNameWithoutExtension(gui->currentRAPlaylistName);
+        notificationLines[0].setText(setNames[gui->currentSet] + playlist + " " + numGames, timeout);
     }
-    else if (currentSet == SET_EXTERNAL) {
+    else if (gui->currentSet == SET_EXTERNAL) {
         // currentUSBGameDirIndex starts at 0 for top row = /Games
-        notificationLines[0].setText(setNames[currentSet] + currentUSBGameDirName + numGames, timeout);
+        notificationLines[0].setText(setNames[gui->currentSet] + currentUSBGameDirName + numGames, timeout);
     } else {
-        notificationLines[0].setText(setNames[currentSet] + numGames, timeout);
+        notificationLines[0].setText(setNames[gui->currentSet] + numGames, timeout);
     }
 }
 
@@ -274,11 +275,11 @@ void GuiLauncher::loadAssets() {
     vector<string> texts = {_("Customize AutoBleem settings"), _("Edit game parameters"),
                             _("Edit Memory Card information"), _("Resume game from saved state point")};
 
-    currentSet = gui->lastSet;
+    gui->currentSet = gui->lastSet;
     currentUSBGameDirIndex = gui->lastUSBGameDirIndex;
     currentRAPlaylistIndex = gui->lastRAPlaylistIndex;
     if (currentRAPlaylistIndex < raPlaylists.size())
-        currentRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
+        gui->currentRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
     if (gui->lastRAPlaylistIndex < raPlaylists.size())
         gui->lastRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
 #if 0
@@ -313,7 +314,7 @@ void GuiLauncher::loadAssets() {
     frontElemets.clear();
     carouselGames.clear();
     carouselPositions.initCoverPositions();
-    switchSet(currentSet,true);
+    switchSet(gui->currentSet,true);
     showSetName();
 
     gameName = "";
@@ -463,7 +464,7 @@ void GuiLauncher::loadAssets() {
     frontElemets.push_back(sselector);
 
     //switchSet(currentSet,false);
-    if (currentSet==SET_RETROARCH)
+    if (gui->currentSet==SET_RETROARCH)
     {
         forceSettingsOnly();
     }

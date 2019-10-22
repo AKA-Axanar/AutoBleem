@@ -84,7 +84,6 @@ public:
 
     shared_ptr<Gui> gui;
 
-    int currentSet = SET_ALL;
     void switchSet(int newSet, bool noForce);
     void showSetName();
 
@@ -99,7 +98,6 @@ public:
     
     // current RetroArch Playlist
     int currentRAPlaylistIndex = 0;
-    std::string currentRAPlaylistName = "";
 
     NotificationLines notificationLines; // top two lines of the screen
     int numberOfNonDuplicatedGamesInCarousel = 0;

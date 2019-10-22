@@ -59,7 +59,6 @@ public:
 
     Fonts fonts;
     Config cfg;
-    bool inGuiLauncher = false;
 
     std::string getCurrentThemePath();
     std::string getCurrentThemeImagePath();
@@ -169,6 +168,11 @@ public:
     int lastUSBGameDirIndex = 0;    // top row in menu = /Games
     int lastRAPlaylistIndex = 0;    // top row in menu = first playlist name
     string lastRAPlaylistName = "";
+
+    int currentSet = SET_ALL;
+    std::string currentRAPlaylistName = "";
+
+    bool inGuiLauncher = false;
 
     SDL_Rect backgroundRect;
     SDL_Rect logoRect;
