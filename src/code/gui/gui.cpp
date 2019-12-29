@@ -833,7 +833,58 @@ void Gui::menuSelection() {
                             menuSelection();
                             menuVisible = false;
                         };
-                    }
+
+#if 0
+                        if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
+                            Mix_PlayChannel(-1, cursor, 0);
+                            Uint32 ticks_start = SDL_GetTicks();
+                            bool done = false;
+                            bool triggered = false;
+                            SDL_Event e;
+                            auto waitUntilButtonIsUp = [&] (int button) {
+                                while (true) {
+                                    if (SDL_PollEvent(&e) && e.type == SDL_JOYBUTTONUP && e.jbutton.button == _cb(button, &e))
+                                        break;
+                                }
+                            };
+
+                            do {
+                                // if 5 seconds holding down square
+                                if ((Sint32)(SDL_GetTicks() - ticks_start) >= 5000) {
+                                    triggered = true;
+                                    shared_ptr<Gui> splash(Gui::getInstance());
+                                    splash->logText("You can release the square button now");
+                                    waitUntilButtonIsUp(PCS_BTN_SQUARE);
+                                    splash->logText("You can release the L1 button now");
+                                    waitUntilButtonIsUp(PCS_BTN_L1);
+                                    done = true;
+                                }
+
+                                if (!done) {
+                                    if (SDL_PollEvent(&e) && e.type == SDL_JOYBUTTONUP && e.jbutton.button == _cb(PCS_BTN_SQUARE, &e))
+                                        done = true;    // cancel
+                                }
+                            } while (!done);
+
+                            if (triggered) {
+                                // for debugging new controllers
+                                // this will display a scrollable window displaying all the events coming from the new controller
+                                // for testing.  it also writes the output to ab_out.txt
+                                // hold down three buttons to exit and do a safe shutdown!
+                                auto cfgTest = new GuiPadTest(renderer);
+                                cfgTest->alsoWriteToCout = true;
+                                assert(cfgTest->joyid != 0);
+                                if (cfgTest->joyid != 0)
+                                    cfgTest->show();
+                                delete cfgTest;
+                                //Util::powerOff();
+                            }
+
+                            menuSelection();
+                            menuVisible = true;
+                        };
+#endif
+                }
             }
         }
     }
