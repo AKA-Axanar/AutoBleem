@@ -62,6 +62,7 @@ void GuiOptions::init() {
         }
     }
     quickmenu.clear();
+    quickmenu.push_back("Menu");
     quickmenu.push_back("UI");
     quickmenu.push_back("RetroArch");
 
@@ -82,8 +83,6 @@ void GuiOptions::init() {
     raconfig.clear();
     raconfig.push_back("false");
     raconfig.push_back("true");
-
-    gui->cfg.inifile.values["autoregion"] = "true"; // removing this as an option - not needed - just set to true
 }
 
 //*******************************
@@ -122,9 +121,6 @@ void GuiOptions::renderOptionLine(const string & text, int cfgIndex, int offset)
 string GuiOptions::getBooleanIcon(const string & input) {
     shared_ptr<Gui> gui(Gui::getInstance());
     string value = gui->cfg.inifile.values[input];
-    if (input == "quick") {
-        if (value == "true") return gui->cfg.inifile.values["delay"] + "s  " + "|@Check|"; else return "|@Uncheck|";
-    }
 
     if ((input != "nomusic") && (input != "mip")) {
         if (value == "true") return "|@Check|"; else return "|@Uncheck|";
@@ -150,8 +146,7 @@ void GuiOptions::render() {
     renderOptionLine(_("Music:") + " " + gui->cfg.inifile.values["music"], CFG_MUSIC, offset);
     renderOptionLine(_("Background Music:") + " " + getBooleanIcon("nomusic"), CFG_ENABLE_BACKGROUND_MUSIC, offset);
     renderOptionLine(_("Widescreen:") + " " + getBooleanIcon("aspect"), CFG_WIDESCREEN, offset);
-    renderOptionLine(_("QuickBoot:") + " " + getBooleanIcon("quick"), CFG_QUICK_BOOT, offset);
-    renderOptionLine(_("QuickBoot Init:") + " " + gui->cfg.inifile.values["quickmenu"], CFG_QUICKMENU, offset);
+    renderOptionLine(_("Boot To:") + " " + gui->cfg.inifile.values["quickmenu"], CFG_QUICKMENU, offset);
     renderOptionLine(_("GFX Filter:") + " " + getBooleanIcon("mip"), CFG_GFX_FILTER, offset);
     renderOptionLine(_("Update RA Config:") + " " + getBooleanIcon("raconfig"), CFG_RACONFIG, offset);
     renderOptionLine(_("Showing Timeout (0 = no timeout):") + " " + gui->cfg.inifile.values["showingtimeout"], CFG_SHOWINGTIMEOUT, offset);
@@ -234,23 +229,6 @@ void GuiOptions::doPrevNextOption(shared_ptr<Gui> gui, shared_ptr<Lang> lang, bo
         gui->cfg.inifile.values["aspect"] = nextValue;
     }
 
-    if (selected == CFG_QUICK_BOOT) {
-        string nextValue = getPrevNextOption(quickboot, gui->cfg.inifile.values["quick"], next);
-        if (next) {
-            string last = gui->cfg.inifile.values["quick"];
-            gui->cfg.inifile.values["quick"] = nextValue;
-            int delay = atoi(gui->cfg.inifile.values["delay"].c_str());
-            delay++;
-            if (last == "false") delay = 1;
-            gui->cfg.inifile.values["delay"] = to_string(delay);
-        } else {
-            int delay = atoi(gui->cfg.inifile.values["delay"].c_str());
-            delay++;
-            gui->cfg.inifile.values["delay"] = to_string(1);
-            gui->cfg.inifile.values["quick"] = nextValue;
-        }
-    }
-
     if (selected == CFG_QUICKMENU) {
         string nextValue = getPrevNextOption(quickmenu, gui->cfg.inifile.values["quickmenu"], next);
         gui->cfg.inifile.values["quickmenu"] = nextValue;
@@ -296,7 +274,7 @@ void GuiOptions::doCircle_Pressed() {
     gui->cfg.inifile.load(cfg_path);    // restore the original config.ini settings
     lang->load(gui->cfg.inifile.values["language"]);    // restore the original lang
     gui->loadAssets();                                  // restore original themes
-    gui->overrideQuickBoot = true;
+    gui->overrideDirectBoot = true;
     menuVisible = false;
     exitCode = -1;
 }
@@ -307,7 +285,7 @@ void GuiOptions::doCircle_Pressed() {
 void GuiOptions::doCross_Pressed() {
     Mix_PlayChannel(-1, gui->cancel, 0);
     gui->cfg.save();
-    gui->overrideQuickBoot = true;
+    gui->overrideDirectBoot = true;
     menuVisible = false;
     exitCode = 0;
 }

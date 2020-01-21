@@ -11,13 +11,10 @@
 #include "gui_confirm.h"
 #include <SDL2/SDL_image.h>
 #include "../ver_migration.h"
-#include "../lang.h"
 #include "../launcher/gui_launcher.h"
 #include "gui_padconfig.h"
 #include "gui_padTest.h"
-#include <fstream>
 #include <unistd.h>
-#include "../util.h"
 #include <iostream>
 #include <iomanip>
 #include "../engine/scanner.h"
@@ -458,7 +455,7 @@ void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, b
     this->db = db;
     this->pathToGamesDir = _pathToGamesDir;
     this->forceScan = forceScan;
-    if (forceScan) overrideQuickBoot = true;
+    if (forceScan) overrideDirectBoot = true;
 
     SDL_version compiled;
     SDL_version linked;
@@ -509,11 +506,10 @@ void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, b
         }
 #endif
 
-        if (cfg.inifile.values["quick"] != "true")
-            waitForGamepad();
+        waitForGamepad();
     } else {
         resumingGui = true;
-        overrideQuickBoot = true;
+        overrideDirectBoot = true;
     }
 }
 
@@ -543,9 +539,6 @@ bool powerOffShift = false;
 bool Gui::quickBoot() {
     int currentTime = SDL_GetTicks();
     string splashText = _("AutoBleem") + " " + cfg.inifile.values["version"];
-    if (cfg.inifile.values["quick"] == "true") {
-        splashText += " (" + _("Quick boot") + " - " + _("Hold") + " |@O| " + _("Menu") + ")";
-    }
 
     while (true) {
         SDL_Event e;
@@ -562,7 +555,7 @@ bool Gui::quickBoot() {
                 return false;
 
             if (e.type == SDL_JOYBUTTONDOWN) {
-                overrideQuickBoot = true;
+                overrideDirectBoot = true;
                 return false;
             }
         }
@@ -606,33 +599,34 @@ void Gui::menuSelection() {
     if (!coverdb->isValid()) {
         criticalException(_("WARNING: NO COVER DB FOUND. PRESS ANY BUTTON."));
     }
-    if (!overrideQuickBoot) {
-        bool quickBootCfg = (cfg.inifile.values["quick"] == "true");
-        if (quickBootCfg && !forceScan) {
-            if (quickBoot()) {
 
-                if (cfg.inifile.values["quickmenu"] == "UI") {
-                    if (cfg.inifile.values["ui"] == "classic") {
-                        this->menuOption = MENU_OPTION_RUN;
-                        return;
-                    } else {
-                        auto launcherScreen = new GuiLauncher(renderer);
-                        launcherScreen->show();
-                        delete launcherScreen;
-                    }
+    if (!overrideDirectBoot && !forceScan) {
+        string quickmenu = cfg.inifile.values["quickmenu"];
+        if (quickmenu != "Menu") {
+            if (cfg.inifile.values["quickmenu"] == "UI") {
+                // boot directly into the UI Carousel
+                if (cfg.inifile.values["ui"] == "classic") {
+                    this->menuOption = MENU_OPTION_RUN;
+                    return;
                 } else {
-                    if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
-                        this->menuOption = MENU_OPTION_RETRO;
-                        return;
-                    } else {
-                        auto launcherScreen = new GuiLauncher(renderer);
-                        launcherScreen->show();
-                        delete launcherScreen;
-                    }
+                    auto launcherScreen = new GuiLauncher(renderer);
+                    launcherScreen->show();
+                    delete launcherScreen;
                 }
-            };
+            } else if (cfg.inifile.values["quickmenu"] == "RetroArch") {
+                // boot directly into Retroarch
+                if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
+                    this->menuOption = MENU_OPTION_RETRO;
+                    return;
+                } else {
+                    auto launcherScreen = new GuiLauncher(renderer);
+                    launcherScreen->show();
+                    delete launcherScreen;
+                }
+            }
         }
     }
+
     otherMenuShift = false;
     powerOffShift = false;
     string adv = cfg.inifile.values["adv"];

@@ -202,7 +202,7 @@ public:
     SDL_Shared<SDL_Texture> buttonTab;
     SDL_Shared<SDL_Texture> cdJewel;
 
-    bool overrideQuickBoot = false;
+    bool overrideDirectBoot = false;
 
     std::string pathToGamesDir; // path to /Games.  "/media/Games" or "/debugSystemPath/Games".
 

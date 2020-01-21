@@ -17,6 +17,18 @@ Config::Config()
     inifile.load(path);
 
     inifile.values.erase("stheme"); // stheme no longer used since themes were consolidated into /Themes
+    inifile.values.erase("autoregion"); // autoregion no longer needed
+
+    // the quick boot option has been removed.
+    // if it exists and is false then set quickmenu to "menu" so it will boot to the normal menu at the bottom.
+    // if it exists and is true then leave quickmenu at it's current setting (UI or Retroarch).
+    if (inifile.values["quick"] != "") {
+        if (inifile.values["quick"] == "false")
+            inifile.values["quickmenu"] = "Menu";
+
+        inifile.values.erase("quick");  // remove "quick"
+        save(); // update the changes
+    }
 
     inifile.values["adv"]="true";
 

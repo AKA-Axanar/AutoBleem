@@ -26,10 +26,6 @@ void GuiSplash::render() {
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
     string splashText = _("AutoBleem")+" " + gui->cfg.inifile.values["version"];
-    if (gui->cfg.inifile.values["quick"] == "true") {
-        splashText += " ("+_("Quick boot")+" - |@O| "+_("Menu");
-        splashText += ")";
-    }
 
     gui->getEmojiTextTexture(renderer, splashText.c_str(), gui->themeFont, &textTex, &textRec);
     int screencenter = 1280 / 2;
@@ -87,7 +83,7 @@ void GuiSplash::loop() {
                 break;
 
             if (e.type == SDL_JOYBUTTONDOWN) {
-                gui->overrideQuickBoot = true;
+                gui->overrideDirectBoot = true;
             }
         }
         render();
