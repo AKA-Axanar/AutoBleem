@@ -224,6 +224,12 @@ int main(int argc, char *argv[]) {
     if (thereAreRawGameFilesInGamesDir)
         copyGameFilesInGamesDirToSubDirs(pathToGamesDir);   // calls splash() so the gui->display needs to be up first
 
+    shared_ptr<Gui> splash(Gui::getInstance());
+    splash->logText("we've just booted and menu option is " + to_string(gui->menuOption));
+    auto start = SDL_GetTicks();
+    while (SDL_GetTicks() - start < 5000)
+        ;
+
     while (gui->menuOption == MENU_OPTION_SCAN || gui->menuOption == MENU_OPTION_START) {
 
         gui->menuSelection();

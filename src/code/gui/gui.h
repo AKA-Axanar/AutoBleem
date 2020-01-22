@@ -178,6 +178,7 @@ public:
     int lastUSBGameDirIndex = 0;    // top row in menu = /Games
     int lastRAPlaylistIndex = 0;    // top row in menu = first playlist name
     string lastRAPlaylistName = "";
+    bool RARanOnceFromQuickMenu = false;
 
     SDL_Rect backgroundRect;
     SDL_Rect logoRect;

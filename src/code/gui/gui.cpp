@@ -615,13 +615,16 @@ void Gui::menuSelection() {
                 }
             } else if (cfg.inifile.values["quickmenu"] == "RetroArch") {
                 // boot directly into Retroarch
-                if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
-                    this->menuOption = MENU_OPTION_RETRO;
-                    return;
-                } else {
-                    auto launcherScreen = new GuiLauncher(renderer);
-                    launcherScreen->show();
-                    delete launcherScreen;
+                if (!RARanOnceFromQuickMenu) {  // if hasn't already been run and exited via quickmenu
+                    RARanOnceFromQuickMenu = true;  // prevent exiting RA from causing an infinite loop
+                    if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
+                        this->menuOption = MENU_OPTION_RETRO;
+                        return;
+                    } else {
+                        auto launcherScreen = new GuiLauncher(renderer);
+                        launcherScreen->show();
+                        delete launcherScreen;
+                    }
                 }
             }
         }
