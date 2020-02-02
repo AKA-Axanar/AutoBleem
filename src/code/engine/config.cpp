@@ -22,6 +22,7 @@ Config::Config()
     inifile.values.erase("quick");
     inifile.values.erase("quickmenu");
     inifile.values.erase("delay");
+    inifile.values.erase("ui");
     inifile.values.erase("adv");
     save();
 
@@ -29,11 +30,6 @@ Config::Config()
     if (inifile.values["language"]=="")
     {
         inifile.values["language"]="English";
-        aDefaultWasSet = true;
-    }
-    if (inifile.values["ui"]=="")
-    {
-        inifile.values["ui"]="classic";
         aDefaultWasSet = true;
     }
     if (inifile.values["aspect"]=="")

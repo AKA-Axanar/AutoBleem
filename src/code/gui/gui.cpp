@@ -563,9 +563,6 @@ void Gui::menuSelection() {
     otherMenuShift = false;
     powerOffShift = false;
     string mainMenu = "|@Start| " + _("AutoBleem") + "    |@X|  " + _("Re/Scan") + " ";
-    if (cfg.inifile.values["ui"] == "classic") {
-        mainMenu += "  |@O|  " + _("Original") + "  ";
-    }
     mainMenu += "|@S|  " + _("RetroArch") + "   ";
     mainMenu += "|@T|  " + _("About") + "  |@Select|  " + _("Options") + " ";
     mainMenu += "|@L1| " + _("Advanced");
@@ -659,27 +656,21 @@ void Gui::menuSelection() {
                     if (!otherMenuShift) {
                         if (!forceScan)
                             if (e.jbutton.button == _cb(PCS_BTN_START, &e)) {
-                                if (cfg.inifile.values["ui"] == "classic") {
-                                    Mix_PlayChannel(-1, cursor, 0);
-                                    this->menuOption = MENU_OPTION_RUN;
-                                    menuVisible = false;
-                                } else {
-                                    if (lastSet < 0) {
-                                        lastSet = SET_PS1;
-                                        lastSelIndex=0;
-                                        resumingGui = false;
-                                    }
-                                    Mix_PlayChannel(-1, cursor, 0);
-                                    drawText(_("Starting EvolutionUI"));
-                                    loadAssets(false);
-                                    auto launcherScreen = new GuiLauncher(renderer);
-                                    launcherScreen->show();
-                                    delete launcherScreen;
-
-                                    menuSelection();
-                                    menuVisible = false;
+                                if (lastSet < 0) {
+                                    lastSet = SET_PS1;
+                                    lastSelIndex = 0;
+                                    resumingGui = false;
                                 }
-                            };
+                                Mix_PlayChannel(-1, cursor, 0);
+                                drawText(_("Starting EvolutionUI"));
+                                loadAssets(false);
+                                auto launcherScreen = new GuiLauncher(renderer);
+                                launcherScreen->show();
+                                delete launcherScreen;
+
+                                menuSelection();
+                                menuVisible = false;
+                            }
 
                         if (!forceScan)
                             if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
@@ -728,13 +719,6 @@ void Gui::menuSelection() {
                             menuSelection();
                             menuVisible = false;
                         };
-                        if (!forceScan)
-                            if (cfg.inifile.values["ui"] == "classic")
-                                if (e.jbutton.button == _cb(PCS_BTN_CIRCLE, &e)) {
-                                    Mix_PlayChannel(-1, cancel, 0);
-                                    this->menuOption = MENU_OPTION_SONY;
-                                    menuVisible = false;
-                                };
                         break;
                     } else {
                         if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
