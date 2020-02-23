@@ -228,6 +228,16 @@ string Util::execUnixCommand(const char* cmd){
 //*******************************
 void Util::execFork(const char *cmd,  vector<const char *> argvNew)
 {
+    cout << "calling Util::execFork()" << endl;
+    cout << "CMD line to execute: ";
+    cout << cmd << " ";
+    for (const char *s:argvNew) {
+        if (s != nullptr) {
+            cout << s << " ";
+        }
+    }
+    cout << endl;
+
     string link = cmd;
 
     int pid = fork();

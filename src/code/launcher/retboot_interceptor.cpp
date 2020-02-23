@@ -22,6 +22,8 @@
 #define PCSX_NEON "builtin_gpu"
 
 bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
+    cout << "calling RetroArchInterceptor::execute()" << endl;
+
     shared_ptr<Gui> gui(Gui::getInstance());
 
     string padMapping = gui->padMapping;
@@ -37,7 +39,6 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     }
     string link = "/media/Autobleem/rc/launch_rb.sh";
     argvNew.push_back(link.c_str());
-
 
     if (!game->foreign) {
         gameFile += (game->folder + sep + game->base);
@@ -90,6 +91,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     argvNew.push_back(nullptr);
 
+    cout << "CMD line to execute: ";
     for (const char *s:argvNew) {
         if (s != nullptr) {
             cout << s << " ";
