@@ -16,7 +16,7 @@
 
 #define RA_MEMCARDLOC "/media/retroarch/saves/"
 #define RA_CORE_CONFIG "/media/retroarch/config/retroarch-core-options.cfg"
-#define RA_CONFIG "/media/retroarch/config/retroarch.cfg"
+#define RA_CONFIG "/media/retroarch/retroarch.cfg"
 #define RA_NEON "NEON"
 #define RA_PEOPS "PEOPS"
 #define PCSX_NEON "builtin_gpu"
