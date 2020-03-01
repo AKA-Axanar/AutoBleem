@@ -9,7 +9,7 @@ using namespace std;
 // these strings are initialized by main.cpp.  once initialized they should not be modified.
 // they are not declared in the header to prevent outside code from accidentally modifying them.
 
-// passing a single arg on the debug command line instead of passing two args is optional.  two arg is still available.
+// passing a single arg on the debug command line instead of passing two args is optional.
 //
 // in single arg mode you pass the path to the root of the flash USB drive.  in this mode, as much as possible, files
 // from the USB drive are used instead of files in the debug build environment.  this allows you to debug the files

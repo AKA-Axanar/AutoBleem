@@ -41,6 +41,8 @@ void PcsxInterceptor::cleanupConfig(PsGamePtr &game)
 // PcsxInterceptor::execute
 //*******************************
 bool PcsxInterceptor::execute(PsGamePtr & game, int resumepoint) {
+    cout << "calling PcsxInterceptor::execute()" << endl;
+
     shared_ptr<Gui> gui(Gui::getInstance());
 
     string padMapping = gui->padMapping;
@@ -121,6 +123,7 @@ bool PcsxInterceptor::execute(PsGamePtr & game, int resumepoint) {
 
     argvNew.push_back(nullptr);
 
+    cout << "CMD line to execute: ";
     for (const char *s:argvNew) {
         if (s != nullptr) {
             cout << "'" << s << "' ";

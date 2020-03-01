@@ -15,6 +15,8 @@
 using namespace std;
 
 bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
+    cout << "calling LaunchInterceptor::execute()" <<endl;
+
     shared_ptr<Gui> gui(Gui::getInstance());
     cout << "Starting External App" << endl;
 
@@ -29,6 +31,7 @@ bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     argvNew.push_back(link.c_str());
     argvNew.push_back(nullptr);
 
+    cout << "CMD line to execute: ";
     for (const char *s:argvNew) {
         if (s != nullptr) {
             cout << s << " ";

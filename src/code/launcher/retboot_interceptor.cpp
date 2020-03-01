@@ -16,12 +16,14 @@
 
 #define RA_MEMCARDLOC "/media/retroarch/saves/"
 #define RA_CORE_CONFIG "/media/retroarch/config/retroarch-core-options.cfg"
-#define RA_CONFIG "/media/retroarch/config/retroarch.cfg"
+#define RA_CONFIG "/media/retroarch/retroarch.cfg"
 #define RA_NEON "NEON"
 #define RA_PEOPS "PEOPS"
 #define PCSX_NEON "builtin_gpu"
 
 bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
+    cout << "calling RetroArchInterceptor::execute()" << endl;
+
     shared_ptr<Gui> gui(Gui::getInstance());
 
     string padMapping = gui->padMapping;
@@ -37,7 +39,6 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     }
     string link = "/media/Autobleem/rc/launch_rb.sh";
     argvNew.push_back(link.c_str());
-
 
     if (!game->foreign) {
         gameFile += (game->folder + sep + game->base);
@@ -90,6 +91,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     argvNew.push_back(nullptr);
 
+    cout << "CMD line to execute: ";
     for (const char *s:argvNew) {
         if (s != nullptr) {
             cout << s << " ";
