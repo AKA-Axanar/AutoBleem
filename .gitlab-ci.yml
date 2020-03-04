@@ -1,5 +1,4 @@
-before_script:
-  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.autobleem.tk/root/autobleem.git”.insteadOf git@gitlab.autobleem.tk:root/autobleem.git
+
 
 
 variables:
@@ -7,6 +6,8 @@ variables:
 
 .build:
   stage: build
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.autobleem.tk/root/autobleem.git”.insteadOf git@gitlab.autobleem.tk:root/autobleem.git
   tags:
     - docker
   image: "docker.io/screemer/psc-toolchain5:latest"
