@@ -1,0 +1,27 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+
+.build:
+  stage: build
+  tags:
+    - docker
+  image: "docker.io/screemer/psc-toolchain5:latest"
+  script:
+    - "# Build binary"
+    - rm -rf build_output
+    - mkdir build_output
+    - cd build_output
+    - cmake -DCMAKE_SYSTEM_PROCESSOR="${ARCH}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../DockerToolchain.cmake ..
+    - make
+    - cd ..
+    - "#Done :)"
+  artifacts:
+    paths:
+      - build_output/
+
+arm:
+  extends: .build
+  variables:
+    ARCH: Arm
+
+
