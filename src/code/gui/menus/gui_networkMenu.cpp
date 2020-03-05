@@ -20,6 +20,8 @@
 
 using namespace std;
 
+#if DISPLAY_NETWORK_MENU
+
 enum { Text=0, SSID, PW, WriteFile, Blank, InitNetwork, IpAddress };
 
 //*******************************
@@ -361,3 +363,4 @@ void GuiNetworkMenu::doCross_Pressed() {
 
     render();
 }
+#endif
