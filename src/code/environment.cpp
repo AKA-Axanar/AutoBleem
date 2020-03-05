@@ -22,6 +22,7 @@ string private_pathToUSBDrive;
 string private_pathToGamesDir;
 string private_pathToRegionalDBFile;
 string private_pathToInternalDBFile;
+bool Env::hiddenMenuEnabled = false;
 
 //*******************************
 // Environment:: One Liners
@@ -85,6 +86,7 @@ string Environment::getPathToInternalDBFile() {
     return private_pathToInternalDBFile;
 }
 
+#if DISPLAY_NETWORK_MENU
 // for networking
 string Environment::getPathToBleemsyncDir() {
     return getPathToUSBRoot() + sep + "bleemsync";
@@ -101,6 +103,7 @@ string Environment::getPathToBleemsyncWPADir() {
 string Environment::getPathToLogsDir() {
     return private_pathToUSBDrive + sep + "logs";
 }
+#endif
 
 //*******************************
 // Environment::getWorkingPath

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "../../lang.h"
 
+#if DISPLAY_NETWORK_MENU
 //********************
 // GuiNetworkMenu
 //********************
@@ -29,7 +30,7 @@ public:
     bool displayAsterisksInsteadOfPassword = true;   // this is a password.  display *****
 
     static std::string getCfgPath() { return Env::getPathToBleemsyncCFGDir() + sep + "ssid.cfg"; }
-    static std::string getRunPath() { return Env::getPathToAppsDir() + sep + "bleemsync_networking" + sep + "run.sh"; }
+    static std::string getRunPath() { return Env::getPathToRCDir() + sep + "network.sh"; }
     static std::string getWpaSupplicantPath()
         { return Env::getPathToBleemsyncWPADir() + sep + "wpa_supplicant.conf"; }
 
@@ -44,3 +45,4 @@ public:
     void doEnter() { doCross_Pressed(); }
     void doEscape() { doCircle_Pressed(); }
 };
+#endif
