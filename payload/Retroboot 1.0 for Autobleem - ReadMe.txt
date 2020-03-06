@@ -1,5 +1,5 @@
-RetroBoot for AutoBleem 1.0
----------------------------
+RetroBoot for AutoBleem 1.0.1
+-----------------------------
 
 Launch RetroArch from AutoBleem!  RetroBoot for AutoBleem comes 
 pre-configured to run all the built-in games on your PlayStation Classic, and
@@ -87,6 +87,9 @@ implied or otherwise.
 
 Change Log
 ----------
+
+v1.0.1 (03/05/2020)
+- Fixed application playlist issues
 
 v1.0 (03/03/2020)
 - Updated to RetroArch 1.8.4
