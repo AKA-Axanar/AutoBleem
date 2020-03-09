@@ -6,7 +6,8 @@
 **** RetroBoot 1.0.1 ****
 RetroBoot 1.0.1 is integrated into AutoBleem 0.8.7.
 
-Wolfenstein has been added to the Apps directory.
+**** Apps ****
+Wolfenstein 3D, Tyrian, Prince of Persia, and Duke Nukem 3D have been added to the Apps directory.
 
 When configuring a new controller and you make a mistake you can try again by pressing Circle (cancel).
 
