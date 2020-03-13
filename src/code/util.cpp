@@ -10,6 +10,7 @@
 #include <iostream>
 #include "main.h"
 #include <stdio.h>
+#include<time.h>
 
 using namespace std;
 
@@ -318,4 +319,25 @@ void Util::dumpMemory(const  char *p, int count) {
         if (i %16 == 15 || i == count-1)
             cout << endl;
     }
+}
+
+//*******************************
+// Util::getRandomNumber
+//*******************************
+unsigned int Util::getRandomNumber() {
+    static bool firstTime{true};
+    if (firstTime) {
+        srand(time(nullptr));
+        firstTime = false;
+    }
+
+    return rand();
+}
+
+//*******************************
+// Util::getRandomIndex
+// pass 100, get a random index between 0 and 99
+//*******************************
+unsigned int Util::getRandomIndex(unsigned int size) {
+    return getRandomNumber() % size;
 }

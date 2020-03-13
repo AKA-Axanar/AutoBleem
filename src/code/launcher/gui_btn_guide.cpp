@@ -39,6 +39,7 @@ void GuiBtnGuide::render() {
     renderTextLineToColumns("|@X| / |@O|",               _("Select or cancel highlighted option"));
     renderTextLineToColumns("|@S|",                      _("Run using RetroBoot"));
     renderTextLineToColumns("|@R1| / |@L1|",             _("Quick scroll to next letter"));
+    renderTextLineToColumns("|@Start|",                  _("Random Game"));
     renderTextLineToColumns("|@Select|",                 _("Games filter"));
     renderTextLineToColumns("|@L2| + |@Select|",         _("Change USB Games Sub-Directory"));
     renderTextLineToColumns("|@L2| + |@Select|",              _("Change RetroBoot System"));

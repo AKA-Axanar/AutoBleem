@@ -282,6 +282,8 @@ Quick scroll to next letter
 
 Quit emulation - back to AutoBleem
 
+Random Game
+
 Re/Scan
 
 ReadMe file not found
