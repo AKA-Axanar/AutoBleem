@@ -40,6 +40,7 @@ public:
     virtual std::string getPrevNextOption(OptionsInfo& info, const std::string & current, bool next);
     virtual std::string doPrevNextOption(OptionsInfo& info, bool next);
     virtual std::string doPrevNextOption(bool next);
+    virtual std::string doRandomOption() { return ""; }  // only a few lines will use this.  most will just return.
 
     virtual std::string doOptionIndex(uint index);
     virtual std::string doFirstOption();
@@ -48,6 +49,7 @@ public:
     int computeAmountTomoveBy(uint totalSize);
     virtual void doL1_Pressed();
     virtual void doR1_Pressed();
+    virtual void doStart_Pressed();
 
     virtual void doL2_Pressed() { doFirstOption(); }
     virtual void doR2_Pressed() { doLastOption(); }

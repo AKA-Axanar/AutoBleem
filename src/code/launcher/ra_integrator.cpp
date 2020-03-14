@@ -224,6 +224,8 @@ void RAIntegrator::readGamesFromAllPlaylists() {
         for (const DirEntry &entry:entries) {
             if (DirEntry::getFileNameWithoutExtension(entry.name) == "AutoBleem")
                 continue;
+            if (DirEntry::getFileNameWithoutExtension(entry.name) == "Applications")
+                continue;
             playlistNames.emplace_back(entry.name);
         }
 

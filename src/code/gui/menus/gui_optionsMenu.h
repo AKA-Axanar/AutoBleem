@@ -48,13 +48,14 @@ public:
     void fill();
 
     virtual std::string getTitle() override { return "-=" + _("Configuration") + "=-"; }
-    virtual std::string getStatusLine() override { return "|@X| " + _("OK") + "     " + "|@O| " + _("Cancel") + "|"; }
+    virtual std::string getStatusLine();
 
     virtual std::string getLineText(const OptionsInfo& info);
     virtual std::string doPrevNextOption(OptionsInfo& info, bool next);
     virtual std::string doPrevNextOption(bool next) { return GuiOptionsMenuBase::doPrevNextOption(next); }
+    virtual std::string doRandomOption();   // only a few lines will use this.  most will just return.
 
-    virtual std::string doOptionIndex(uint index);
+    virtual std::string doOptionIndex(uint index) override ;
 
     int exitCode=0;
 

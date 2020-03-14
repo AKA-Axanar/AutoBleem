@@ -50,5 +50,8 @@ public:
 
     static void cleanPublisherString(std::string & pub);  // remove any trailing "." or spaces
     static void dumpMemory(const char *p, int count);
+
+    static unsigned int getRandomNumber();
+    static unsigned int getRandomIndex(unsigned int size);
 };
 

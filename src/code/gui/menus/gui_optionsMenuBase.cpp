@@ -225,6 +225,13 @@ void GuiOptionsMenuBase::doR1_Pressed() {
                 doOptionIndex(index);
         }
     render();
-} while (fastForwardUntilAnotherEvent());
+    } while (fastForwardUntilAnotherEvent());
 }
 
+//*******************************
+// void GuiOptionsMenuBase::doStart_Pressed()
+//*******************************
+void GuiOptionsMenuBase::doStart_Pressed() {
+    doRandomOption();
+    render();
+}

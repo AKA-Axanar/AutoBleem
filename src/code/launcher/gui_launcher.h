@@ -63,6 +63,7 @@ public:
     void loop_chooseGameDir();
     void loop_chooseRAPlaylist();
     void loop_selectButton_Pressed();
+    void loop_startButton_Pressed();
     void loop_circleButton_Pressed();
     void loop_triangleButton_Pressed();
     void loop_squareButton_Pressed();

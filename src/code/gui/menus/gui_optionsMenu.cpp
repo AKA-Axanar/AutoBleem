@@ -4,6 +4,14 @@
 
 using namespace std;
 
+string GuiOptions::getStatusLine() {
+    auto id = lines[selected].id;
+    if (id == CFG_THEME || id == CFG_MUSIC)
+        return "|@X| " + _("OK") + "     " + "|@O| " + _("Cancel") + "  " + "|@Start|   " + ("Random") + "|";
+    else
+        return "|@X| " + _("OK") + "     " + "|@O| " + _("Cancel") + "|";
+}
+
 //*******************************
 // GuiOptions::getThemes
 //*******************************
@@ -138,7 +146,22 @@ string GuiOptions::doPrevNextOption(OptionsInfo& info, bool next) {
 }
 
 //*******************************
-// void GuiOptions::doOptionIndex()
+// string GuiOptions::doRandomOption()
+// only a few lines will use this.  most will just return.
+//*******************************
+string GuiOptions::doRandomOption() {
+    int id = lines[selected].id;
+    if (id == CFG_THEME || id == CFG_MUSIC) {
+        auto & choices = lines[selected].choices;
+        unsigned int size = choices.size();
+        if (size > 1)
+            return doOptionIndex(Util::getRandomIndex(size));
+    }
+    return "";
+}
+
+//*******************************
+// string GuiOptions::doOptionIndex()
 //*******************************
 string GuiOptions::doOptionIndex(uint index) {
     if (validSelectedIndex()) {

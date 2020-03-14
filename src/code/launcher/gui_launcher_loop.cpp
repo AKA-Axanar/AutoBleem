@@ -274,6 +274,10 @@ void GuiLauncher::loop_joyButton_Pressed() {
         loop_selectButton_Pressed();
     };
 
+    if (e.jbutton.button == gui->_cb(PCS_BTN_START, &e)) {
+        loop_startButton_Pressed();
+    };
+
     if (powerOffShift)
         return; // none of the following buttons should work if L2 is pressed
 
@@ -583,6 +587,28 @@ void GuiLauncher::loop_selectButton_Pressed() {
             } else {
                 updateMeta();
             }
+        }
+    }
+}
+
+//*******************************
+// GuiLauncher::loop_startButton_Pressed
+// pick a random game
+//*******************************
+void GuiLauncher::loop_startButton_Pressed() {
+    Mix_PlayChannel(-1, gui->cursor, 0);
+
+    if (state == STATE_GAMES) {
+        if (carouselGames.empty()) {
+            return;
+        }
+
+        selGameIndex = Util::getRandomIndex(carouselGames.size());
+        if (selGameIndexInCarouselGamesIsValid()) {
+            Mix_PlayChannel(-1, gui->cursor, 0);
+            setInitialPositions(selGameIndex);
+            updateMeta();
+            menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
         }
     }
 }
