@@ -1,59 +1,109 @@
-================================================================================
-          Retroarch AutoBleem
-================================================================================
-
-RetroBoot for AutoBleem 0.10
-----------------------------
+RetroBoot for AutoBleem 1.0.1
+-----------------------------
 
 Launch RetroArch from AutoBleem!  RetroBoot for AutoBleem comes 
 pre-configured to run all the built-in games on your PlayStation Classic, and
 can scan in games from anywhere on your USB drive.
 
-Add more games (optional)
-You can put more games anywhere on your USB drive, but the suggested location
-is the /roms/ folder.  This is the default location for the scan function.
 
 FAQs
 ----
 
-"How do I add more games to the menus?"
-From the RetroArch home screen, scroll right to the icon that looks like a big
+- "How do I add more games to the menus?"
+From the RetroArch home screen, scroll down to the icon that looks like a big
 plus sign.  Select it, and then choose the file, or folder of files, you wish
 to scan into the menus.
 
-"I scanned my games, but they didn't all show up in the playlists"
-To scan automatically, your games must be in the libretro database.  The romsets
-RetroArch recognizes are listed at https://github.com/libretro/libretro-database.
-You can add unrecognized games to your playlists manually.  Playlists are stored 
-in /retroarch/playlists/ and you can edit them manually using the instructions at 
+- "I scanned my games, but they didn't all show up in the playlists"
+To scan using the automatic scanner, your games must be in the libretro database.  
+The romsets RetroArch recognizes are listed at 
+https://github.com/libretro/libretro-database. You can add unrecognized games to 
+your playlists manually.  Playlists are stored in /retroarch/playlists/ and you 
+can edit them manually using the instructions at 
 https://docs.libretro.com/guides/roms-playlists-thumbnails/ or a RetroArch playlist 
 editor.  A free web-based editor is available at 
-https://www.marcrobledo.com/retr.oarch-playlist-editor/.  When editing playlists,
+https://www.marcrobledo.com/retroarch-playlist-editor/.  When editing playlists,
 be sure to specify the path that they will be found on your PSC - your PSC will see
 the USB stick as /media/ so the default roms folder is /media/roms/
+As of version 1.8.4, RetroArch contains an additional manual scanner, which does
+not require roms to be in the database.
 
-"How do I set up thumbnails?"
+
+- "How do I set up thumbnails?"
 To install thumbnails, follow the instructions in 
 https://docs.libretro.com/guides/roms-playlists-thumbnails/
-The thumbnails folder on PSC_RetroBoot is located at /retroarch/thumbnails/
+The thumbnails folder on Retroboot is located at /retroarch/thumbnails/
 The RetroArch team provides thumbnails for download at 
 https://github.com/libretro/libretro-thumbnails 
 
-"I tried to scan in a folder of games, and now my playlist is blank!"
+
+- "I tried to scan in a folder of games, and now my playlist is blank!"
 When scanning a large number of games, RetroArch may temporarily blank out the
 playlist while it works in the background;  wait for it to complete, and your
 playlist will be restored.
 
-"Do I need to set up a PS1 BIOS ?"
-No.  PSC_RetroBoot will automatically copy the BIOS from your PlayStation 
+
+- "Why won't Windows let me format my USB drive as FAT32 ?"
+The default Windows format utility will not let you format large drives as 
+FAT32, but this can be accomplished with third party tools.  Try using 
+guiformat by Ridgecrop Consultants. 
+(http://www.ridgecrop.demon.co.uk/index.htm?guiformat.htm)  For best results, 
+I suggest setting "Allocation unit size" to 32768.
+
+
+- "My PlayStation Classic just boots to the regular menus!"
+This indicates that your system was unable to detect your USB drive.  Make sure
+you've formatted the drive as FAT32, and set its volume label to SONY (all 
+capitals)  Make sure you've copied all files from the archive to the USB drive.
+
+The PlayStation Classic has limited power delivery to the USB ports.  You may 
+need to use a powered USB hub for some flash drives, and you will almost 
+certainly need one for any USB hard drive that doesn't have an external power 
+supply.
+
+Some USB sticks, particularly USB 3 sticks, are simply not compatible with the
+PlayStation classic, even with a powered hub.  For best results, use a USB 2.0
+drive.
+
+
+- "Do I need to set up a PS1 BIOS ?"
+No.  Retroboot will automatically copy the BIOS from your PlayStation 
 Classic's internal memory to your USB drive the first time it is run.
 
-"Where can I find more help using and configuring RetroArch?"
+
+- "Where can I find more help using and configuring RetroArch?"
 Full documentation for RetroArch is available at https://docs.libretro.com/
 
 
-Change Log (RetroBoot for AutoBleem)
-------------------------------------
+- "What are the risks of this?  Can it brick my system?"
+Retroboot is designed to run directly from your USB drive, with no 
+modification to the system files on your PlayStation Classic.  Access to the 
+built-in games is performed in read-only mode.
+
+I am confident that Retroboot has little to no chance of bricking or 
+otherwise damaging your system, but this software is offered with no warranty,
+implied or otherwise.
+
+
+Change Log
+----------
+
+v1.0.1 (03/05/2020)
+- Fixed application playlist issues
+
+v1.0 (03/03/2020)
+- Updated to RetroArch 1.8.4
+- Added app launcher system
+- Added experimental RNDIS support
+- Updated cores
+- Updated controller mappings
+- Updated configurations
+- Updated assets and databases
+- Switched to Ozone as the default skin
+
+v0.10.1 (28/11/2019)
+- Fixed core options saving issues
+- Fixed Mednafen PCE Turbo Fire
 
 v0.10 (26/11/2019)
 - Updated to RetroArch 1.8.1
@@ -85,12 +135,12 @@ v0.8 (05/05/2019)
 - Updated assets and databases
 - Moved cheats to a seperate add-on
 
-v0.7.5b (23/04/2019)
+v0.7.5b (21/04/2019)
 - Fixed shut-down issues
 
 v0.7.5 (21/04/2019)
 - Updated cores to KMFDManic custom release 4-15-19
-- Added busy loaders
+- Added shut down message
 - Updated configs
 
 v0.7.1 (03/04/2019)
@@ -99,15 +149,64 @@ v0.7.1 (03/04/2019)
 - Improved stability
 
 v0.7 (01/04/2019)
-
 - New RetroArch build (1.7.6b RetroBoot) based on libretro master.
 - LZMA core compression support
 - Updated cores to KMFDManic custom release 4-1-19
-- Fixed status LEDs
 
-v0.6 (20/03/2019) (Release Widthdrawn)
+v0.6 (17/03/2019) (Release Withdrawn)
+- Updated to RetroArch 1.7.6
+- Updated cores to KMFDManic release 3-16-19
+- Added cheats
+- Updated assets
+- Updated databases
 
-- Initial Release
+v0.5.5 (11/03/2019) (Release Withdrawn)
+- Added xinput controller support
+- Improved logging
+- Payload cleanup
+
+v0.5 (10/03/2019) (Release Withdrawn)
+- Implemented new payload launcher
+- Updated boot scripts
+- Migrated to KMFDManic's Cores 
+ 
+v0.4.1 (26/01/2019)
+- Fixed Mupen64Plus core
+
+v0.4 (26/01/2019)
+- Parallelized boot sequence for dramtically improved boot times on slow drives
+- Implemented log monitoring to recover from core initialization errors
+- Included assets for ozone and glui menu drivers
+- Fixed nonfunctional shader presets
+- Restructured file layout
+- Updated all cores
+
+v0.3.1 (22/01/2019)
+- Updated NES cores
+
+v0.3 (22/01/2019)
+- Added memory card importing from internal storage
+- Implemented crash recovery for RetroArch
+- Implemented automatic restoration of default PS1 playlist on delete
+- Overhauled boot sequence, with indicator LEDs for slower USB drives
+- Mapped case buttons
+- Updated RetroArch binary (thanks to CompCom of Team Classic+)
+- Included common-shaders from RetroPie
+- Increased autosave interval to 30 seconds to reduce drive wear
+- Updated PCSX reARMed core to latest nightly with NEON support
+
+
+v0.2 (18/01/2019)
+- Implemented virtual tray support for built-in multi-disc games (MGS & FF7)
+- Added PPSSPP core for PSP support
+- Enabled SRAM Autosave (5 second intervals)
+- Enabled PSX BIOS boot logo
+- Switched to XMB menu color 0 (Legacy Red)
+- Fixed udev rules
+- Cleaned up boot scripts
+
+v0.1 (17/01/2019)
+- Initial release
 
 
 Credits
@@ -115,7 +214,7 @@ Credits
 
 Assembled by /u/genderbent for the good folks of /r/PlaystationClassic
 Cores provided by KMFDManic 
-(https://github.com/KMFDManic/NESC-SNESC-Modifications/releases)
+(https://github.com/KMFDManic/NESC-SNESC-Modifications/releasesc
 soramloader thanks to madmonkey1907
 Special thanks to CompCom
 
@@ -800,5 +899,6 @@ Public License instead of this License.  But first, please read
 <http://www.gnu.org/philosophy/why-not-lgpl.html>.
 
 ---
+
 Core sources available at https://github.com/KMFDManic/
 Contact psc.retroboot@gmail.com for additional sources.
