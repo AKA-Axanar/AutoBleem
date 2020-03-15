@@ -275,7 +275,7 @@ Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string themePath, strin
 // Gui::loadAssets
 //*******************************
 void Gui::loadAssets(bool reloadMusic) {
-    // check theme exists - otherwise back to argb
+    // check theme exists - otherwise back to aergb
 
     string defaultPath = Env::getPathToThemesDir() + sep + "default" + sep;
     themePath = getCurrentThemePath() + sep;
