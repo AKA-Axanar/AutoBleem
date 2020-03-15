@@ -2,6 +2,10 @@
 
 # Retroboot launcher for AutoBleem
 
+if [ -f /tmp/.rbpatching ]; then
+	exit 0
+fi
+
 #kill sony stuffs and set powermanagement parameters
 killall -s KILL showLogo sonyapp ui_menu auto_dimmer pcsx dimmer 
 echo 2 > /data/power/disable
