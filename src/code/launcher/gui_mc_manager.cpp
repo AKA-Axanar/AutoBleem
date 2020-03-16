@@ -24,7 +24,7 @@ void GuiMcManager::loadAssets() {
     shared_ptr<Gui> gui(Gui::getInstance());
     mcGrid = IMG_LoadTexture(renderer, (gui->getCurrentThemeImagePath() + sep + "MC/Dot_Matrix.png").c_str());
     mcPencil = IMG_LoadTexture(renderer, (gui->getCurrentThemeImagePath() + sep + "MC/Pencil_Carsor.png").c_str());
-    fontJIS = Fonts::openFont(Env::getWorkingPath() + sep + "japanese.ttf", 20);
+    fontJIS = Fonts::openNewSharedFont(Env::getWorkingPath() + sep + "japanese.ttf", 20);
 
     memcard1 = new CardEdit(renderer);
     memcard2 = new CardEdit(renderer);
@@ -108,7 +108,7 @@ void GuiMcManager::renderStatic() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
-    gui->renderTextLine(_("Memory Card Manager"), 1, 1, POS_CENTER);
+    gui->renderTextLine("-=" + _("Memory Card Manager") + "=-", 1, 1, POS_CENTER);
     gui->renderStatus(
             "|@Start| " + _("Select Right Card") +
             " | |@Select| " + _("Defragment Card") +

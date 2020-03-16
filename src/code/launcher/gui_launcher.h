@@ -37,7 +37,6 @@ public:
     void render();
 
     // these variables are used by the loop routines
-    bool menuVisible = true;
     long motionStart = 0;
     long timespeed = 0;
     int motionDir = 0;
@@ -45,6 +44,12 @@ public:
     vector<string> texts;
     long time = 0;
     SDL_Event e;
+    // for prev/next first letter fast forwarding
+    Uint32 prevNextFastForwardTimeLimit = 200;
+    bool L1_isPressedForFastForward = false;
+    Uint32 L1_fastForwardTimeStart = 0;
+    bool R1_isPressedForFastForward = false;
+    Uint32 R1_fastForwardTimeStart = 0;
 
     void loop();
 
@@ -54,15 +59,17 @@ public:
     void loop_joyMoveDown();
 
     // a button is pressed
-    void loop_joyButtonPressed();
+    void loop_joyButton_Pressed();
     void loop_chooseGameDir();
     void loop_chooseRAPlaylist();
-    void loop_selectButtonPressed();
-    void loop_circleButtonPressed();
-    void loop_triangleButtonPressed();
-    void loop_squareButtonPressed();
-    void loop_crossButtonPressed();
+    void loop_selectButton_Pressed();
+    void loop_startButton_Pressed();
+    void loop_circleButton_Pressed();
+    void loop_triangleButton_Pressed();
+    void loop_squareButton_Pressed();
+    void loop_crossButton_Pressed();
     void loop_crossButtonPressed_STATE_GAMES();
+    void addGameToPS1GameHistoryAsLatestGamePlayed(PsGamePtr game);
     void loop_crossButtonPressed_STATE_SET();
     void loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS();
     void loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS();
@@ -72,6 +79,7 @@ public:
 
     // a button is released
     void loop_joyButtonReleased();
+    void loop_prevNextGameFirstLetter(bool next);   // false is prev, true is next
     void loop_prevGameFirstLetter();
     void loop_nextGameFirstLetter();
 
@@ -89,11 +97,15 @@ public:
     void switchSet(int newSet, bool noForce);
     void showSetName();
 
+    void getGames_SET_SUBDIR(PsGames* gamesList, int rowIndex);
+    void appendGames_SET_INTERNAL(PsGames* gamesList);
     void getGames_SET_FAVORITE(PsGames* gamesList);
-    void getGames_SET_SUBDIR(int rowIndex, PsGames* gamesList);
+    void getGames_SET_HISTORY(PsGames* gamesList);
+
+    PsGames getAllPS1Games(bool includeUSB, bool includeInternal);
+
     void getGames_SET_RETROARCH(const std::string& playlistName, PsGames *gamesList);
     void getGames_SET_APPS(PsGames* gamesList);
-    void appendGames_SET_INTERNAL(PsGames* gamesList);
 
     // current USB Game Dir
     int currentUSBGameDirIndex = 0;

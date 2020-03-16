@@ -2,9 +2,13 @@
 
 #include <string>
 
+#define DISPLAY_NETWORK_MENU 0
+
 struct Environment {
     static std::string getPathToUSBRoot();
-    static std::string getPathToApps();
+    static std::string getPathToAutobleemDir();
+    static std::string getPathToAppsDir();
+    static std::string getPathToRCDir();
     static std::string getPathToGamesDir();
     static std::string getPathToMemCardsDir();
     static std::string getPathToSaveStatesDir();
@@ -16,6 +20,14 @@ struct Environment {
     static std::string getPathToRegionalDBFile();   // includes the "regional.db" filename
     static std::string getPathToInternalDBFile();   // includes the "internal.db" filename
 
+#if DISPLAY_NETWORK_MENU
+// for networking
+    static std::string getPathToBleemsyncDir();
+    static std::string getPathToBleemsyncCFGDir();
+    static std::string getPathToBleemsyncWPADir();
+    static std::string getPathToLogsDir();
+#endif
+
     static std::string getWorkingPath();  // 1 arg: "usb:/Autobleem/bin/autobleem", 2 arg: autobleem-gui executable dir
     static std::string getSonyPath();  // 1 arg: "usb:/Autobleem/bin/autobleem/sony", 2 arg: "" + sep + "sony"
     static std::string getSonyFontPath();  // 1 arg: "usb:/Autobleem/bin/autobleem/sony", 2 arg: "" + sep + "sony"
@@ -23,6 +35,8 @@ struct Environment {
 
     static std::string getPathToThemesDir();        // "usb:/themes" or "./themes"
     static std::string getPathToCoversDBDir();   // "usb:/Autobleem/bin/db" or "../db"
+
+    static bool hiddenMenuEnabled;
 };
 
 using Env = Environment;

@@ -1,6 +1,62 @@
 
 
                                        *****************************
+                                       Autobleem-0.8.7 Release Notes
+                                       *****************************
+**** RetroBoot 1.0.1 ****
+RetroBoot 1.0.1 is integrated into AutoBleem 0.8.7.
+
+**** Apps ****
+Wolfenstein 3D, Tyrian, Prince of Persia, and Duke Nukem 3D have been added to the Apps directory.
+
+When configuring a new controller and you make a mistake you can try again by pressing Circle (cancel).
+
+Instead of needing to know if your controller DPAD is analogue or digital you can 
+just press any DPAD button.
+
+If no image is found in Named_Boxarts for a Retroarch game Autobleem will look in Named_Titles 
+and then Named_Snaps.
+
+Fast Forward through the next/prev game first letters in the carousel by holding down L1 or R1.
+
+There is now a PS1 Game History selection item in the game directory selection menu.  
+(Similar to the RetroArch game history.)
+
+**** Keyboard editor screen ****
+Before the cursor was only displayed at the end of the line.  To change a character 
+at the front string you had to delete the entire string (a game name for example), and
+retype the entire string.  Holding down the L2 button allows you to move the cursor position.
+
+USB keyboards are now supported in the keyboard editor.  This allows you to enter characters 
+from your keyboard that aren't on the display.  Press any key on the USB keyboard and the
+keyboard display goes away and you can edit the string directly using your USB keyboard.
+Backspace, delete, and the arrow keys can be used.  Enter is the same as pressing X and
+escape is the same as pressing Circle (cancel). Tab will go back to entering characters 
+with the controller.
+
+**** Fast Forward in most menus ***
+You can hold down a left/right/up/down joystick button to fast forward through the selections.
+
+**** Other menu improvements ****
+L1/R1 will move one page at a time in vertical menus.
+L2/R2 will move to the top or bottom of vertical menus.
+L1/R1 will move by multiple items in horizontal menus (themes, languages, etc)
+L2/R2 will move to the first or last menu item.
+
+**** USB Keyboard support ****
+USB keyboard support is available in most menus.  Cursor keys, home, end, page up, and page down.
+Enter is the same as pressing X.  Escape is the same as pressing Circle (cancel).
+
+**** Random Game, Theme, or Music ****
+While viewing the game carousel press Start to select a random game.
+While in the Options Menu, press Start in the theme list to select a random theme.
+While in the Options Menu, press Start in the music list to select a random music track.
+
+Autobleem support channel on Discord: https://discord.gg/eKqfjk
+
+
+
+                                       *****************************
                                        Autobleem-0.8.5 Release Notes
                                        *****************************
 

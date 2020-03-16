@@ -48,7 +48,7 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 #define SET_LAST 2
 
 // SET_PS1 select sub states. keep SET_PS1_Games_Subdir last as it's going to be left off the L2+Select menu
-enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_Games_Subdir };
+enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir };
 
 //********************
 // GuiBase
@@ -58,7 +58,7 @@ public:
     SDL_Shared<SDL_Window> window;
     SDL_Shared<SDL_Renderer> renderer;
 
-    Fonts fonts;
+    Fonts themeFonts;
     Fonts sonyFonts;
     Config cfg;
     bool inGuiLauncher = false;
@@ -112,13 +112,11 @@ public:
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
 
-    void logText(const std::string & message);
+    static void splash(const std::string & message);
 
     void menuSelection();
 
     void saveSelection();
-
-    bool quickBoot();
 
     void renderBackground();
 
@@ -128,20 +126,23 @@ public:
 
     void renderTextBar();
 
-    int renderTextLine(const std::string & text, int line, int offset,  int position, int xoffset);
-    int renderTextLine(const std::string & text, int line, int offset, int position, int xoffset, TTF_Font_Shared font);
+    // returns rectangle height
+    int renderTextLine(const std::string & text, int line,
+                       int offset = 0, int position = POS_LEFT, int xoffset = 0,
+                       TTF_Font_Shared font = TTF_Font_Shared());   // font will default to themeFont in the cpp
 
-    int renderTextLine(const std::string & text, int line, int offset,  int position);
+    // returns the SDL_Rect of the screen positions if your rendered this text with these args
+    // this is basically renderTextLine but doesn't render the texct and instead returns the bounding rectangle
+    SDL_Rect getTextRectangleOnScreen(const std::string & text, int line,
+                       int offset = 0, int position = POS_LEFT, int xoffset = 0,
+                       TTF_Font_Shared font = TTF_Font_Shared());    // font will default to themeFont in the cpp
 
-    int renderTextLine(const std::string & text, int line, int offset);
+    int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
+                                int offset = 0, TTF_Font_Shared font = TTF_Font_Shared());
 
-    int renderTextLineOptions(const std::string & text, int line, int offset,  int position);
+    int renderTextLineOptions(const std::string & text, int line, int offset = 0,  int position = POS_LEFT, int xoffset = 0);
 
-    int renderTextLineOptions(const std::string & text, int line, int offset,  int position, int xoffset);
-
-    void renderSelectionBox(int line, int offset);
-
-    void renderSelectionBox(int line, int offset, int xoffset);
+    void renderSelectionBox(int line, int offset, int xoffset = 0, TTF_Font_Shared font = TTF_Font_Shared());
 
     void renderLabelBox(int line, int offset);
 
@@ -169,7 +170,8 @@ public:
 
     // these are saved in gui so the next time Start brings up the carousel it can restore to last state
     int lastSet = SET_PS1;          // one of these: all games, internal, usb game dir, favorites, RA playlist
-    int lastPS1_SelectState = SET_PS1_All_Games;    // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_Games_Subdir
+    // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir
+    int lastPS1_SelectState = SET_PS1_All_Games;
     int lastSelIndex = 0;           // index into carouselGames
     int lastUSBGameDirIndex = 0;    // top row in menu = /Games
     int lastRAPlaylistIndex = 0;    // top row in menu = first playlist name
@@ -192,9 +194,11 @@ public:
     SDL_Shared<SDL_Texture> buttonR2;
     SDL_Shared<SDL_Texture> buttonCheck;
     SDL_Shared<SDL_Texture> buttonUncheck;
+    SDL_Shared<SDL_Texture> buttonEsc;
+    SDL_Shared<SDL_Texture> buttonEnter;
+    SDL_Shared<SDL_Texture> buttonBackspace;
+    SDL_Shared<SDL_Texture> buttonTab;
     SDL_Shared<SDL_Texture> cdJewel;
-
-    bool overrideQuickBoot = false;
 
     std::string pathToGamesDir; // path to /Games.  "/media/Games" or "/debugSystemPath/Games".
 

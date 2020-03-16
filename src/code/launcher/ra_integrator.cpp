@@ -224,6 +224,8 @@ void RAIntegrator::readGamesFromAllPlaylists() {
         for (const DirEntry &entry:entries) {
             if (DirEntry::getFileNameWithoutExtension(entry.name) == "AutoBleem")
                 continue;
+            if (DirEntry::getFileNameWithoutExtension(entry.name) == "Applications")
+                continue;
             playlistNames.emplace_back(entry.name);
         }
 
@@ -372,7 +374,7 @@ PsGames RAIntegrator::parseJSON(string path) {
         if (isGameValid(game)) {
             psGames.emplace_back(game);
         } else {
-            cout << "Game  invalid: " << game->title <<  endl;
+            cout << "Game invalid: title = '" << game->title << "'" <<  endl;
         }
     }
     in.close();

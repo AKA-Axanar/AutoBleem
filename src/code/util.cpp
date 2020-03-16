@@ -10,6 +10,7 @@
 #include <iostream>
 #include "main.h"
 #include <stdio.h>
+#include<time.h>
 
 using namespace std;
 
@@ -228,6 +229,16 @@ string Util::execUnixCommand(const char* cmd){
 //*******************************
 void Util::execFork(const char *cmd,  vector<const char *> argvNew)
 {
+    cout << "calling Util::execFork()" << endl;
+    cout << "CMD line to execute: ";
+    cout << cmd << " ";
+    for (const char *s:argvNew) {
+        if (s != nullptr) {
+            cout << s << " ";
+        }
+    }
+    cout << endl;
+
     string link = cmd;
 
     int pid = fork();
@@ -280,6 +291,14 @@ string Util::getStringWithinChar(string s, char del) {
 }
 
 //*******************************
+// Util::removeCharsFromString
+//*******************************
+void Util::removeCharsFromString(string& str, string charsToRemove) {
+    for (char ch : charsToRemove)
+        str.erase( std::remove(str.begin(), str.end(), ch), str.end() );
+}
+
+//*******************************
 // Util::cleanPublisherString
 // remove any trailing "." or space or " ."
 //*******************************
@@ -300,4 +319,25 @@ void Util::dumpMemory(const  char *p, int count) {
         if (i %16 == 15 || i == count-1)
             cout << endl;
     }
+}
+
+//*******************************
+// Util::getRandomNumber
+//*******************************
+unsigned int Util::getRandomNumber() {
+    static bool firstTime{true};
+    if (firstTime) {
+        srand(time(nullptr));
+        firstTime = false;
+    }
+
+    return rand();
+}
+
+//*******************************
+// Util::getRandomIndex
+// pass 100, get a random index between 0 and 99
+//*******************************
+unsigned int Util::getRandomIndex(unsigned int size) {
+    return getRandomNumber() % size;
 }

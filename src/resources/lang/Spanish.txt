@@ -24,6 +24,8 @@ Are you sure you want to flush all covers?
 ¿Estas seguro que quieres eliminar todas las caratulas?
 Are you sure?
 ¿Estas seguro?
+Auto Init Network on Boot:
+Auto Iniciar Red al Arrancar:
 AutoBleem
 AutoBleem
 AutoBleem resume points not available in RetroArch.
@@ -32,8 +34,12 @@ AutoBleem Theme:
 Tema AutoBleem:
 Background Music:
 Musica de Fondo:
+Backspace
+Restroceso
 Bin file failed to verify
 El archivo .bin no se pudo verificar
+Bleemsync directory not on USB
+El directorio de Bleemsync no esta en el USB
 Button Guide
 Guia de Botones
 Cancel
@@ -54,8 +60,6 @@ Close
 Cerrar
 Configuration
 Configuracion
-Configuration saved - Press |@X| to continue
-Configuracion guardada - Pulsa |@X| para continuar
 CONFIGURED
 CONFIGURADO
 Confirm
@@ -90,12 +94,16 @@ Do you want to save memcards data ?
 Quieres salvar los datos de las memorycards ?
 Download latest:
 Descargar ultimo:
-DPAD
-DPAD
 Edit game parameters
 Editar parametros de juego
 Edit Memory Card information
 Editar informacion de Memory Card
+Edit Network SSID and Password (ssid.cfg)
+Editar SSID de Red y Password (ssid.cfg)
+Edit Password
+Editar Password
+Edit SSID
+Editar SSID
 Emulator config MENU
 MENU de configuracion del Emulador
 Enter
@@ -108,12 +116,18 @@ Enter new name for card
 Entra nuevo monbre para tarjeta
 Enter new name for memory card
 Entra nuevo nombre para memory card
+Enter Password
+Introducir Password
+Enter SSID
+Introducir SSID
 Entry
 Entrada
 Exit to EvoUI
 Salir a EvoUI
 Failed to delete
 Fallo al borrar
+Failed to Initialize Wi-Fi To Network SSID:
+Fallo al Iniciar Wi-Fi a la Red SSID:
 Favorite Games
 Juegos Favoritos
 Favorite:
@@ -136,6 +150,8 @@ Game failed to verify:
 El juego no se pudo verificar:
 Game file not found
 Archivo de juego no encontrado
+Game History
+Historial de Juego
 Game Manager
 Administrador de Juegos
 Game manager - Select game
@@ -148,8 +164,6 @@ Game:
 Juego:
 games
 juegos
-Games
-Juegos
 Games changed. Press
 Juegos cambiados. Pulsa
 Games filter
@@ -162,22 +176,30 @@ Go back
 Ir atras
 High res:
 High res:
-Hold
-Manten
 In Boot Menu: Safe Power Off The Console
 En el Menu Principal: Apagado Seguro de la Consola
 In Game
 En Juego
 In Retroarch Game
 En Juego de Retoarch
+Initialize Network
+Iniciar Red
+Initialize Wi-Fi Now?
+¿Iniciar Wi-Fi Ahora?
+Initialized Wi-Fi To Network SSID:
+Wi-Fi Iniciado a Red SSID:
+Initializing Wi-Fi To Network SSID:
+Iniciando Wi-Fi a la Red SSID:
 Internal
 Interno
 INTERNAL
 INTERNO
 Internal Games
 Juegos Internos
-Is your dpad analogue?
-¿Es tu dpad analogico?
+IP Address:
+Direccion IP:
+IP:
+IP:
 Language:
 Idioma:
 Link Block
@@ -196,12 +218,14 @@ Memory Card:
 Memory Card:
 Memory Cards
 Memory Cards
-Menu
-Menu
+Move Cursor
+Mover Cursor
 Moving :
 Moviendo :
 Music:
 Musica:
+Network SSID
+Red SSID
 New Card
 Nueva Tarjeta
 New GamePad found
@@ -222,6 +246,8 @@ Original
 Original
 Page
 Pagina
+Password:
+Password:
 pcsx.cfg file not found
 Archivo pcsx.cfg no encontrado
 Player
@@ -246,16 +272,14 @@ POWERING OFF... PLEASE WAIT
 APAGANDO... POR FAVOR ESPERA
 Press a key for
 Pulsa un boton para
+Press any DPAD button (to determine if it's digital or analogue)
+Presiona cualquier direccion del DPAD (para determinar si es digital o analogico)
+Press |@X| to save controller mapping, or |@O| to retry configuration
+Pulsa |@X| para guardar el mapeo de botones, o |@O| para reiniciar la configuracion
 Published by:
 Publicado por:
-Quick boot
-Arranque rapido
 Quick scroll to next letter
 Desplazamiento rapido a la siguiente letra
-QuickBoot Init:
-Inicio QuickBoot:
-QuickBoot:
-QuickBoot:
 Quit emulation - back to AutoBleem
 Quitar emulacion - volver a AutoBleem
 Re/Scan
@@ -268,6 +292,8 @@ Reload Cards
 Recargar Tarjetas
 Rename
 Renombrar
+RESET
+RESET
 RESUME
 REANUDAR
 Resume game from saved state point
@@ -280,8 +306,6 @@ RetroArch is not installed
 RetroArch no esta instalado
 Run using RetroBoot
 Ejecutar con RetroBoot
-Same as classic menu
-Igual que el Menu Clasico
 Scanline Level:
 Nivel de Scanline:
 Scanlines:
@@ -320,6 +344,8 @@ Showing: Apps
 Mostrando: Apps
 Showing: Favorite Games
 Mostrando: Juegos Favoritos
+Showing: Game History
+Mostrando: Historial de Juego
 Showing: Internal Games
 Mostrando: Juegos Internos
 Showing: Retroarch
@@ -334,6 +360,8 @@ SpeedHack:
 SpeedHack:
 Spu Interpolation:
 Spu Interpolation:
+SSID:
+SSID:
 Starting EvolutionUI
 Iniciando EvolutionUI
 Support via Discord:
@@ -354,11 +382,19 @@ Updating regional.db...
 Actualizando regional.db...
 USB Games
 Juegos USB
+Use Controller
+Usar Mando
 WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 ADVERTENCIA: COVER BD NO ENCONTRADO. PULSE CUALQUIER BOTON.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 ADVERTENCIA: JUEGOS NO ENCONTRADOS. PULSE CUALQUIER BOTON.
+Wi-Fi Connection:
+Conexion Wi-Fi:
 Widescreen:
 Widescreen:
+Write connect info to ssid.cfg file
+Escribir informacion de conexion en el archivo ssid.cfg
+Write ssid.cfg file
+Escribir archivo ssid.cfg
 Year:
 Año:

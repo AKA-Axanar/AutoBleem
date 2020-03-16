@@ -1,4 +1,4 @@
-.-= Code C++ and shell scripts =-.
+q.-= Code C++ and shell scripts =-.
 .-= Codice C++ e shell scripts =-.
 .-= Database maintenance =-.
 .-= Manutenzione database =-.
@@ -24,6 +24,8 @@ Are you sure you want to flush all covers?
 Sei sicuro di voler cancellare tutte le cover?
 Are you sure?
 Sei sicuro?
+Auto Init Network on Boot:
+Inizializza Rete all'Avvio:
 AutoBleem
 AutoBleem
 AutoBleem resume points not available in RetroArch.
@@ -32,8 +34,12 @@ AutoBleem Theme:
 Tema di AutoBleem:
 Background Music:
 Musica di Sottofondo:
+Backspace
+Backspace
 Bin file failed to verify
 Verifica del file Bin fallita
+Bleemsync directory not on USB
+Cartella Bleemsync non presente su USB
 Button Guide
 Guida ai Pulsanti
 Cancel
@@ -47,15 +53,13 @@ Cambia MC
 Change RetroBoot System
 Cambia Sistema di RetroBoot
 Change USB Games Sub-Directory
-Cambia la Sottoartella dei Giochi su USB
+Cambia Sottocartella dei Giochi su USB
 Clock:
 Frequenza:
 Close
 Chiudi
 Configuration
 Configurazione
-Configuration saved - Press |@X| to continue
-Configurazione salvata - Premi |@X| per continuare
 CONFIGURED
 CONFIGURATO
 Confirm
@@ -63,7 +67,7 @@ Conferma
 Copy
 Copia
 Cover image file not found
-Impossibile trovare il file dell'immagine di copertina
+File dell'immagine di copertina non trovato 
 Cover Style:
 Stile delle Cover:
 Cue file not found
@@ -71,9 +75,9 @@ File Cue non trovato
 Custom
 Personalizza
 Custom Memory Cards
-Memory Card Personalizzate
+Personalizza Memory Cards
 Customize AutoBleem settings
-Personalizza le impostazioni di AutoBleem
+Personalizza impostazioni di AutoBleem
 Decompressing ecm:
 Decompressione ecm:
 Defragment Card
@@ -87,39 +91,49 @@ Cancella card
 Delete Game
 Cancella Gioco
 Do you want to save memcards data ?
-Vuoi salvare i dati delle memory card ?
+Vuoi salvare i dati delle memorycard ?
 Download latest:
 Scarica la versione piu' recente:
-DPAD
-DPAD
 Edit game parameters
-Modifica i parametri del gioco
+Modifica parametri del gioco
 Edit Memory Card information
-Modifica le informazioni della Memory Card
+Modifica informazioni della Memory Card
+Edit Network SSID and Password (ssid.cfg)
+Modifica SSID e Password della Rete (ssid.cfg)
+Edit Password
+Modifica Password
+Edit SSID
+Modifica SSID
 Emulator config MENU
-MENU di configurazione dell'emulatore
+MENU configurazione dell'emulatore
 Enter
 Scegli
 Enter new card name
-Inserisci il nome della nuova memory card
+Inserisci il nome della nuova card
 Enter new game name
 Inserisci il nome del nuovo gioco
 Enter new name for card
-Inserisci il nuovo nome della memory card
+Inserisci il nuovo nome della card
 Enter new name for memory card
 Inserisci il nuovo nome della memory card
+Enter Password
+Inserisci Password
+Enter SSID
+Inserisci SSID
 Entry
-Valore
+Voce
 Exit to EvoUI
 Torna a EvoUI
 Failed to delete
 Impossibile cancellare
-Favorite:
-Preferiti:
+Failed to Initialize Wi-Fi To Network SSID:
+Impossibile Inizializzare Wi-Fi per la Rete SSID:
 Favorite Games
 Giochi Preferiti
+Favorite:
+Preferiti:
 Flush covers
-Cancella le cover
+Svuota le cover
 Folder:
 Cartella:
 Frameskip:
@@ -135,21 +149,21 @@ GIOCO
 Game failed to verify:
 Verifica fallita per questi giochi:
 Game file not found
-Impossibile trovare i file del gioco
+File del gioco non trovato
+Game History
+Cronologia Giochi
 Game Manager
 Gestore del gioco
 Game manager - Select game
-Gestore del gioco - Seleziona un gioco
+Gestore del gioco - Scegli un gioco
 Game.ini file not found
-Impossibile trovare il file Game.ini
+File Game.ini non trovato
 Game.ini file not valid
 File Game.ini non valido
 Game:
 Gioco:
 games
 giochi
-Games
-Giochi
 Games changed. Press
 Giochi cambiati. Premi
 Games filter
@@ -162,26 +176,34 @@ Go back
 Ritorna
 High res:
 Alta risoluzione:
-Hold
-Mantieni
 In Boot Menu: Safe Power Off The Console
 Nel Menu Di Avvio: Spegni La Console In Modo Sicuro
 In Game
 Mentre Giochi
 In Retroarch Game
 Mentre Giochi - in RetroArch
+Initialize Network
+Inizializza Rete
+Initialize Wi-Fi Now?
+Inizializza Wi-Fi Adesso?
+Initialized Wi-Fi To Network SSID:
+Wi-Fi inizializzata per la Rete con SSID:
+Initializing Wi-Fi To Network SSID:
+Inizializzo Wi-Fi per la Rete con SSID:
 Internal
 Interno
 INTERNAL
 INTERNO
 Internal Games
 Giochi Interni
-Is your dpad analogue?
-Il tuo dpad e' analogico?
+IP Address:
+Indirizzo IP:
+IP:
+IP:
 Language:
 Lingua:
 Link Block
-BLocco di Link
+Blocco di Link
 Link end Block
 Blocco di Fine Link
 Loading ... Please Wait ...
@@ -196,12 +218,14 @@ Memory Card:
 Memory Card:
 Memory Cards
 Memory Cards
-Menu
-Menu
+Move Cursor
+Sposta Cursore
 Moving :
 Spostando :
 Music:
 Musica:
+Network SSID
+SSID della Rete
 New Card
 Nuova Card
 New GamePad found
@@ -213,7 +237,7 @@ Nessun disco
 OK
 OK
 OOPS! Game crashed. Resume point not available.
-Oh-Oh! Il gioco e' crashato. Punto di salvataggio non disponibile.
+Oh-Oh! Il gioco e' crashato. Punto di ripristino non disponibile.
 Open Retroarch Menu
 Apri il Menu di RetroArch
 Options
@@ -222,8 +246,10 @@ Original
 Originale
 Page
 Pagina
+Password:
+Password:
 pcsx.cfg file not found
-Impossibile trovare il file pcsx.cfg
+File pcsx.cfg non trovato
 Player
 Giocatore
 Players
@@ -246,28 +272,28 @@ POWERING OFF... PLEASE WAIT
 SPEGNIMENTO IN CORSO... ATTENDERE PREGO
 Press a key for
 Premi un tasto per
+Press any DPAD button (to determine if it's digital or analogue)
+Premi un tasto del DPAD (per determinare se digitale o analogico)
+Press |@X| to save controller mapping, or |@O| to retry configuration
+Premi |@X| per salvare la mappatura del controller, o |@O| per ripetere la configurazione
 Published by:
 Pubblicato da:
-Quick boot
-Avvio rapido
 Quick scroll to next letter
-Scorri rapidamente alla lettera successiva/precedente
-QuickBoot Init:
-Esegui all'AvvioRapido:
-QuickBoot:
-AvvioRapido:
+Scorri rapidamente alla lettera successiva
 Quit emulation - back to AutoBleem
 Esci dall'emulazione - torna ad AutoBleem
 Re/Scan
 Ri/Cerca
 ReadMe file not found
-Impossibile trovare il file ReadMe
+File ReadMe non trovato
 Region:
 Regione:
 Reload Cards
 Ricarica Cards
 Rename
 Rinomina
+RESET
+RESETTA
 RESUME
 RIPRENDI
 Resume game from saved state point
@@ -280,8 +306,6 @@ RetroArch is not installed
 RetroArch non e' installato
 Run using RetroBoot
 Esegui con RetroBoot
-Same as classic menu
-Come nel menu classico
 Scanline Level:
 Livello Scanline:
 Scanlines:
@@ -295,13 +319,13 @@ Seleziona memory card
 Select or cancel highlighted option
 Seleziona o annulla l'opzione evidenziata
 Select PS1 Game Category
-Seleziona la Categoria dei Giochi PS1
+Seleziona Categoria dei Giochi PS1
 SELECT RESUME SLOT TO LOAD
 SELEZIONA UNO SLOT DA CARICARE
 Select RetroBoot Platform
-Seleziona la Piattaforma RetroBoot
+Seleziona Piattaforma Retroboot
 Select Right Card
-Seleziona la Card Destra
+Seleziona Card Destra
 SELECT SLOT TO SAVE STATE
 SELEZIONA UNO SLOT DOVE SALVARE
 Serial:
@@ -310,16 +334,18 @@ SETTINGS
 IMPOSTAZIONI
 Share MC
 Condividi MC
+Show Internal Games:
+Mostra Giochi Interni
 Showing Timeout (0 = no timeout):
 Timeout di Visualizzazione (0 = nessun timeout):
-Show Internal Games:
-Mostra i Giochi Interni
 Showing: All Games
 Sto mostrando: Tutti i Giochi
 Showing: Apps
 Sto mostrando: Apps
 Showing: Favorite Games
 Sto mostrando: Giochi Preferiti
+Showing: Game History
+Sto mostrando: Cronologia dei Giochi
 Showing: Internal Games
 Sto mostrando: Giochi Interni
 Showing: Retroarch
@@ -334,6 +360,8 @@ SpeedHack:
 SpeedHack:
 Spu Interpolation:
 Interpolazione Spu:
+SSID:
+SSID:
 Starting EvolutionUI
 Avvio di EvolutionUI
 Support via Discord:
@@ -354,11 +382,19 @@ Updating regional.db...
 Aggiornando regional.db...
 USB Games
 Giochi su USB
+Use Controller
+Usa Controller
 WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 ATTENZIONE: DB DELLE COVER NON TROVATO. PREMI UN TASTO QUALSIASI.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 ATTENZIONE: NESSUN GIOCO TROVATO. PREMI UN TASTO QUALSIASI.
+Wi-Fi Connection:
+Connessione Wi-Fi:
 Widescreen:
 Widescreen:
+Write connect info to ssid.cfg file
+Scrivi le info di connessione nel file ssid.cfg
+Write ssid.cfg file
+Scrivi file ssid.cfg
 Year:
 Anno:

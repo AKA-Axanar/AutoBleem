@@ -9,6 +9,7 @@
 #include "engine/database.h"
 #include "engine/scanner.h"
 #include "gui/gui.h"
+#include "gui/menus/gui_networkMenu.h"
 #include "main.h"
 #include "ver_migration.h"
 #include "engine/coverdb.h"
@@ -49,8 +50,6 @@ bool copyGameFilesInGamesDirToSubDirs(const string & path){
     vector<string> extensions;
     vector<string> binList;
 
-    shared_ptr<Gui> splash(Gui::getInstance());
-
     extensions.push_back("pbp");
     extensions.push_back("cue");
 
@@ -60,7 +59,7 @@ bool copyGameFilesInGamesDirToSubDirs(const string & path){
 
     //On first run, we won't process bin/img files, as cue file may handle a part of them
     for (const auto &entry : fileList){
-        splash->logText(_("Moving :") + " " + entry.name);
+        Gui::splash(_("Moving :") + " " + entry.name);
         fileExt = DirEntry::getFileExtension(entry.name);
         filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
         //Checking if file exists
@@ -71,18 +70,18 @@ bool copyGameFilesInGamesDirToSubDirs(const string & path){
                     //Create directory for game
                     DirEntry::createDir(path + sep + filenameWE);
                     //Move cue file
-                    rename((path + "/" + entry.name).c_str(), (path + sep + filenameWE + "/" + entry.name).c_str());
+                    DirEntry::renameFile(path + "/" + entry.name, path + sep + filenameWE + "/" + entry.name);
                     //Move bin files
                     for (const auto &bin : binList){
-                        splash->logText(_("Moving :") + " " + bin);
-                        rename((path + sep + bin).c_str(), (path + sep + filenameWE + sep + bin).c_str());
+                        Gui::splash(_("Moving :") + " " + bin);
+                        DirEntry::renameFile(path + sep + bin, path + sep + filenameWE + sep + bin);
                     }
                     ret = true;
                 }
             }else{
                 DirEntry::createDir(path + sep + filenameWE);
 
-                rename((path + sep + entry.name).c_str(),(path + sep + filenameWE + sep + entry.name).c_str());
+                DirEntry::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
                 ret = true;
             }
         }
@@ -94,13 +93,13 @@ bool copyGameFilesInGamesDirToSubDirs(const string & path){
     extensions.push_back("bin");
     fileList = DirEntry::getFilesWithExtension(path, globalFileList, extensions);
     for (const auto &entry : fileList){
-        splash->logText(_("Moving :") + " " + entry.name);
+        Gui::splash(_("Moving :") + " " + entry.name);
         fileExt = DirEntry::getFileExtension(entry.name);
         filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
         //Checking if file exists
         if(access((path + sep + entry.name).c_str(),F_OK) != -1){
             DirEntry::createDir(path + sep + filenameWE);
-            rename((path + sep + entry.name).c_str(), (path + sep + filenameWE + sep + entry.name).c_str());
+            DirEntry::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
             ret = true;
         }
     }
@@ -186,7 +185,7 @@ int main(int argc, char *argv[]) {
     cout << "Importing internal games from PSC to USB" << endl;
     Util::execUnixCommand("/media/Autobleem/rc/backup_internal.sh");
 
-    // add favorites column to internal.db if the column doesn't exist
+    // add favorites and history columns to internal.db if the column doesn't exist
     Database *internalDB = new Database();
     if (!internalDB->connect(Env::getPathToInternalDBFile())) {
         delete internalDB;
@@ -194,6 +193,7 @@ int main(int argc, char *argv[]) {
     }
     gui->internalDB = internalDB;
     gui->internalDB->createFavoriteColumn(); // add the favorites column if it doesn't exist
+    gui->internalDB->createHistoryColumn();  // add the history column if it doesn't exist
 
     string dbpath = Env::getPathToRegionalDBFile();
     string pathToGamesDir = Env::getPathToGamesDir();
@@ -221,7 +221,18 @@ int main(int argc, char *argv[]) {
     gui->display(scanner->forceScan, pathToGamesDir, db, false);
 
     if (thereAreRawGameFilesInGamesDir)
-        copyGameFilesInGamesDirToSubDirs(pathToGamesDir);   // calls splash() so the gui->display needs to be up first
+        copyGameFilesInGamesDirToSubDirs(pathToGamesDir);   // the gui->display needs to be up first
+
+#if DISPLAY_NETWORK_MENU
+    GuiNetworkMenu::deleteNetworkLog(); // delete info from last wifi connection
+    bool autobootnetwork = (gui->cfg.inifile.values["autobootnetwork"] == "true");
+    if (autobootnetwork) {
+        string ssid = GuiNetworkMenu::getSSID();
+        if (ssid != "") {
+            string ipAddress = GuiNetworkMenu::initializeWifi();
+        }
+    }
+#endif
 
     while (gui->menuOption == MENU_OPTION_SCAN || gui->menuOption == MENU_OPTION_START) {
 
@@ -253,14 +264,11 @@ int main(int argc, char *argv[]) {
                 gui->display(false, pathToGamesDir, db, true);
             } else
             {
-
-
                 gui->finish();
                 gui->saveSelection();
                 EmuInterceptor *interceptor;
 
                 interceptor = new LaunchInterceptor();
-
 
                 interceptor->memcardIn(gui->runningGame);
                 interceptor->prepareResumePoint(gui->runningGame, gui->resumepoint);
@@ -360,7 +368,7 @@ int main(int argc, char *argv[]) {
     delete internalDB;
 	internalDB = nullptr;
 
-    gui->logText(_("Loading ... Please Wait ..."));
+    Gui::splash(_("Loading ... Please Wait ..."));
     gui->finish();
     SDL_Quit();
     delete coverdb;

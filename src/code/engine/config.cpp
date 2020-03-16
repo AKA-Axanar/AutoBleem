@@ -16,16 +16,19 @@ Config::Config()
     std::string path=Env::getWorkingPath() + sep + "config.ini";
     inifile.load(path);
 
-    inifile.values["adv"]="true";
+    // these are no longer used
+    inifile.values.erase("stheme");
+    inifile.values.erase("autoregion");
+    inifile.values.erase("quick");
+    inifile.values.erase("quickmenu");
+    inifile.values.erase("delay");
+    inifile.values.erase("adv");
+    save();
 
     bool aDefaultWasSet {false};
     if (inifile.values["language"]=="")
     {
         inifile.values["language"]="English";
-        aDefaultWasSet = true;
-    }
-    if (inifile.values["delay"] == "") {
-        inifile.values["delay"] = "1";
         aDefaultWasSet = true;
     }
     if (inifile.values["ui"]=="")
@@ -41,11 +44,6 @@ Config::Config()
     if (inifile.values["jewel"]=="")
     {
         inifile.values["jewel"]="default";
-        aDefaultWasSet = true;
-    }
-    if (inifile.values["quickmenu"]=="")
-    {
-        inifile.values["quickmenu"]="UI";
         aDefaultWasSet = true;
     }
     if (inifile.values["music"]=="")

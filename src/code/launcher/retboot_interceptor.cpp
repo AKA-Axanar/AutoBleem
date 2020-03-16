@@ -16,12 +16,14 @@
 
 #define RA_MEMCARDLOC "/media/retroarch/saves/"
 #define RA_CORE_CONFIG "/media/retroarch/config/retroarch-core-options.cfg"
-#define RA_CONFIG "/media/retroarch/config/retroarch.cfg"
+#define RA_CONFIG "/media/retroarch/retroarch.cfg"
 #define RA_NEON "NEON"
 #define RA_PEOPS "PEOPS"
 #define PCSX_NEON "builtin_gpu"
 
 bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
+    cout << "calling RetroArchInterceptor::execute()" << endl;
+
     shared_ptr<Gui> gui(Gui::getInstance());
 
     string padMapping = gui->padMapping;
@@ -37,7 +39,6 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     }
     string link = "/media/Autobleem/rc/launch_rb.sh";
     argvNew.push_back(link.c_str());
-
 
     if (!game->foreign) {
         gameFile += (game->folder + sep + game->base);
@@ -90,6 +91,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     argvNew.push_back(nullptr);
 
+    cout << "CMD line to execute: ";
     for (const char *s:argvNew) {
         if (s != nullptr) {
             cout << s << " ";
@@ -193,8 +195,8 @@ void RetroArchInterceptor::memcardOut(PsGamePtr &game) {
 
 
         if (DirEntry::exists(backup)) {
-            remove(inpath.c_str());
-            rename(backup.c_str(), inpath.c_str());
+            DirEntry::removeFile(inpath);
+            DirEntry::renameFile(backup, inpath);
         }
     }
 }
@@ -209,11 +211,11 @@ void RetroArchInterceptor::backupCoreConfig() {
 void RetroArchInterceptor::restoreCoreConfig() {
     if (DirEntry::exists(string(RA_CORE_CONFIG) + ".bak")) {
         DirEntry::copy(string(RA_CORE_CONFIG) + ".bak", RA_CORE_CONFIG);
-        remove((string(RA_CORE_CONFIG) + ".bak").c_str());
+        DirEntry::removeFile(string(RA_CORE_CONFIG) + ".bak");
     }
     if (DirEntry::exists(string(RA_CONFIG) + ".bak")) {
         DirEntry::copy(string(RA_CONFIG) + ".bak", RA_CONFIG);
-        remove((string(RA_CONFIG) + ".bak").c_str());
+        DirEntry::removeFile(string(RA_CONFIG) + ".bak");
     }
 }
 

@@ -5,18 +5,12 @@
 #include <SDL2/SDL.h>
 #include "gui_launcher.h"
 #include "../gui/gui.h"
-#include "../gui/gui_options.h"
+#include "../gui/menus/gui_optionsMenu.h"
 #include "../gui/gui_confirm.h"
-#include "../gui/gui_editor.h"
-#include "../lang.h"
-#include "pcsx_interceptor.h"
-#include "gui_btn_guide.h"
 #include <algorithm>
 #include <iostream>
-#include "../engine/scanner.h"
-#include "../gui/gui_playlists.h"
 #include "gui_mc_manager.h"
-#include "../environment.h"
+#include <cassert>
 
 using namespace std;
 
@@ -40,70 +34,9 @@ void GuiLauncher::updateMeta() {
 }
 
 //*******************************
-// GuiLauncher::getGames_SET_FAVORITE
-//*******************************
-void GuiLauncher::getGames_SET_FAVORITE(PsGames *gamesList) {
-    PsGames completeList;
-    gui->db->getGames(&completeList);
-
-    if (gui->cfg.inifile.values["origames"] == "true") {
-        PsGames internalList;
-        gui->internalDB->getInternalGames(&internalList);
-        completeList.insert(end(completeList), begin(internalList), end(internalList));
-    }
-
-    // put only the favorites in gamesList
-    copy_if(begin(completeList), end(completeList), back_inserter(*gamesList),
-            [](const PsGamePtr &game) { return game->favorite; });
-}
-
-//*******************************
-// GuiLauncher::getGames_SET_APPS
-//*******************************
-void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
-    PsGames completeList;
-
-    std::string appPath = Environment::getPathToApps();
-    if (!DirEntry::exists(appPath)) {
-        return;
-    }
-    DirEntries dirs = DirEntry::diru_DirsOnly(appPath);
-    cout << "Scanning apps in: " << appPath << endl;
-    for (auto &dir : dirs) {
-        std::string appIni = appPath + sep + dir.name + sep + "app.ini";
-        cout << "AppIni: " << appIni << endl;
-        if (DirEntry::exists(appIni)) {
-            Inifile *file = new Inifile();
-            file->load(appIni);
-            PsGamePtr game{new PsGame};
-            game->gameId = 0;
-            game->year = 0;
-            game->players = 0;
-            game->memcard = "";
-            game->cds = 0;
-
-            game->title = file->values["title"];
-            game->publisher = file->values["author"];
-            game->readme_path = appPath + sep + dir.name + sep + file->values["readme"];
-            game->startup = file->values["startup"];
-            game->image_path = appPath + sep + dir.name + sep + file->values["image"];
-            game->base = appPath + sep + dir.name;
-            game->kernel = file->values["kernel"] == "true";
-            game->app = true;
-            game->foreign = true;
-
-            gamesList->push_back(game);
-            delete file;
-        }
-    }
-
-
-}
-
-//*******************************
 // GuiLauncher::getGames_SET_SUBDIR
 //*******************************
-void GuiLauncher::getGames_SET_SUBDIR(int rowIndex, PsGames *gamesList) {
+void GuiLauncher::getGames_SET_SUBDIR(PsGames* gamesList, int rowIndex) {
     GameRowInfos gameRowInfos;
     gui->db->getGameRowInfos(&gameRowInfos);
     if (gameRowInfos.size() == 0)
@@ -137,6 +70,51 @@ void GuiLauncher::getGames_SET_SUBDIR(int rowIndex, PsGames *gamesList) {
     }
 }
 
+//*******************************
+// GuiLauncher::appendGames_SET_INTERNAL
+//*******************************
+void GuiLauncher::appendGames_SET_INTERNAL(PsGames *gamesList) {
+    PsGames internal;
+    gui->internalDB->getInternalGames(&internal);
+    for (const auto &internalGame : internal) {
+        gamesList->push_back(internalGame);
+    }
+}
+
+//*******************************
+// GuiLauncher::getGames_SET_FAVORITE
+//*******************************
+void GuiLauncher::getGames_SET_FAVORITE(PsGames *gamesList) {
+    PsGames completeList = getAllPS1Games(true, gui->cfg.inifile.values["origames"] == "true");
+
+    // put only the favorites in gamesList
+    copy_if(begin(completeList), end(completeList), back_inserter(*gamesList),
+            [](const PsGamePtr &game) { return game->favorite; });
+}
+
+//*******************************
+// GuiLauncher::getGames_SET_HISTORY
+//*******************************
+void GuiLauncher::getGames_SET_HISTORY(PsGames *gamesList) {
+    PsGames completeList = getAllPS1Games(true, gui->cfg.inifile.values["origames"] == "true");
+
+    // put only the history in gamesList
+    copy_if(begin(completeList), end(completeList), back_inserter(*gamesList),
+            [](const PsGamePtr &game) { return game->history > 0; });
+}
+
+//*******************************
+// GuiLauncher::getAllPS1Games
+//*******************************
+PsGames GuiLauncher::getAllPS1Games(bool includeUSB, bool includeInternal) {
+    PsGames gamesList;
+    if (includeUSB)
+        getGames_SET_SUBDIR(&gamesList, 0);
+    if (includeInternal)
+        appendGames_SET_INTERNAL(&gamesList);
+
+    return gamesList;
+}
 
 //*******************************
 // GuiLauncher::getGames_SET_RETROARCH
@@ -148,13 +126,43 @@ void GuiLauncher::getGames_SET_RETROARCH(const std::string &playlistName, PsGame
 }
 
 //*******************************
-// GuiLauncher::appendGames_SET_INTERNAL
+// GuiLauncher::getGames_SET_APPS
 //*******************************
-void GuiLauncher::appendGames_SET_INTERNAL(PsGames *gamesList) {
-    PsGames internal;
-    gui->internalDB->getInternalGames(&internal);
-    for (const auto &internalGame : internal) {
-        gamesList->push_back(internalGame);
+void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
+    PsGames completeList;
+
+    std::string appPath = Environment::getPathToAppsDir();
+    if (!DirEntry::exists(appPath)) {
+        return;
+    }
+    DirEntries dirs = DirEntry::diru_DirsOnly(appPath);
+    cout << "Scanning apps in: " << appPath << endl;
+    for (auto &dir : dirs) {
+        std::string appIni = appPath + sep + dir.name + sep + "app.ini";
+        cout << "AppIni: " << appIni << endl;
+        if (DirEntry::exists(appIni)) {
+            Inifile *file = new Inifile();
+            file->load(appIni);
+            PsGamePtr game{new PsGame};
+            game->gameId = 0;
+            game->year = 0;
+            game->players = 0;
+            game->memcard = "";
+            game->cds = 0;
+
+            game->title = file->values["title"];
+            game->publisher = file->values["author"];
+            game->readme_path = appPath + sep + dir.name + sep + file->values["readme"];
+            game->startup = file->values["startup"];
+            game->image_path = appPath + sep + dir.name + sep + file->values["image"];
+            game->base = appPath + sep + dir.name;
+            game->kernel = file->values["kernel"] == "true";
+            game->app = true;
+            game->foreign = true;
+
+            gamesList->push_back(game);
+            delete file;
+        }
     }
 }
 
@@ -184,16 +192,21 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {
         }
 
         if (currentPS1_SelectState == SET_PS1_All_Games) {
-            getGames_SET_SUBDIR(0, &gamesList);   // get the games in row 0 = /Games and on down
-            if (gui->cfg.inifile.values["origames"] == "true")  // if include internal games in all games
-                appendGames_SET_INTERNAL(&gamesList);   // add internal games too
+            bool includeInternal = gui->cfg.inifile.values["origames"] == "true";
+            gamesList = getAllPS1Games(true, includeInternal);
+
         } else if (currentPS1_SelectState == SET_PS1_Internal_Only) {
-                appendGames_SET_INTERNAL(&gamesList);   // since it starts out empty this sets only internal
+            appendGames_SET_INTERNAL(&gamesList);   // since it starts out empty this sets only internal
+
         } else if (currentPS1_SelectState == SET_PS1_Games_Subdir) {
             // get the games in the current subdir of /Games and on down
-            getGames_SET_SUBDIR(currentUSBGameDirIndex, &gamesList);
+            getGames_SET_SUBDIR(&gamesList, currentUSBGameDirIndex);
+
         } else if (currentPS1_SelectState == SET_PS1_Favorites) {
             getGames_SET_FAVORITE(&gamesList);
+
+        } else if (currentPS1_SelectState == SET_PS1_History) {
+            getGames_SET_HISTORY(&gamesList);
         }
 
     } else if (currentSet == SET_RETROARCH) {
@@ -203,8 +216,16 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {
         getGames_SET_APPS(&gamesList);
     }
 
-    if (!(currentSet == SET_RETROARCH && currentRAPlaylistName == raIntegrator->historyDisplayName))
-        sort(gamesList.begin(), gamesList.end(), sortByTitle);
+    if (!(currentSet == SET_RETROARCH && currentRAPlaylistName == raIntegrator->historyDisplayName)) {
+        if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_History) {
+            // sort by history 1-100.  1 is latest game played, 100 is the oldest
+            sort(begin(gamesList), end(gamesList),
+                 [&](PsGamePtr p1, PsGamePtr p2) { return p1->history < p2->history; });
+        } else {
+            // sort by title
+            sort(gamesList.begin(), gamesList.end(), sortByTitle);
+        }
+    }
     cout << "Games Sorted" << endl;
     // copy the gamesList into the carousel
     carouselGames.clear();
@@ -250,8 +271,12 @@ void GuiLauncher::showSetName() {
     vector<string> setPS1SubStateNames = {_("Showing: All Games") + " ",
                                           _("Showing: Internal Games") + " ",
                                           _("Showing: Favorite Games") + " ",
+                                          _("Showing: Game History") + " ",
                                           _("Showing: USB Games Directory:") + " "
     };
+    assert(currentPS1_SelectState >= 0 && currentPS1_SelectState <= SET_PS1_Games_Subdir);
+    assert(setPS1SubStateNames.size()-1 == SET_PS1_Games_Subdir);  // currentPS1_SelectState out of range
+
     string numGames = " (" + to_string(numberOfNonDuplicatedGamesInCarousel) + " " + _("games") + ")";
 
     auto str = gui->cfg.inifile.values["showingtimeout"];
@@ -266,8 +291,11 @@ void GuiLauncher::showSetName() {
             notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + numGames, timeout);
         } else if (currentPS1_SelectState == SET_PS1_Favorites) {
             notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + numGames, timeout);
+        } else if (currentPS1_SelectState == SET_PS1_History) {
+            notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + numGames, timeout);
         } else if (currentPS1_SelectState == SET_PS1_Games_Subdir) {
-            notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + currentUSBGameDirName + numGames, timeout);
+            notificationLines[0].setText(
+                    setPS1SubStateNames[currentPS1_SelectState] + currentUSBGameDirName + numGames, timeout);
         }
     } else if (currentSet == SET_RETROARCH) {
         string playlist = DirEntry::getFileNameWithoutExtension(currentRAPlaylistName);
@@ -376,10 +404,10 @@ void GuiLauncher::loadAssets() {
         secB = gui->getB(colorsFile.values["sec"]);
     }
 
-    gui->fonts.openAllFonts(gui->getCurrentThemeFontPath());
+    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath());
 
-    notificationLines.createAndSetDefaults(2, 10, 10, FONT_24, 24,
-                                           8);    // count, x_start, y_start, FontSize, fontHeight, separationBetweenLines
+    // count, x_start, y_start, fontEnum, fontHeight, separationBetweenLines
+    notificationLines.createAndSetDefaults(2, 10, 10, FONT_22_MED, 24, 8);
 
     staticElements.clear();
     frontElemets.clear();
@@ -451,9 +479,7 @@ void GuiLauncher::loadAssets() {
     staticElements.push_back(settingsBack);
 
     meta = new PsMeta(renderer, "meta", gui->getCurrentThemeImagePath() + sep + "CB/PlayerOne.png");
-    meta->font15 = gui->fonts[FONT_15];
-    meta->font24 = gui->fonts[FONT_24];
-    meta->font30 = gui->fonts[FONT_30];
+    meta->fonts = gui->themeFonts;
     meta->x = 785;
     meta->y = 285;
     meta->visible = true;
@@ -495,12 +521,12 @@ void GuiLauncher::loadAssets() {
     menu->loadAssets();
 
     menuHead = new PsCenterLabel(renderer, "header");
-    menuHead->font = gui->fonts[FONT_30];
+    menuHead->font = gui->themeFonts[FONT_28_BOLD];
     menuHead->visible = false;
     menuHead->y = 545;
     menuText = new PsCenterLabel(renderer, "menuText");
     menuText->visible = false;
-    menuText->font = gui->fonts[FONT_24];
+    menuText->font = gui->themeFonts[FONT_22_MED];
     menuText->y = 585;
 
     menuHead->setText(headers[0], fgR, fgG, fgB);
@@ -510,8 +536,8 @@ void GuiLauncher::loadAssets() {
     staticElements.push_back(menuText);
 
     sselector = new PsStateSelector(renderer, "selector");
-    sselector->font30 = gui->fonts[FONT_30];
-    sselector->font24 = gui->fonts[FONT_24];
+    sselector->font30 = gui->themeFonts[FONT_28_BOLD];
+    sselector->font24 = gui->themeFonts[FONT_22_MED];
     sselector->visible = false;
 
     if (gui->resumingGui) {
@@ -736,7 +762,7 @@ void GuiLauncher::render() {
 
     menu->render();
 
-    auto font24 = gui->fonts[FONT_24];
+    auto font24 = gui->themeFonts[FONT_22_MED];
     renderText(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
     renderText(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
     renderText(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, POS_LEFT, false);

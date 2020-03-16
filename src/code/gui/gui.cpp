@@ -5,15 +5,16 @@
 #include "gui.h"
 #include "gui_about.h"
 #include "gui_splash.h"
-#include "gui_options.h"
-#include "gui_memcards.h"
-#include "gui_manager.h"
+#include "menus/gui_optionsMenu.h"
+#include "menus/gui_memCardsMenu.h"
+#include "menus/gui_gameManagerMenu.h"
 #include "gui_confirm.h"
 #include <SDL2/SDL_image.h>
 #include "../ver_migration.h"
 #include "../lang.h"
 #include "../launcher/gui_launcher.h"
 #include "gui_padconfig.h"
+#include "gui_padTest.h"
 #include <fstream>
 #include <unistd.h>
 #include "../util.h"
@@ -23,6 +24,7 @@
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
 #include "../environment.h"
+#include "menus/gui_networkMenu.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -62,13 +64,8 @@ GuiBase::GuiBase() {
 
 
     TTF_Init();
-    fonts[FONT_30] = TTF_OpenFont((getCurrentThemeFontPath() + sep + "SST-Bold.ttf").c_str(), 28);
-    fonts[FONT_15] = TTF_OpenFont((getCurrentThemeFontPath() + sep + "SST-Bold.ttf").c_str(), 15);
-    fonts[FONT_24] = TTF_OpenFont((getCurrentThemeFontPath() + sep + "SST-Medium.ttf").c_str(), 22);
-
-    sonyFonts[FONT_30] = TTF_OpenFont((Env::getSonyFontPath() + sep + "SST-Bold.ttf").c_str(), 28);
-    sonyFonts[FONT_15] = TTF_OpenFont((Env::getSonyFontPath() + sep + "SST-Bold.ttf").c_str(), 15);
-    sonyFonts[FONT_24] = TTF_OpenFont((Env::getSonyFontPath() + sep + "SST-Medium.ttf").c_str(), 22);
+    sonyFonts.openAllFonts(Env::getSonyFontPath());
+    themeFonts.openAllFonts(getCurrentThemeFontPath());
 }
 
 //********************
@@ -163,9 +160,9 @@ string GuiBase::getCurrentThemeFontPath() {
                                     //*******************************
 
 //*******************************
-// Gui::logText
+// Gui::splash
 //*******************************
-void Gui::logText(const string &message) {
+void Gui::splash(const string &message) {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->drawText(message);
 }
@@ -174,9 +171,9 @@ void Gui::logText(const string &message) {
 extern "C"
 {
 //*******************************
-// Gui::logText
+// Gui::splash
 //*******************************
-void logText(char *message) {
+void splash(char *message) {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->drawText(message);
 }
@@ -278,7 +275,7 @@ Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string themePath, strin
 // Gui::loadAssets
 //*******************************
 void Gui::loadAssets(bool reloadMusic) {
-    // check theme exists - otherwise back to argb
+    // check theme exists - otherwise back to aergb
 
     string defaultPath = Env::getPathToThemesDir() + sep + "default" + sep;
     themePath = getCurrentThemePath() + sep;
@@ -326,6 +323,9 @@ void Gui::loadAssets(bool reloadMusic) {
     buttonR2 = loadThemeTexture(renderer, themePath, defaultPath, "r2");
     buttonCheck = loadThemeTexture(renderer, themePath, defaultPath, "check");
     buttonUncheck = loadThemeTexture(renderer, themePath, defaultPath, "uncheck");
+    buttonEsc = loadThemeTexture(renderer, themePath, defaultPath, "esc");
+    buttonEnter = loadThemeTexture(renderer, themePath, defaultPath, "enter");
+    buttonTab = loadThemeTexture(renderer, themePath, defaultPath, "tab");
     if (cfg.inifile.values["jewel"] != "none") {
         if (cfg.inifile.values["jewel"] == "default") {
             cdJewel = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/nofilter.png").c_str());
@@ -342,7 +342,7 @@ void Gui::loadAssets(bool reloadMusic) {
     string fontSizeString = themeData.values["fsize"];
     if (fontSizeString != "")
         fontSize = atoi(fontSizeString.c_str());
-    themeFont = Fonts::openFont(fontPath, fontSize);
+    themeFont = Fonts::openNewSharedFont(fontPath, fontSize);
 
     if (reloadMusic) {
         if (music != nullptr) {
@@ -459,7 +459,6 @@ void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, b
     this->db = db;
     this->pathToGamesDir = _pathToGamesDir;
     this->forceScan = forceScan;
-    if (forceScan) overrideQuickBoot = true;
 
     SDL_version compiled;
     SDL_version linked;
@@ -482,22 +481,37 @@ void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, b
         splashScreen->show();
         delete splashScreen;
 
+#if 1
         for (int i = 0; i < SDL_NumJoysticks(); i++) {
             SDL_Joystick *joystick = SDL_JoystickOpen(i);
             if (!mapper.isKnownPad(SDL_JoystickInstanceID(joystick))) {
                 cout << "New pad type" << endl;
+                // new controller configuration
                 auto cfgPad = new GuiPadConfig(renderer);
                 cfgPad->joyid = SDL_JoystickInstanceID(joystick);
                 cfgPad->show();
                 delete cfgPad;
             }
         }
+#else   // build verion to test controllers.  GuiPadTest displays the SDL event coming from the controller.
+        for (int i = 0; i < SDL_NumJoysticks(); i++) {
+            SDL_Joystick *joystick = SDL_JoystickOpen(i);
+            // for debugging new controllers
+            // this will display a scrollable window displaying all the events coming from the new controller
+            // for testing.  it also writes the output to ab_out.txt
+            // hold down three buttons to exit and do a safe shutdown!
+            auto cfgTest = new GuiPadTest(renderer);
+            cfgTest->joyid = SDL_JoystickInstanceID(joystick);
+            cfgTest->alsoWriteToCout = true;
+                cfgTest->show();
+            delete cfgTest;
+            Util::powerOff();
+        }
+#endif
 
-        if (cfg.inifile.values["quick"] != "true")
-            waitForGamepad();
+        waitForGamepad();
     } else {
         resumingGui = true;
-        overrideQuickBoot = true;
     }
 }
 
@@ -521,50 +535,6 @@ void Gui::saveSelection() {
 bool otherMenuShift = false;
 bool powerOffShift = false;
 
-//*******************************
-// Gui::quickBoot
-//*******************************
-bool Gui::quickBoot() {
-    int currentTime = SDL_GetTicks();
-    string splashText = _("AutoBleem") + " " + cfg.inifile.values["version"];
-    if (cfg.inifile.values["quick"] == "true") {
-        splashText += " (" + _("Quick boot") + " - " + _("Hold") + " |@O| " + _("Menu") + ")";
-    }
-
-    while (true) {
-        SDL_Event e;
-        if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
-                    drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
-                }
-            }
-            if (e.type == SDL_QUIT)
-                return false;
-            else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
-                return false;
-
-            if (e.type == SDL_JOYBUTTONDOWN) {
-                overrideQuickBoot = true;
-                return false;
-            }
-        }
-        drawText(splashText);
-
-        int delay = TicksPerSecond;
-
-        if (cfg.inifile.values["delay"] != "") {
-            delay = delay * atoi(cfg.inifile.values["delay"].c_str());
-        }
-        int newTime = SDL_GetTicks();
-        int secs = (delay / TicksPerSecond) - (newTime - currentTime) / TicksPerSecond;
-        if (newTime - currentTime > delay) {
-            return true;
-        }
-    }
-}
-
 int Gui::_cb(int button, SDL_Event *e) {
     return mapper.translateButton(button, e);
 }
@@ -583,56 +553,31 @@ void Gui::menuSelection() {
             cout << "--" << SDL_JoystickName(joystick) << endl;
         }
     // Check if all OK
-    if (scanner->noGamesFoundDuringScan) {
-        criticalException(_("WARNING: NO GAMES FOUND. PRESS ANY BUTTON."));
-    }
+// commented this part out.  it was just annoying people who only played RA
+//    if (scanner->noGamesFoundDuringScan) {
+//        criticalException(_("WARNING: NO GAMES FOUND. PRESS ANY BUTTON."));
+//    }
     //
     if (!coverdb->isValid()) {
         criticalException(_("WARNING: NO COVER DB FOUND. PRESS ANY BUTTON."));
     }
-    if (!overrideQuickBoot) {
-        bool quickBootCfg = (cfg.inifile.values["quick"] == "true");
-        if (quickBootCfg && !forceScan) {
-            if (quickBoot()) {
-
-                if (cfg.inifile.values["quickmenu"] == "UI") {
-                    if (cfg.inifile.values["ui"] == "classic") {
-                        this->menuOption = MENU_OPTION_RUN;
-                        return;
-                    } else {
-                        auto launcherScreen = new GuiLauncher(renderer);
-                        launcherScreen->show();
-                        delete launcherScreen;
-                    }
-                } else {
-                    if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
-                        this->menuOption = MENU_OPTION_RETRO;
-                        return;
-                    } else {
-                        auto launcherScreen = new GuiLauncher(renderer);
-                        launcherScreen->show();
-                        delete launcherScreen;
-                    }
-                }
-            };
-        }
-    }
     otherMenuShift = false;
     powerOffShift = false;
-    string adv = cfg.inifile.values["adv"];
     string mainMenu = "|@Start| " + _("AutoBleem") + "    |@X|  " + _("Re/Scan") + " ";
     if (cfg.inifile.values["ui"] == "classic") {
         mainMenu += "  |@O|  " + _("Original") + "  ";
     }
     mainMenu += "|@S|  " + _("RetroArch") + "   ";
     mainMenu += "|@T|  " + _("About") + "  |@Select|  " + _("Options") + " ";
-    if (adv == "true") {
-        mainMenu += "|@L1| " + _("Advanced");
-    }
+    mainMenu += "|@L1| " + _("Advanced");
     mainMenu += " |@L2|+|@R2|" + _("Power Off");
 
     string forceScanMenu = _("Games changed. Press") + "  |@X|  " + _("to scan") + "|";
+#if DISPLAY_NETWORK_MENU
+    string otherMenu = "|@S|  " + _("Network SSID") + "  |@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
+#else
     string otherMenu = "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
+#endif
     cout << SDL_NumJoysticks() << "joysticks were found." << endl;
 
     if (!forceScan) {
@@ -665,7 +610,7 @@ void Gui::menuSelection() {
         if (SDL_PollEvent(&e)) {
 
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
                 }
@@ -677,33 +622,28 @@ void Gui::menuSelection() {
             }
             switch (e.type) {
                 case SDL_JOYBUTTONUP:
-                    if (adv != "false") {
-                        if (!forceScan) {
-                            if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
-                                Mix_PlayChannel(-1, cursor, 0);
-                                drawText(mainMenu);
-                                otherMenuShift = false;
-                            }
-                            if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
-                                Mix_PlayChannel(-1, cursor, 0);
-                                powerOffShift = false;
-                            }
+                    if (!forceScan) {
+                        if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
+                            Mix_PlayChannel(-1, cursor, 0);
+                            drawText(mainMenu);
+                            otherMenuShift = false;
+                        }
+                        if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
+                            Mix_PlayChannel(-1, cursor, 0);
+                            powerOffShift = false;
                         }
                     }
                     break;
                 case SDL_JOYBUTTONDOWN:
-                    if (adv != "false") {
-                        if (!forceScan) {
-                            if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
-                                Mix_PlayChannel(-1, cursor, 0);
-                                drawText(otherMenu);
-                                otherMenuShift = true;
-                            }
-                            if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
-                                Mix_PlayChannel(-1, cursor, 0);
-
-                                powerOffShift = true;
-                            }
+                    if (!forceScan) {
+                        if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
+                            Mix_PlayChannel(-1, cursor, 0);
+                            drawText(otherMenu);
+                            otherMenuShift = true;
+                        }
+                        if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
+                            Mix_PlayChannel(-1, cursor, 0);
+                            powerOffShift = true;
                         }
                     }
 
@@ -802,6 +742,22 @@ void Gui::menuSelection() {
                                 };
                         break;
                     } else {
+#if DISPLAY_NETWORK_MENU
+                        if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
+                            Mix_PlayChannel(-1, cursor, 0);
+                            if (DirEntry::exists(Env::getPathToBleemsyncCFGDir())) {
+                                auto networkMenu = new GuiNetworkMenu(renderer);
+                                networkMenu->show();
+                                delete networkMenu;
+
+                                menuSelection();
+                                menuVisible = false;
+                            } else {
+                                Gui::splash(_("Bleemsync directory not on USB"));
+                            }
+                        };
+#endif
+
                         if (e.jbutton.button == _cb(PCS_BTN_CROSS, &e)) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto memcardsScreen = new GuiMemcards(renderer);
@@ -915,6 +871,15 @@ void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, TT
             if (icon == "Uncheck") {
                 textTexures.push_back(buttonUncheck);
             }
+            if (icon == "Esc") {
+                textTexures.push_back(buttonEsc);
+            }
+            if (icon == "Enter") {
+                textTexures.push_back(buttonEnter);
+            }
+            if (icon == "Tab") {
+                textTexures.push_back(buttonTab);
+            }
         } else {
             SDL_Shared<SDL_Texture> textTex = nullptr;
             SDL_Rect textRec;
@@ -999,7 +964,8 @@ void Gui::renderStatus(const string &text, int posy) {
     {
         textRec.y=posy;
     }
-    if (textRec.w > atoi(themeData.values["textw"].c_str())) textRec.w = atoi(themeData.values["textw"].c_str());
+    if (textRec.w > atoi(themeData.values["textw"].c_str()))
+        textRec.w = atoi(themeData.values["textw"].c_str());
     SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 }
 
@@ -1045,20 +1011,16 @@ void Gui::renderLabelBox(int line, int offset) {
 //*******************************
 // Gui::renderSelectionBox
 //*******************************
-void Gui::renderSelectionBox(int line, int offset) {
-    renderSelectionBox(line, offset, 0);
-}
-
-//*******************************
-// Gui::renderSelectionBox
-//*******************************
-void Gui::renderSelectionBox(int line, int offset, int xoffset) {
+void Gui::renderSelectionBox(int line, int offset, int xoffset, TTF_Font_Shared font) {
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
 
+    if (!font)
+        font = themeFont;
+
     string fg = themeData.values["text_fg"];
 
-    getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
+    getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
 
     SDL_Rect rect2;
     rect2.x = atoi(themeData.values["opscreenx"].c_str());
@@ -1075,20 +1037,6 @@ void Gui::renderSelectionBox(int line, int offset, int xoffset) {
     SDL_SetRenderDrawColor(renderer, getR(fg), getG(fg), getB(fg), 255);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_RenderDrawRect(renderer, &rectSelection);
-}
-
-//*******************************
-// Gui::renderTextLine
-//*******************************
-int Gui::renderTextLine(const string &text, int line, int offset) {
-    return renderTextLine(text, line, offset, POS_LEFT);
-}
-
-//*******************************
-// Gui::renderTextLineOptions
-//*******************************
-int Gui::renderTextLineOptions(const string &text, int line, int offset, int position) {
-    return renderTextLineOptions(text, line, offset, position, 0);
 }
 
 //*******************************
@@ -1110,7 +1058,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
     int h = renderTextLine(text, line, offset, position, xoffset);
 
     SDL_Shared<SDL_Texture> buttonTex;
-    SDL_Rect rect;
+//    SDL_Rect rect;
 
     if (button == -1) {
         return h;
@@ -1151,16 +1099,10 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
 //*******************************
 // Gui::renderTextLine
 //*******************************
-int Gui::renderTextLine(const string &text, int line, int offset, int position) {
-    return renderTextLine(text, line, offset, position, 0);
-}
-
-int Gui::renderTextLine(const string &text, int line, int offset,  int position, int xoffset)
-{
-    return renderTextLine(text,line,offset,position,xoffset,themeFont);
-}
-
 int Gui::renderTextLine(const string &text, int line, int offset,  int position, int xoffset, TTF_Font_Shared font) {
+    if (!font)
+        font = themeFont;   // default to themeFont
+
     SDL_Rect rect2;
     rect2.x = atoi(themeData.values["opscreenx"].c_str());
     rect2.y = atoi(themeData.values["opscreeny"].c_str());
@@ -1198,14 +1140,73 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
 }
 
 //*******************************
-// Gui::renderTextChar
+// Gui::getTextRectangleOnScreen
 //*******************************
-void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
+// returns the SDL_Rect of the screen positions if your rendered this text with these args
+SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,  int position, int xoffset, TTF_Font_Shared font) {
+    if (!font)
+        font = themeFont;   // default to themeFont
+
     SDL_Rect rect2;
     rect2.x = atoi(themeData.values["opscreenx"].c_str());
     rect2.y = atoi(themeData.values["opscreeny"].c_str());
     rect2.w = atoi(themeData.values["opscreenw"].c_str());
     rect2.h = atoi(themeData.values["opscreenh"].c_str());
+
+    SDL_Shared<SDL_Texture> textTex;
+    SDL_Rect textRec;
+
+    getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
+    int lineh = textRec.h;
+    getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
+    textRec.x = rect2.x + 10 + xoffset;
+    textRec.y = (lineh * line) + offset;
+
+    if (line<0)
+    {
+        line=-line;
+        textRec.y=line;
+    }
+
+    if (textRec.w >= (1280 - rect2.x * 4)) {
+        textRec.w = (1280 - rect2.x * 4);
+    }
+    if (position==POS_CENTER) {
+        textRec.x = (1280 / 2) - textRec.w / 2;
+    }
+    if (position==POS_RIGHT) {
+        textRec.x = 1280 - textRec.x - textRec.w;
+    }
+
+    //SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
+
+    return textRec;
+}
+
+//*******************************
+// Gui::renderTextLineToColumns
+//*******************************
+int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight,
+                                 int xLeft, int xRight,
+                                 int line, int offset, TTF_Font_Shared font) {
+
+            renderTextLine(textLeft,  line, offset, POS_LEFT, xLeft, font);
+    int h = renderTextLine(textRight, line, offset, POS_LEFT, xRight, font);
+
+    return h;   // rectangle height
+}
+
+//*******************************
+// Gui::renderTextChar
+//*******************************
+void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
+#if 0
+    SDL_Rect rect2;
+    rect2.x = atoi(themeData.values["opscreenx"].c_str());
+    rect2.y = atoi(themeData.values["opscreeny"].c_str());
+    rect2.w = atoi(themeData.values["opscreenw"].c_str());
+    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+#endif
 
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;

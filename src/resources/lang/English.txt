@@ -24,6 +24,8 @@ Are you sure you want to flush all covers?
 
 Are you sure?
 
+Auto Init Network on Boot:
+
 AutoBleem
 
 AutoBleem resume points not available in RetroArch.
@@ -32,7 +34,11 @@ AutoBleem Theme:
 
 Background Music:
 
+Backspace
+
 Bin file failed to verify
+
+Bleemsync directory not on USB
 
 Button Guide
 
@@ -53,8 +59,6 @@ Clock:
 Close
 
 Configuration
-
-Configuration saved - Press |@X| to continue
 
 CONFIGURED
 
@@ -90,11 +94,15 @@ Do you want to save memcards data ?
 
 Download latest:
 
-DPAD
-
 Edit game parameters
 
 Edit Memory Card information
+
+Edit Network SSID and Password (ssid.cfg)
+
+Edit Password
+
+Edit SSID
 
 Emulator config MENU
 
@@ -108,11 +116,17 @@ Enter new name for card
 
 Enter new name for memory card
 
+Enter Password
+
+Enter SSID
+
 Entry
 
 Exit to EvoUI
 
 Failed to delete
+
+Failed to Initialize Wi-Fi To Network SSID:
 
 Favorite Games
 
@@ -136,6 +150,8 @@ Game failed to verify:
 
 Game file not found
 
+Game History
+
 Game Manager
 
 Game manager - Select game
@@ -147,8 +163,6 @@ Game.ini file not valid
 Game:
 
 games
-
-Games
 
 Games changed. Press
 
@@ -162,13 +176,19 @@ Go back
 
 High res:
 
-Hold
-
 In Boot Menu: Safe Power Off The Console
 
 In Game
 
 In Retroarch Game
+
+Initialize Network
+
+Initialize Wi-Fi Now?
+
+Initialized Wi-Fi To Network SSID:
+
+Initializing Wi-Fi To Network SSID:
 
 Internal
 
@@ -176,7 +196,9 @@ INTERNAL
 
 Internal Games
 
-Is your dpad analogue?
+IP Address:
+
+IP:
 
 Language:
 
@@ -196,11 +218,13 @@ Memory Card:
 
 Memory Cards
 
-Menu
+Move Cursor
 
 Moving :
 
 Music:
+
+Network SSID
 
 New Card
 
@@ -221,6 +245,8 @@ Options
 Original
 
 Page
+
+Password:
 
 pcsx.cfg file not found
 
@@ -244,19 +270,19 @@ Power Off
 
 POWERING OFF... PLEASE WAIT
 
+Press |@X| to save controller mapping, or |@O| to retry configuration
+
 Press a key for
+
+Press any DPAD button (to determine if it's digital or analogue)
 
 Published by:
 
-Quick boot
-
 Quick scroll to next letter
 
-QuickBoot Init:
-
-QuickBoot:
-
 Quit emulation - back to AutoBleem
+
+Random Game
 
 Re/Scan
 
@@ -267,6 +293,8 @@ Region:
 Reload Cards
 
 Rename
+
+RESET
 
 RESUME
 
@@ -279,8 +307,6 @@ RetroArch
 RetroArch is not installed
 
 Run using RetroBoot
-
-Same as classic menu
 
 Scanline Level:
 
@@ -320,6 +346,8 @@ Showing: Apps
 
 Showing: Favorite Games
 
+Showing: Game History
+
 Showing: Internal Games
 
 Showing: Retroarch
@@ -333,6 +361,8 @@ Space
 SpeedHack:
 
 Spu Interpolation:
+
+SSID:
 
 Starting EvolutionUI
 
@@ -354,11 +384,19 @@ Updating regional.db...
 
 USB Games
 
+Use Controller
+
 WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 
 Widescreen:
+
+Wi-Fi Connection:
+
+Write connect info to ssid.cfg file
+
+Write ssid.cfg file
 
 Year:
 

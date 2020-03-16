@@ -9,7 +9,7 @@ using namespace std;
 // these strings are initialized by main.cpp.  once initialized they should not be modified.
 // they are not declared in the header to prevent outside code from accidentally modifying them.
 
-// passing a single arg on the debug command line instead of passing two args is optional.  two arg is still available.
+// passing a single arg on the debug command line instead of passing two args is optional.
 //
 // in single arg mode you pass the path to the root of the flash USB drive.  in this mode, as much as possible, files
 // from the USB drive are used instead of files in the debug build environment.  this allows you to debug the files
@@ -22,6 +22,7 @@ string private_pathToUSBDrive;
 string private_pathToGamesDir;
 string private_pathToRegionalDBFile;
 string private_pathToInternalDBFile;
+bool Env::hiddenMenuEnabled = false;
 
 //*******************************
 // Environment:: One Liners
@@ -31,8 +32,16 @@ string Environment::getPathToUSBRoot() {
   return private_pathToUSBDrive;
 }
 
-string Environment::getPathToApps() {
+string Environment::getPathToAutobleemDir() {
+    return private_pathToUSBDrive + sep + "Autobleem";
+}
+
+string Environment::getPathToAppsDir() {
     return private_pathToUSBDrive + sep + "Apps";
+}
+
+std::string Environment::getPathToRCDir() {
+    return getPathToAutobleemDir() + sep + "rc";
 }
 
 string Environment::getPathToGamesDir() {
@@ -76,6 +85,25 @@ string Environment::getPathToRegionalDBFile() {
 string Environment::getPathToInternalDBFile() {
     return private_pathToInternalDBFile;
 }
+
+#if DISPLAY_NETWORK_MENU
+// for networking
+string Environment::getPathToBleemsyncDir() {
+    return getPathToUSBRoot() + sep + "bleemsync";
+}
+
+string Environment::getPathToBleemsyncCFGDir() {
+    return getPathToBleemsyncDir() + sep + "etc/bleemsync/CFG";
+}
+
+string Environment::getPathToBleemsyncWPADir() {
+    return getPathToBleemsyncDir() + sep + "network/etc/wpa_supplicant";
+}
+
+string Environment::getPathToLogsDir() {
+    return private_pathToUSBDrive + sep + "logs";
+}
+#endif
 
 //*******************************
 // Environment::getWorkingPath
