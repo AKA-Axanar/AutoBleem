@@ -282,6 +282,8 @@ Quick scroll to next letter
 Desplazamiento rapido a la siguiente letra
 Quit emulation - back to AutoBleem
 Quitar emulacion - volver a AutoBleem
+Random Game
+Juego Aleatorio
 Re/Scan
 Re/Escanear
 ReadMe file not found
