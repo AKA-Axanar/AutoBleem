@@ -22,6 +22,7 @@ string private_pathToUSBDrive;
 string private_pathToGamesDir;
 string private_pathToRegionalDBFile;
 string private_pathToInternalDBFile;
+bool Env::autobleemKernel = false;
 bool Env::hiddenMenuEnabled = false;
 
 //*******************************

@@ -36,6 +36,7 @@ struct Environment {
     static std::string getPathToThemesDir();        // "usb:/themes" or "./themes"
     static std::string getPathToCoversDBDir();   // "usb:/Autobleem/bin/db" or "../db"
 
+    static bool autobleemKernel;        // true if the kernel is the AutoBleem Kernel
     static bool hiddenMenuEnabled;
 };
 
