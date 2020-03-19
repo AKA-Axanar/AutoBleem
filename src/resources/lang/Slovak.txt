@@ -24,6 +24,8 @@ Are you sure you want to flush all covers?
 Naozaj chcete zmazať všetky obaly?
 Are you sure?
 Ste si tým istý?
+Auto Init Network on Boot:
+Automatická inicializácia siete pri štarte:
 AutoBleem
 AutoBleem
 AutoBleem resume points not available in RetroArch.
@@ -32,8 +34,12 @@ AutoBleem Theme:
 Téma AutoBleemu:
 Background Music:
 Hudba na pozadí:
+Backspace
+Vrátiť
 Bin file failed to verify
 Nepodarilo sa overiť súbor bin.
+Bleemsync directory not on USB
+Adresár Bleemsync nie je na USB
 Button Guide
 Sprievodca tlačidlami
 Cancel
@@ -92,6 +98,12 @@ Edit game parameters
 Upraviť parametre hry
 Edit Memory Card information
 Upraviť informácie Pamäťovej karty
+Edit Network SSID and Password (ssid.cfg)
+Upraviť sieťové SSID a heslo (ssid.cfg)
+Edit Password
+Upraviť heslo
+Edit SSID
+Upraviť SSID
 Emulator config MENU
 Menu Emulátora
 Enter
@@ -104,12 +116,18 @@ Enter new name for card
 Zadajte nový názov karty
 Enter new name for memory card
 Zadajte nový názov pamäťovej karty
+Enter Password
+Zadajte heslo
+Enter SSID
+Zadajte SSID
 Entry
 Údaj
 Exit to EvoUI
 Odísť do EvoUI
 Failed to delete
 Nepodarilo sa odstrániť
+Failed to Initialize Wi-Fi To Network SSID:
+Nepodarilo sa inicializovať sieťové SSID pre Wi-Fi:
 Favorite Games
 Obľúbené hry
 Favorite:
@@ -146,8 +164,6 @@ Game:
 Hra:
 games
 hry
-Games
-Hry
 Games changed. Press
 Hry sa zmenili. Stlač
 Games filter
@@ -160,20 +176,30 @@ Go back
 Späť
 High res:
 Vysoké rozlíšenie:
-Hold
-Čakajte
 In Boot Menu: Safe Power Off The Console
 V bootovacom menu: Bezpečne vypnúť konzolu
 In Game
 V hre
 In Retroarch Game
 V Retroarch hre
+Initialize Network
+Inicializácia siete
+Initialize Wi-Fi Now?
+Inicializovať Wi-Fi?
+Initialized Wi-Fi To Network SSID:
+Inicializované sieťové SSID pre Wi-Fi:
+Initializing Wi-Fi To Network SSID:
+Inicializujem sieťové SSID pre Wi-Fi:
 Internal
 Originálne
 INTERNAL
 ORIGINÁLNE
 Internal Games
 Originálne hry
+IP Address:
+IP adresa:
+IP:
+IP:
 Language:
 Jazyk:
 Link Block
@@ -192,14 +218,14 @@ Memory Card:
 Pamäťová karta:
 Memory Cards
 Pamäťové karty
-Menu
-Menu
 Move Cursor
 Presunúť kurzor
 Moving :
 Presúvam:
 Music:
 Hudba:
+Network SSID
+Sieť SSID
 New Card
 Nová karta
 New GamePad found
@@ -220,6 +246,8 @@ Original
 Originálne hry
 Page
 Strana
+Password:
+Heslo:
 pcsx.cfg file not found
 Súbor pcsx.cfg sa nenašiel
 Player
@@ -242,24 +270,20 @@ Power Off
 Vypnúť
 POWERING OFF... PLEASE WAIT
 VYPÍNAM... ČAKAJTE PROSÍM
-Press |@X| to save controller mapping, or |@O| to retry configuration
-Stlačte |@X| na premapovanie ovládača, alebo |@O| na zopakovanie konfigurácie
 Press a key for
 Stlačte hocijaké tlačidlo
 Press any DPAD button (to determine if it's digital or analogue)
 Stlačte ktorékoľvek tlačidlo DPAD (aby ste zistili, či je digitálne alebo analógové)
+Press |@X| to save controller mapping, or |@O| to retry configuration
+Stlačte |@X| na premapovanie ovládača, alebo |@O| na zopakovanie konfigurácie
 Published by:
 Vydavateľ:
-Quick boot
-Rýchly štart
 Quick scroll to next letter
-Rýchlo prejsť na nasledujúci znak  
-QuickBoot Init:
-Rýchly štart do:
-QuickBoot:
-Rýchly štart:
+Rýchlo prejsť na nasledujúci znak
 Quit emulation - back to AutoBleem
 Ukončiť emuláciu - návrat do AutoBleemu
+Random Game
+Náhodná hra
 Re/Scan
 Pre/Hľadať
 ReadMe file not found
@@ -338,6 +362,8 @@ SpeedHack:
 SpeedHack:
 Spu Interpolation:
 Interpolácia zvuku:
+SSID:
+SSID:
 Starting EvolutionUI
 Spúšťam EvolutionUI
 Support via Discord:
@@ -358,11 +384,19 @@ Updating regional.db...
 Aktualizujem regional.db...
 USB Games
 USB Hry
+Use Controller
+Použite ovládač
 WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 POZOR: NENAŠLA SA DATABÁZA OBALOV NA HRY. STLAČTE ĽUBOVOĽNÚ KLÁVESU.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 POZOR: NEBOLA NÁJDENÁ ŽIADNA HRA. STLAČTE ĽUBOVOĽNÚ KLÁVESU.
+Wi-Fi Connection:
+Pripojenie Wi-Fi:
 Widescreen:
 Širokouhlý obraz:
+Write connect info to ssid.cfg file
+Zapísať informácie o pripojení do súboru ssid.cfg
+Write ssid.cfg file
+Zapísať súbor ssid.cfg
 Year:
 Rok:

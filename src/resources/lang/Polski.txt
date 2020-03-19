@@ -24,6 +24,8 @@ Are you sure you want to flush all covers?
 Czy na pewno chcesz wyczyścić wszystkie okładki?
 Are you sure?
 Czy jesteś pewien?
+Auto Init Network on Boot:
+Automatycznie łącz do Sieci na Starcie:
 AutoBleem
 AutoBleem
 AutoBleem resume points not available in RetroArch.
@@ -32,8 +34,12 @@ AutoBleem Theme:
 Skórka AutoBleem:
 Background Music:
 Muzyka w tle:
+Backspace
+Backspace
 Bin file failed to verify
 Nie udało się zweryfikować pliku Bin
+Bleemsync directory not on USB
+Brak folderu Bleemsync na USB
 Button Guide
 Opis funkcji
 Cancel
@@ -92,6 +98,12 @@ Edit game parameters
 Edytuj parametry gry
 Edit Memory Card information
 Edytuj informacje Karty Pamięci
+Edit Network SSID and Password (ssid.cfg)
+Edytuj Nazwę Sieci i Hasło (ssid.cfg)
+Edit Password
+Edytuj Hasło
+Edit SSID
+Edytuj SSID
 Emulator config MENU
 MENU kofiguracji emulatora
 Enter
@@ -104,12 +116,18 @@ Enter new name for card
 Podaj nową nazwę dla karty
 Enter new name for memory card
 Podaj nową nazwę dla karty pamięci
+Enter Password
+Wprowadź Hasło
+Enter SSID
+Wprowadź SSID
 Entry
 Wprowadź
 Exit to EvoUI
 Powrót do EvoUI
 Failed to delete
 Nieudane usuwanie
+Failed to Initialize Wi-Fi To Network SSID:
+Nieudane Połączenie Wi-Fi do Sieci:
 Favorite Games
 Ulubione Gry
 Favorite:
@@ -124,10 +142,10 @@ Free
 Wolne
 Free space
 Wolne miejsce
-GAME
-GRA
 Game
 Gra
+GAME
+GRA
 Game failed to verify:
 Nie udało się zweryfikować Gry: 
 Game file not found
@@ -146,8 +164,6 @@ Game:
 Gra:
 games
 gry
-Games
-Gry
 Games changed. Press
 Gry zmienione. Naciśnij
 Games filter
@@ -160,20 +176,30 @@ Go back
 Powrót
 High res:
 Zwiększ Rozdzielczość:
-Hold
-Przytrzymaj
 In Boot Menu: Safe Power Off The Console
 W Menu Startowym: Bezpieczne Wyłączenie Konsoli
 In Game
 W Grze
 In Retroarch Game
 W grze Retroarch
+Initialize Network
+Zainicjuj Sieć
+Initialize Wi-Fi Now?
+Podłączyć teraz Wi-Fi?
+Initialized Wi-Fi To Network SSID:
+Podłączono Wi-Fi do Sieci:
+Initializing Wi-Fi To Network SSID:
+Łączenie Wi-Fi do Sieci:
 INTERNAL
 WEWNĘTRZNA
 Internal
 Wewnętrzna
 Internal Games
 Wewnętrzne Gry
+IP Address:
+Adres IP:
+IP:
+IP:
 Language:
 Język:
 Link Block
@@ -192,14 +218,14 @@ Memory Card:
 Karta pamięci:
 Memory Cards
 Karty Pamięci
-Menu
-Menu
 Move Cursor
 Przesuń Kursor
 Moving :
 Przenoszenie :
 Music:
 Muzyka:
+Network SSID
+Nazna Sieci (SSID)
 New Card
 Nowa karta
 New GamePad found
@@ -220,6 +246,8 @@ Original
 Oryginał
 Page
 Strona
+Password:
+Hasło:
 pcsx.cfg file not found
 Nie znaleziono pliku pcsx.cfg
 Player
@@ -250,16 +278,12 @@ Press |@X| to save controller mapping, or |@O| to retry configuration
 Naciśnij |@X| aby zapisać układ kontrolera, albo |@O| aby ponowić konfigurację
 Published by:
 Wydawca:
-Quick boot
-Szybki Start
 Quick scroll to next letter
 Szybki przeskok do następnej litery
-QuickBoot Init:
-Szybki Start do:
-QuickBoot:
-Szybki Start:
 Quit emulation - back to AutoBleem
 Zakończ emulację - powrót do AutoBleem
+Random Game
+Losowa Gra
 Re/Scan
 Skanuj
 ReadMe file not found
@@ -338,6 +362,8 @@ SpeedHack:
 SpeedHack:
 Spu Interpolation:
 Interpolacja Spu:
+SSID:
+SSID:
 Starting EvolutionUI
 Włączam EvolutionUI
 Support via Discord:
@@ -358,11 +384,19 @@ Updating regional.db...
 Uaktualniam regional.db...
 USB Games
 Gry USB
+Use Controller
+Użyj Kontrolera
 WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 UWAGA: BRAK BAZY OKŁADEK. NACIŚNIJ DOWOLNY PRZYCISK
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 UWAGA: NIE WYKRYTO GIER. WCIŚNIJ DOWOLNY PRZYCISK.
+Wi-Fi Connection:
+Połączenie Wi-Fi:
 Widescreen:
 Pełny ekran:
+Write connect info to ssid.cfg file
+Zapisz dane połączenia do ssid.cfg
+Write ssid.cfg file
+Zapisz plik ssid.cfg
 Year:
 Rok:
