@@ -263,8 +263,11 @@ string GuiNetworkMenu::getStatusLine() {
             return "   |@X| " + _("Initialize Network") +
                    "   |@O| " + _("Cancel") + " |";
 
+        case IpAddress:
+            return "   |@O| " + _("Cancel") + " |";
+
         default:
-            assert(false);
+            assert(false);  // you missed an enum
             return "   |@O| " + _("Cancel") + " |";
     }
 }
@@ -358,7 +361,7 @@ void GuiNetworkMenu::doCross_Pressed() {
             break;
 
         default:
-            assert(false);
+            assert(false);  // you missed an enum
     }
 
     render();
