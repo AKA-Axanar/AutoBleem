@@ -26,6 +26,9 @@ public:
     virtual std::string getTitle() override { return "-=" + _("-=" + _("Edit Network SSID and Password (ssid.cfg)") + "=-") + "=-"; }
     virtual std::string getStatusLine() override;   // returns the status line at the bottom
 
+    // skip selecting blank lines in the menu
+    virtual bool skipSelectingThisLineWhenMovingByOne(int index) { return lines[index] == ""; }
+
     std::string ssid, password;
     bool displayAsterisksInsteadOfPassword = true;   // this is a password.  display *****
 
