@@ -134,8 +134,6 @@ add_executable(
         src/code/gui/menus/gui_memCardsMenu.cpp
         src/code/gui/menus/gui_memCardsMenu.h
         src/code/gui/menus/gui_menuBase.h
-		src/code/gui/menus/gui_networkMenu.cpp
-		src/code/gui/menus/gui_networkMenu.h 
         src/code/gui/menus/gui_optionsMenu.cpp
         src/code/gui/menus/gui_optionsMenu.h
         src/code/gui/menus/gui_optionsMenuBase.cpp 

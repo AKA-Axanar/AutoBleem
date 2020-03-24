@@ -9,7 +9,6 @@
 #include "engine/database.h"
 #include "engine/scanner.h"
 #include "gui/gui.h"
-#include "gui/menus/gui_networkMenu.h"
 #include "main.h"
 #include "ver_migration.h"
 #include "engine/coverdb.h"

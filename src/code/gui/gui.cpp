@@ -24,7 +24,6 @@
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
 #include "../environment.h"
-#include "menus/gui_networkMenu.h"
 
 using namespace std;
 using namespace nlohmann;
