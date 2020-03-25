@@ -222,17 +222,6 @@ int main(int argc, char *argv[]) {
     if (thereAreRawGameFilesInGamesDir)
         copyGameFilesInGamesDirToSubDirs(pathToGamesDir);   // the gui->display needs to be up first
 
-#if DISPLAY_NETWORK_MENU
-    GuiNetworkMenu::deleteNetworkLog(); // delete info from last wifi connection
-    bool autobootnetwork = (gui->cfg.inifile.values["autobootnetwork"] == "true");
-    if (autobootnetwork) {
-        string ssid = GuiNetworkMenu::getSSID();
-        if (ssid != "") {
-            string ipAddress = GuiNetworkMenu::initializeWifi();
-        }
-    }
-#endif
-
     while (gui->menuOption == MENU_OPTION_SCAN || gui->menuOption == MENU_OPTION_START) {
 
         gui->menuSelection();

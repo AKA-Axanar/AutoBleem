@@ -572,11 +572,7 @@ void Gui::menuSelection() {
     mainMenu += " |@L2|+|@R2|" + _("Power Off");
 
     string forceScanMenu = _("Games changed. Press") + "  |@X|  " + _("to scan") + "|";
-#if DISPLAY_NETWORK_MENU
-    string otherMenu = "|@S|  " + _("Network SSID") + "  |@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
-#else
-    string otherMenu = "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
-#endif
+    string otherMenu = "|@S|  " + _("Hardware Information") + "  |@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
     cout << SDL_NumJoysticks() << "joysticks were found." << endl;
 
     if (!forceScan) {
@@ -741,21 +737,12 @@ void Gui::menuSelection() {
                                 };
                         break;
                     } else {
-#if DISPLAY_NETWORK_MENU
                         if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
                             Mix_PlayChannel(-1, cursor, 0);
-                            if (DirEntry::exists(Env::getPathToBleemsyncCFGDir())) {
-                                auto networkMenu = new GuiNetworkMenu(renderer);
-                                networkMenu->show();
-                                delete networkMenu;
-
-                                menuSelection();
-                                menuVisible = false;
-                            } else {
-                                Gui::splash(_("Bleemsync directory not on USB"));
-                            }
+                            string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
+                            vector<const char *> argvNew { cmd.c_str(), nullptr };
+                            Util::execFork(cmd.c_str(), argvNew);
                         };
-#endif
 
                         if (e.jbutton.button == _cb(PCS_BTN_CROSS, &e)) {
                             Mix_PlayChannel(-1, cursor, 0);
