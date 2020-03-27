@@ -138,7 +138,9 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
 // main
 //*******************************
 int main(int argc, char *argv[]) {
+    Env::autobleemKernel = DirEntry::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
+
     if (argc == 1 + 1) {
         // the single arg is the path to the usb drive
         private_singleArgPassed = true;
