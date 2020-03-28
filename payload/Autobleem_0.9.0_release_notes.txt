@@ -1,8 +1,32 @@
 
+                                       *****************************
+                                       Autobleem-0.9.0 Release Notes
+                                       *****************************
+**** AutoBleem Kernel ****
+The new AutoBleem kernel introduces OTG, WiFi, Ethernet, Bluetooth, NTFS and exFat support!
+
+**** Apps ****
+With ABFlashkit you can flash the AutoBleem Kernel to your PSC, create a backup of your 
+current PSC kernel and restore that PSC kernel from the backup created during the AutoBleem
+kernel installation process. Specific instructions on the use of this app will be provided
+in a separate document.
+
+NOTE: It is very important to leave the LBOOT.EPB file on your USB drive. This is the backup
+file of your PSCs kernel before the AutoBleem kernel was installed. DO NOT DELETE THIS FILE.
+
+The PSC Bios app allows you to configure WiFi, Ethernet, Bluetooth and your timezone for the PSC. 
+As long as the PSC is connected to a network via WiFi or Ethernet, files modified or created on the
+PSC will have the correct time stamp. It also includes scanning for your SSID and automatically 
+reinitializes the network on boot!
+
+NOTE: Pressing L1 + Square while at the AutoBleem start screen will take you directly to the
+PSC Bios app.  This will display your PSC hardware information including WiFi and Ethernet 
+connection information and IP address.
 
                                        *****************************
                                        Autobleem-0.8.7 Release Notes
                                        *****************************
+
 **** RetroBoot 1.0.1 ****
 RetroBoot 1.0.1 is integrated into AutoBleem 0.8.7.
 
