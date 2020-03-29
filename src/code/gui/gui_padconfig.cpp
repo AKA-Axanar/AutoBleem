@@ -146,7 +146,7 @@ void GuiPadConfig::loop() {
                             newConfig.path = Env::getWorkingPath() + sep + "gpmapping/" + name + ".ini";
                             newConfig.save(newConfig.path);
                             gui->mapper.reload();
-                            menuVisible == false;
+                            menuVisible = false;
                             return;
                         } else if (to_string(e.jbutton.button) == newConfig.values["circle"]) {
                             step = 0;

@@ -55,6 +55,7 @@ void GuiScreen::loop()
                         doL2_Pressed();
                     else if (e.jbutton.button == gui->_cb(PCS_BTN_R2,&e))
                         doR2_Pressed();
+                    break;
 
                 case SDL_JOYBUTTONUP:
                     if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e))
@@ -77,6 +78,7 @@ void GuiScreen::loop()
                         doL2_Released();
                     else if (e.jbutton.button == gui->_cb(PCS_BTN_R2,&e))
                         doR2_Released();
+                    break;
 
                 case SDL_KEYDOWN:
                     if (e.key.keysym.sym == SDLK_UP)
@@ -106,7 +108,6 @@ void GuiScreen::loop()
                     else if (e.key.keysym.sym == SDLK_ESCAPE)
                         doEscape();
                     break;
-
             }
         }
         render();

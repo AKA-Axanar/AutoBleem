@@ -169,7 +169,7 @@ void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
 //*******************************
 // GuiLauncher::switchSet
 //*******************************
-void GuiLauncher::switchSet(int newSet, bool noForce) {
+void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet is not used.  probably not the intent.
     cout << "Switching to Set: " << currentSet << endl;
     // clear the carousel text
     if (!carouselGames.empty()) {

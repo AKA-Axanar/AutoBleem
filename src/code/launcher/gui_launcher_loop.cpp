@@ -757,7 +757,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
     if (currentSet == SET_PS1)
         addGameToPS1GameHistoryAsLatestGamePlayed(gui->runningGame);
 
-        gui->emuMode = EMU_PCSX;
+    gui->emuMode = EMU_PCSX;
     if (gui->runningGame->foreign)
     {
         if (!gui->runningGame->app) {
@@ -859,7 +859,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
         loadAssets();
         gui->resumingGui = false;
         currentSet = lastSet;
-        if (currentSet = SET_PS1)
+        if (currentSet == SET_PS1)
             currentPS1_SelectState = lastPS1_SelectState;
         currentUSBGameDirIndex = lastUSBGameDirIndex;
         currentRAPlaylistIndex = lastRAPlaylistIndex;
@@ -1071,7 +1071,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
                 gui->resumepoint = slot;
                 gui->lastSet = currentSet;
                 if (currentSet == SET_PS1)
-                    gui->lastPS1_SelectState == currentPS1_SelectState;
+                    gui->lastPS1_SelectState = currentPS1_SelectState;
                 gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
                 gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
                 sselector->cleanSaveStateImages();
