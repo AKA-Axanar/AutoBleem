@@ -168,10 +168,10 @@ void GuiAppStart::loop() {
                         result = false;
                         menuVisible = false;
                     };
+                    break;
 
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
                 case SDL_JOYHATMOTION:
-
                     if (totalLines!=0) {
                         if (gui->mapper.isUp(&e)) {
                             scrolling = -1;
@@ -185,11 +185,8 @@ void GuiAppStart::loop() {
                             scrolling = 0;
                         }
                     }
-
+                    break;
             }
-
-
-
         }
     }
 }
