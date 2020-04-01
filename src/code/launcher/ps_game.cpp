@@ -28,10 +28,10 @@ bool PsGame::isCleanExit() {
 void PsGame::setMemCard(string name) {
     if (!foreign) {
         this->memcard = name;
-        Inifile *ini = new Inifile();
-        ini->load(this->folder + sep + GAME_INI);
-        ini->values["memcard"] = name;
-        ini->save(this->folder + sep + GAME_INI);
+        Inifile ini;
+        ini.load(this->folder + sep + GAME_INI);
+        ini.values["memcard"] = name;
+        ini.save(this->folder + sep + GAME_INI);
         shared_ptr<Gui> gui(Gui::getInstance());
         gui->db->updateMemcard(this->gameId, name);
     }
