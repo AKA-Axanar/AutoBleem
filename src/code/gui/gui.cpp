@@ -288,9 +288,9 @@ void Gui::loadAssets(bool reloadMusic) {
         cfg.save();
     }
 
-    themeData.load(defaultPath + "theme.ini");
     defaultData.load(defaultPath + "theme.ini");
-    themeData.load(themePath + "theme.ini");
+    themeData.load(defaultPath + "theme.ini");
+    themeData.OverwriteAndAppend(themePath + "theme.ini");    // adds to default/theme.ini values
 
     bool reloading = false;
 
