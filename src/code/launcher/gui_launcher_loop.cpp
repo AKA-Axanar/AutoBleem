@@ -944,7 +944,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 editor->gameIni.values["favorite"] == "0") {
                 gui->lastSet = SET_PS1;
                 gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();
+                loadAssets();   // reload - one less favorite game in display
             }
         } else {
             if (editor->changes) {
@@ -955,7 +955,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 editor->gameData->favorite == false) {
                 gui->lastSet = SET_PS1;
                 gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();
+                loadAssets();   // reload - one less favorite game in display
             }
         }
     }

@@ -7,6 +7,8 @@
 #include "../engine/inifile.h"
 #include "../gui/gui.h"
 #include <fstream>
+#include <iostream>
+
 using namespace std;
 
 //*******************************
@@ -15,9 +17,11 @@ using namespace std;
 bool PsGame::isCleanExit() {
     if (!foreign) {
         string filenamefile = ssFolder + sep + "filename.txt";
-        return DirEntry::exists(filenamefile);
-    } else
-    {
+        bool ret = DirEntry::exists(filenamefile);
+        if (!ret)
+            cout << "PsGame::isCleanExit() failed '" << filenamefile << "' not found" << endl;
+        return ret;
+    } else {
         return true;
     }
 }
