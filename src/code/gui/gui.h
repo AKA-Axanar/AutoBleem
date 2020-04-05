@@ -52,12 +52,15 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir };
 
 //********************
-// GuiBase
+// Gui
 //********************
-class GuiBase {
+class Gui {
+private:
+
+    Gui();
+
 public:
-    GuiBase();
-    ~GuiBase();
+    ~Gui();
 
     SDL_Shared<SDL_Window> window;
     SDL_Shared<SDL_Renderer> renderer;
@@ -92,17 +95,7 @@ public:
 
     std::string getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath="");
     std::string getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath="");
-};
 
-//********************
-// Gui
-//********************
-class Gui : public GuiBase {
-private:
-
-    Gui() { mapper.init(); }
-
-public:
     std::vector<SDL_Joystick *> joysticks;
 
     int _cb(int button, SDL_Event *e);

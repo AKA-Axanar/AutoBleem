@@ -47,7 +47,7 @@ TTF_Font_Shared Fonts::openNewSharedFont(const string &filename, int fontSize) {
 // Fonts::openAllBasicSonyFonts
 // this will get the four basic fonts in the sony/font dir
 //********************
-void Fonts::openAllBasicSonyFonts(GuiBase *gui, const std::string& sonyRootPath) {
+void Fonts::openAllBasicSonyFonts(Gui *gui, const std::string& sonyRootPath) {
     fonts.clear();
     rootPath = sonyRootPath;
     medPath = rootPath + sep + "font" + sep + "SST-Medium.ttf";
@@ -68,7 +68,7 @@ void Fonts::openAllBasicSonyFonts(GuiBase *gui, const std::string& sonyRootPath)
 // Fonts::void Fonts::openAllBasicThemeFonts
 // this will look for the four basic fonts in the theme font dir but if not found there will use the sony font
 //********************
-void Fonts::openAllBasicThemeFonts(GuiBase *gui, const std::string& themeRootPath) {
+void Fonts::openAllBasicThemeFonts(Gui *gui, const std::string& themeRootPath) {
     fonts.clear();
     rootPath = themeRootPath;
     medPath = gui->getCurrentThemeFontFile("SST-Medium.ttf", themeRootPath);

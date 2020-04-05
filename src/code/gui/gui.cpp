@@ -37,13 +37,13 @@ using ordered_json = basic_json<my_workaround_fifo_map>;
 #define RA_PLAYLIST "AutoBleem.lpl"
 
                                     //*******************************
-                                    // GuiBase
+                                    // Gui
                                     //*******************************
 
-//********************
-// GuiBase::GuiBase
-//********************
-GuiBase::GuiBase() {
+//*******************************
+// Gui::Gui ctor
+//*******************************
+Gui::Gui() {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_InitSubSystem(SDL_INIT_JOYSTICK);
     SDL_InitSubSystem(SDL_INIT_AUDIO);
@@ -62,36 +62,38 @@ GuiBase::GuiBase() {
     TTF_Init();
     sonyFonts.openAllBasicSonyFonts(this, Env::getSonyPath());
     themeFonts.openAllBasicThemeFonts(this, getCurrentThemePath());
+
+    mapper.init();
 }
 
-//********************
-// GuiBase::~GuiBase
-//********************
-GuiBase::~GuiBase() {
+//*******************************
+// Gui::~Gui dtor
+//*******************************
+Gui::~Gui() {
     SDL_Quit();
 }
 
 //*******************************
-// GuiBase::setThemePath
+// Gui::setThemePath
 //*******************************
-void GuiBase::setThemePath(const std::string& path) {
+void Gui::setThemePath(const std::string& path) {
     cout << "set currentThemePath = '" << path << "'" << endl;
     currentThemePath = path;
 }
 
 //*******************************
-// GuiBase::loadThemeIni
+// Gui::loadThemeIni
 //*******************************
-void GuiBase::loadThemeIni() {
+void Gui::loadThemeIni() {
     themeIni.reload(Env::getPathToSharedThemeFiles() + sep + "theme.ini");
     themeIni.OverwriteAndAppend(currentThemePath + sep + "theme.ini");    // adds to default/theme.ini values
 }
 
 //*******************************
-// GuiBase::getCurrentThemePath
+// Gui::getCurrentThemePath
 // looks up the theme in config.ini, example return: /themes/aergb.  it does not return or set currentThemePath
 //*******************************
-string GuiBase::getCurrentThemePath() {
+string Gui::getCurrentThemePath() {
 #if defined(__x86_64__) || defined(_M_X64)
     string path = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
     if (!DirEntry::exists(path)) {
@@ -109,12 +111,12 @@ string GuiBase::getCurrentThemePath() {
 }
 
 //*******************************
-// GuiBase::getCurrentThemeFile
+// Gui::getCurrentThemeFile
 //*******************************
 // give them the filename with an optional sub dir and theme path and it searches for the file in the theme paths.
 // it will search 1) the current theme path, 2) Autobleem/bin/autobleem/sharedThemeFiles, 3) /usr/sony/share/data
 // example file name or path to search for: ("cross.png"), ("error.wav",SOUNDS), ("SST-Medium.ttf",FONT)
-string GuiBase::getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile, const std::string& _themePath) {
+string Gui::getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile, const std::string& _themePath) {
     string relativePathToFile = _themePath;
 
     if (subdirToFile != "")
@@ -144,41 +146,37 @@ string GuiBase::getCurrentThemeFile(const std::string& filename, const std::stri
     return "";
 }
 
-string GuiBase::getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile, const std::string& _themePath) {
+string Gui::getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile, const std::string& _themePath) {
     return getCurrentThemeFile(themeIni.values[iniKey], subdirToFile, _themePath);
 }
 
-string GuiBase::getCurrentThemeRootFile(const std::string& file, const std::string& _themePath) {
+string Gui::getCurrentThemeRootFile(const std::string& file, const std::string& _themePath) {
     return getCurrentThemeFile(file, "", _themePath);
 }
-string GuiBase::getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
+string Gui::getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
     return getCurrentThemeFileFromIniValue(iniKey, "", _themePath);
 }
 
-string GuiBase::getCurrentThemeImageFile(const std::string& file, const std::string& _themePath) {
+string Gui::getCurrentThemeImageFile(const std::string& file, const std::string& _themePath) {
     return getCurrentThemeFile(file, "images", _themePath);
 }
-string GuiBase::getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
+string Gui::getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
     return getCurrentThemeFileFromIniValue(iniKey, "images", _themePath);
 }
 
-string GuiBase::getCurrentThemeFontFile(const std::string& file, const std::string& _themePath) {
+string Gui::getCurrentThemeFontFile(const std::string& file, const std::string& _themePath) {
     return getCurrentThemeFile(file, "font", _themePath);
 }
-string GuiBase::getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
+string Gui::getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
     return getCurrentThemeFileFromIniValue(iniKey, "font", _themePath);
 }
 
-string GuiBase::getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath) {
+string Gui::getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath) {
     return getCurrentThemeFile(file, "sounds", _themePath);
 }
-string GuiBase::getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
+string Gui::getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
     return getCurrentThemeFileFromIniValue(iniKey, "sounds", _themePath);
 }
-
-                                    //*******************************
-                                    // Gui
-                                    //*******************************
 
 //*******************************
 // Gui::splash
