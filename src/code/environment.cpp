@@ -30,11 +30,15 @@ bool Env::hiddenMenuEnabled = false;
 //*******************************
 
 string Environment::getPathToUSBRoot() {
-  return private_pathToUSBDrive;
+    return private_pathToUSBDrive;
 }
 
 string Environment::getPathToAutobleemDir() {
     return private_pathToUSBDrive + sep + "Autobleem";
+}
+
+string Environment::getPathToSharedThemeFiles() {
+    return getWorkingPath() + sep + "sharedThemeFiles";
 }
 
 string Environment::getPathToAppsDir() {

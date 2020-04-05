@@ -7,6 +7,7 @@
 struct Environment {
     static std::string getPathToUSBRoot();
     static std::string getPathToAutobleemDir();
+    static std::string getPathToSharedThemeFiles();
     static std::string getPathToAppsDir();
     static std::string getPathToRCDir();
     static std::string getPathToGamesDir();
