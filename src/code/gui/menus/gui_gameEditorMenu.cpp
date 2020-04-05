@@ -407,8 +407,8 @@ void GuiEditor::render() {
     gui->renderStatus(guiMenu);
 
     SDL_Rect rect;
-    rect.x = atoi(gui->themeData.values["ecoverx"].c_str());
-    rect.y = atoi(gui->themeData.values["ecovery"].c_str());
+    rect.x = atoi(gui->themeIni.values["ecoverx"].c_str());
+    rect.y = atoi(gui->themeIni.values["ecovery"].c_str());
     rect.w = 226;
     rect.h = 226;
 

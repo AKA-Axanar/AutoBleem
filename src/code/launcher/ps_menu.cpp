@@ -4,13 +4,14 @@
 
 #include "ps_menu.h"
 #include <SDL2/SDL_image.h>
+#include "../gui/gui.h"
+
 using namespace std;
 
 //*******************************
 // PsMenu::PsMenu
 //*******************************
-PsMenu::PsMenu(SDL_Shared<SDL_Renderer> renderer1, string name1, string texPath) : PsObj(renderer1, name1, "") {
-    path = texPath;
+PsMenu::PsMenu(SDL_Shared<SDL_Renderer> renderer1, string name1) : PsObj(renderer1, name1, "") {
     loadAssets();
 }
 
@@ -18,10 +19,12 @@ PsMenu::PsMenu(SDL_Shared<SDL_Renderer> renderer1, string name1, string texPath)
 // PsMenu::loadAssets
 //*******************************
 void PsMenu::loadAssets() {
-    settings = IMG_LoadTexture(renderer, (path + "/CB/Setting_ICN.png").c_str());
-    guide = IMG_LoadTexture(renderer, (path + "/CB/Manual_ICN.png").c_str());
-    memcard = IMG_LoadTexture(renderer, (path + "/CB/MemoryCard_ICN.png").c_str());
-    savestate = IMG_LoadTexture(renderer, (path + "/CB/Resume.png").c_str());
+    auto gui = Gui::getInstance();
+
+    settings = IMG_LoadTexture(renderer, gui->getCurrentThemeImageFile("CB/Setting_ICN.png").c_str());
+    guide = IMG_LoadTexture(renderer, gui->getCurrentThemeImageFile("CB/Manual_ICN.png").c_str());
+    memcard = IMG_LoadTexture(renderer, gui->getCurrentThemeImageFile("CB/MemoryCard_ICN.png").c_str());
+    savestate = IMG_LoadTexture(renderer, gui->getCurrentThemeImageFile("CB/Resume.png").c_str());
     x = 640 - 118 / 2;
     y = 520;
     oy = y;

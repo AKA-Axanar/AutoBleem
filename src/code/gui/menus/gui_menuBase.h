@@ -78,14 +78,14 @@ void GuiMenuBase<LineDataType>::init()
 {
     font = gui->themeFont;
 
-    maxVisible = atoi(gui->themeData.values["lines"].c_str());
+    maxVisible = atoi(gui->themeIni.values["lines"].c_str());
 
     if (useSmallerFont) {
         // sometimes the left column will overwrite into the right column.
         // and the second column sometimes go off the right side.
         font = gui->themeFonts[FONT_15_BOLD];   // use a smaller font
         // compute the larger number of rows we can now display
-        string themeFontSizeString = gui->themeData.values["fsize"];
+        string themeFontSizeString = gui->themeIni.values["fsize"];
         int themeFontSize = atoi(themeFontSizeString.c_str());
         maxVisible = ( ((float)themeFontSize) / ((float)15) ) * ((float) maxVisible);
         lastVisibleIndex = firstVisibleIndex + maxVisible - 1;

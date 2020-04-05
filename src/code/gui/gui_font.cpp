@@ -3,6 +3,7 @@
 #include "../util.h"
 #include <assert.h>
 #include "../DirEntry.h"
+#include "gui.h"
 
 using namespace std;
 
@@ -43,13 +44,35 @@ TTF_Font_Shared Fonts::openNewSharedFont(const string &filename, int fontSize) {
 }
 
 //********************
-// Fonts::openAllFonts
+// Fonts::openAllBasicSonyFonts
+// this will get the four basic fonts in the sony/font dir
 //********************
-void Fonts::openAllFonts(const std::string &_rootPath) {
+void Fonts::openAllBasicSonyFonts(GuiBase *gui, const std::string& sonyRootPath) {
     fonts.clear();
-    rootPath = _rootPath;
-    medPath = rootPath + sep + "SST-Medium.ttf";
-    boldPath = rootPath + sep + "SST-Bold.ttf";
+    rootPath = sonyRootPath;
+    medPath = rootPath + sep + "font" + sep + "SST-Medium.ttf";
+    boldPath = rootPath + sep + "font" + sep + "SST-Bold.ttf";
+
+    for (auto fontInfo : allFontInfos) {
+        string path;
+        if (fontInfo.fontType == FONT_MED)
+            path = medPath;
+        else
+            path = boldPath;
+        fonts[fontInfo.fontEnum] = openNewSharedFont(path, fontInfo.size);
+        fontInfos[fontInfo.fontEnum] = fontInfo;
+    }
+}
+
+//********************
+// Fonts::void Fonts::openAllBasicThemeFonts
+// this will look for the four basic fonts in the theme font dir but if not found there will use the sony font
+//********************
+void Fonts::openAllBasicThemeFonts(GuiBase *gui, const std::string& themeRootPath) {
+    fonts.clear();
+    rootPath = themeRootPath;
+    medPath = gui->getCurrentThemeFontFile("SST-Medium.ttf", themeRootPath);
+    boldPath = gui->getCurrentThemeFontFile("SST-Bold.ttf", themeRootPath);
 
     for (auto fontInfo : allFontInfos) {
         string path;

@@ -404,7 +404,7 @@ void GuiLauncher::loadAssets() {
         secB = gui->getB(colorsFile.values["sec"]);
     }
 
-    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath());
+    gui->themeFonts.openAllBasicThemeFonts(gui.get(), gui->getCurrentThemePath());
 
     // count, x_start, y_start, fontEnum, fontHeight, separationBetweenLines
     notificationLines.createAndSetDefaults(2, 10, 10, FONT_22_MED, 24, 8);
@@ -429,12 +429,12 @@ void GuiLauncher::loadAssets() {
     long time = SDL_GetTicks();
 
     cout << "Loading theme and creating objects" << endl;
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png")) {
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/AB_BG.png"))) {
         staticMeta = true;
-        background = new PsObj(renderer, "background", gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png");
+        background = new PsObj(renderer, "background", gui->getCurrentThemeImageFile("GR/AB_BG.png"));
     } else {
         staticMeta = false;
-        background = new PsObj(renderer, "background", gui->getCurrentThemeImagePath() + sep + "GR/JP_US_BG.png");
+        background = new PsObj(renderer, "background", gui->getCurrentThemeImageFile("GR/JP_US_BG.png"));
     }
 
     background->x = 0;
@@ -442,23 +442,23 @@ void GuiLauncher::loadAssets() {
     background->visible = true;
     staticElements.push_back(background);
     string footerFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/Footer_AB.png")) {
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/Footer_AB.png"))) {
         footerFile = "GR/Footer_AB.png";
     } else {
         footerFile = "GR/Footer.png";
     }
-    auto footer = new PsObj(renderer, "footer", gui->getCurrentThemeImagePath() + sep + footerFile);
+    auto footer = new PsObj(renderer, "footer", gui->getCurrentThemeImageFile(footerFile));
     footer->y = 720 - footer->h;
     footer->visible = true;
     staticElements.push_back(footer);
 
-    playButton = new PsObj(renderer, "playButton", gui->getCurrentThemeImagePath() + sep + "GR/Acid_C_Btn.png");
+    playButton = new PsObj(renderer, "playButton", gui->getCurrentThemeImageFile("GR/Acid_C_Btn.png"));
     playButton->y = 428;
     playButton->x = 540;
     playButton->visible = selGameIndex != -1;
     staticElements.push_back(playButton);
 
-    playText = new PsZoomBtn(renderer, "playText", gui->getCurrentThemeImagePath() + sep + "BMP_Text/Play_Text.png");
+    playText = new PsZoomBtn(renderer, "playText", gui->getCurrentThemeImageFile("BMP_Text/Play_Text.png"));
     playText->y = 428;
     playText->x = 640 - 262 / 2;
     playText->visible = selGameIndex != -1;
@@ -468,17 +468,17 @@ void GuiLauncher::loadAssets() {
 
     staticElements.push_back(playText);
     string settingsFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "CB/Function_AB.png")) {
-        settingsFile = "/CB/Function_AB.png";
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("CB/Function_AB.png"))) {
+        settingsFile = "CB/Function_AB.png";
     } else {
-        settingsFile = "/CB/Function_BG.png";
+        settingsFile = "CB/Function_BG.png";
     }
-    settingsBack = new PsSettingsBack(renderer, "playButton", gui->getCurrentThemeImagePath() + settingsFile);
+    settingsBack = new PsSettingsBack(renderer, "playButton", gui->getCurrentThemeImageFile(settingsFile));
     settingsBack->setCurLen(100);
     settingsBack->visible = true;
     staticElements.push_back(settingsBack);
 
-    meta = new PsMeta(renderer, "meta", gui->getCurrentThemeImagePath() + sep + "CB/PlayerOne.png");
+    meta = new PsMeta(renderer, "meta", gui->getCurrentThemeImageFile("CB/PlayerOne.png"));
     meta->fonts = gui->themeFonts;
     meta->x = 785;
     meta->y = 285;
@@ -492,32 +492,32 @@ void GuiLauncher::loadAssets() {
     }
     staticElements.push_back(meta);
 
-    arrow = new PsMoveBtn(renderer, "arrow", gui->getCurrentThemeImagePath() + sep + "GR/arrow.png");
+    arrow = new PsMoveBtn(renderer, "arrow", gui->getCurrentThemeImageFile("GR/arrow.png"));
     arrow->x = 640 - 12;
     arrow->y = 360;
     arrow->originaly = arrow->y;
     arrow->visible = false;
     staticElements.push_back(arrow);
 
-    xButton = new PsObj(renderer, "xbtn", gui->getCurrentThemeImagePath() + sep + "GR/X_Btn_ICN.png");
+    xButton = new PsObj(renderer, "xbtn", gui->getCurrentThemeImageFile("GR/X_Btn_ICN.png"));
     xButton->x = 605;
     xButton->y = 640;
     xButton->visible = true;
     staticElements.push_back(xButton);
 
-    oButton = new PsObj(renderer, "obtn", gui->getCurrentThemeImagePath() + sep + "GR/Circle_Btn_ICN.png");
+    oButton = new PsObj(renderer, "obtn", gui->getCurrentThemeImageFile("GR/Circle_Btn_ICN.png"));
     oButton->x = 765;
     oButton->y = 640;
     oButton->visible = true;
     staticElements.push_back(oButton);
 
-    tButton = new PsObj(renderer, "tbtn", gui->getCurrentThemeImagePath() + sep + "GR/Tri_Btn_ICN.png");
+    tButton = new PsObj(renderer, "tbtn", gui->getCurrentThemeImageFile("GR/Tri_Btn_ICN.png"));
     tButton->x = 910;
     tButton->y = 640;
     tButton->visible = true;
     staticElements.push_back(tButton);
 
-    menu = new PsMenu(renderer, "menu", gui->getCurrentThemeImagePath());
+    menu = new PsMenu(renderer, "menu");
     menu->loadAssets();
 
     menuHead = new PsCenterLabel(renderer, "header");
