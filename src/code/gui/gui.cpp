@@ -394,24 +394,25 @@ void Gui::loadAssets(bool reloadMusic) {
     home_down = Mix_LoadWAV(getCurrentThemeSoundFile("home_down.wav").c_str());
     resume = Mix_LoadWAV(getCurrentThemeSoundFile("resume_new.wav").c_str());
 
-    if (reloadMusic)
-    if (cfg.inifile.values["nomusic"] != "true")
-        if (themeIni.values["loop"] != "-1") {
-            if (!customMusic) {
-                music = Mix_LoadMUS(getCurrentThemeRootFileFromIniValue("music").c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, themeIni.values["loop"] == "1" ? -1 : 0) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
-                }
-            } else {
-                music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, -1) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
+    if (reloadMusic) {
+        if (cfg.inifile.values["nomusic"] != "true") {
+            if (themeIni.values["loop"] != "-1") {
+                if (!customMusic) {
+                    music = Mix_LoadMUS(getCurrentThemeRootFileFromIniValue("music").c_str());
+                    if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                    if (Mix_PlayMusic(music, themeIni.values["loop"] == "1" ? -1 : 0) == -1) {
+                        printf("Unable to play music file: %s\n", Mix_GetError());
+                    }
+                } else {
+                    music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
+                    if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                    if (Mix_PlayMusic(music, -1) == -1) {
+                        printf("Unable to play music file: %s\n", Mix_GetError());
+                    }
                 }
             }
-
         }
+    }
 }
 
 //*******************************
