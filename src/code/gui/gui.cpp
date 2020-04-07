@@ -93,24 +93,44 @@ void Gui::loadThemeIni() {
 }
 
 //*******************************
+// Gui::saveCurrentThemePathAndFillThemeIni
+// find the UI or RA playlist theme path.  If valid, save the themePath and fill themeIni with the theme settings.
+//*******************************
+void Gui::saveCurrentThemePathAndFillThemeIni() {
+    // check theme exists - otherwise back to default
+    string newThemePath = getCurrentThemePath();
+
+    if (currentSet != SET_RETROARCH) {
+        // not in RA playlist. using regular UI theme. if theme.ini doesn't exist switch UI theme to default UI theme
+        if (!DirEntry::exists(newThemePath + sep + "theme.ini")) {  // if no theme.ini in path
+            cfg.inifile.values["theme"] = "default";            // change to default theme in the config.ini
+            cfg.save();
+            newThemePath = getCurrentThemePath();               // use the default UI theme path
+        }
+    }
+
+    cout << "Saving theme path and filling themeIni for: " << currentThemePath << endl;
+    setThemePath(newThemePath);
+    loadThemeIni();
+}
+
+//*******************************
 // Gui::getCurrentThemePath
 // looks up the theme in config.ini, example return: /themes/aergb.  it does not return or set currentThemePath
 //*******************************
 string Gui::getCurrentThemePath() {
-#if defined(__x86_64__) || defined(_M_X64)
-    string path = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
-    if (!DirEntry::exists(path)) {
-        path = Env::getSonyPath();
+    string themePath = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
+#if 0   // this is only for when we support RA themes
+    if (currentSet == SET_RETROARCH) {
+        string RAthemePath = Env::getPathToRetroarchThemesDir() + sep + cfg.inifile.values["ratheme"] + sep + currentRAPlaylistName;
+        if (DirEntry::exists(RAthemePath + sep + "theme.ini"))
+            themePath = RAthemePath;
     }
-    return path;
-#else
-    string path =  "/media/themes/" + cfg.inifile.values["theme"] + "";
-    if (!DirEntry::exists(path))
-    {
-        path = "/usr/sony/share/data";
-    }
-    return path;
 #endif
+    if (!DirEntry::exists(themePath)) {
+        themePath = Env::getSonyPath();
+    }
+    return themePath;
 }
 
 //*******************************
@@ -119,7 +139,7 @@ string Gui::getCurrentThemePath() {
 // give them the filename with an optional sub dir and theme path and it searches for the file in the theme paths.
 // it will search 1) the current theme path, 2) Autobleem/bin/autobleem/sharedThemeFiles, 3) /usr/sony/share/data
 // example file name or path to search for: ("cross.png"), ("error.wav",SOUNDS), ("SST-Medium.ttf",FONT)
-string Gui::getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile, const std::string& _themePath) {
+string Gui::getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile, const std::string& _themePath, bool reportError) {
     string relativePathToFile = _themePath;
 
     if (subdirToFile != "")
@@ -145,40 +165,45 @@ string Gui::getCurrentThemeFile(const std::string& filename, const std::string& 
         return testPath;
     }
 
-    cout << "theme file " << relativePathToFile << " not found for theme " << currentThemePath << endl;
+    if (reportError) {
+        string errorMsg = "theme file " + relativePathToFile + " not found for theme " + currentThemePath;
+        cout << errorMsg << endl;
+        splash(errorMsg);
+        usleep(5 * 1000);
+    }
     return "";
 }
 
-string Gui::getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile, const std::string& _themePath) {
-    return getCurrentThemeFile(themeIni.values[iniKey], subdirToFile, _themePath);
+string Gui::getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(themeIni.values[iniKey], subdirToFile, _themePath, reportError);
 }
 
-string Gui::getCurrentThemeRootFile(const std::string& file, const std::string& _themePath) {
-    return getCurrentThemeFile(file, "", _themePath);
+string Gui::getCurrentThemeRootFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "", _themePath, reportError);
 }
-string Gui::getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
-    return getCurrentThemeFileFromIniValue(iniKey, "", _themePath);
-}
-
-string Gui::getCurrentThemeImageFile(const std::string& file, const std::string& _themePath) {
-    return getCurrentThemeFile(file, "images", _themePath);
-}
-string Gui::getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
-    return getCurrentThemeFileFromIniValue(iniKey, "images", _themePath);
+string Gui::getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "", _themePath, reportError);
 }
 
-string Gui::getCurrentThemeFontFile(const std::string& file, const std::string& _themePath) {
-    return getCurrentThemeFile(file, "font", _themePath);
+string Gui::getCurrentThemeImageFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "images", _themePath, reportError);
 }
-string Gui::getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
-    return getCurrentThemeFileFromIniValue(iniKey, "font", _themePath);
+string Gui::getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "images", _themePath, reportError);
 }
 
-string Gui::getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath) {
-    return getCurrentThemeFile(file, "sounds", _themePath);
+string Gui::getCurrentThemeFontFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "font", _themePath, reportError);
 }
-string Gui::getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath) {
-    return getCurrentThemeFileFromIniValue(iniKey, "sounds", _themePath);
+string Gui::getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "font", _themePath, reportError);
+}
+
+string Gui::getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "sounds", _themePath, reportError);
+}
+string Gui::getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "sounds", _themePath, reportError);
 }
 
 //*******************************
@@ -294,16 +319,8 @@ Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string texname) {
 // Gui::loadAssets
 //*******************************
 void Gui::loadAssets(bool reloadMusic) {
-    // check theme exists - otherwise back to default
-    string pathToUse = getCurrentThemePath();
-    if (!DirEntry::exists(pathToUse + sep + "theme.ini")) {  // if no theme.ini in path
-        cfg.inifile.values["theme"] = "default";            // change to default theme in the config.ini
-        cfg.save();
-        pathToUse = getCurrentThemePath();                  // use the default theme path
-    }
-    cout << "Loading UI theme:" << currentThemePath << endl;
-    setThemePath(pathToUse);
-    loadThemeIni();
+
+    saveCurrentThemePathAndFillThemeIni();
 
     bool reloading = false;
 

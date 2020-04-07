@@ -429,7 +429,7 @@ void GuiLauncher::loadAssets() {
     long time = SDL_GetTicks();
 
     cout << "Loading theme and creating objects" << endl;
-    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/AB_BG.png"))) {
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/AB_BG.png", "", false))) {
         staticMeta = true;
         background = new PsObj(renderer, "background", gui->getCurrentThemeImageFile("GR/AB_BG.png"));
     } else {
@@ -442,7 +442,7 @@ void GuiLauncher::loadAssets() {
     background->visible = true;
     staticElements.push_back(background);
     string footerFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/Footer_AB.png"))) {
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/Footer_AB.png", "", false))) {
         footerFile = "GR/Footer_AB.png";
     } else {
         footerFile = "GR/Footer.png";
@@ -468,7 +468,7 @@ void GuiLauncher::loadAssets() {
 
     staticElements.push_back(playText);
     string settingsFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImageFile("CB/Function_AB.png"))) {
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("CB/Function_AB.png", "", false))) {
         settingsFile = "CB/Function_AB.png";
     } else {
         settingsFile = "CB/Function_BG.png";

@@ -70,10 +70,17 @@ public:
     Config cfg;
     bool inGuiLauncher = false;
 
+    //
+    // Themes
+    //
     std::string currentThemePath;   // set by Gui::loadAssets()
     void setThemePath(const std::string& path);
+
     Inifile themeIni;
     void loadThemeIni();
+
+    // find the UI or RA playlist theme path.  If valid, save the themePath and fill themeIni with the theme settings.
+    void saveCurrentThemePathAndFillThemeIni();
 
     // looks up the theme in config.ini, example return: /themes/aergb.  it does not return or set currentThemePath
     std::string getCurrentThemePath();
@@ -81,20 +88,20 @@ public:
     // give it the filename or path/filename and it searches for the file in the theme paths.
     // it will search 1) the current theme path, 2) Autobleem/bin/autobleem/sharedThemeFiles, 3) /usr/sony/share/data
     // example file name or path to search for: "cross.png", "sounds/error.wav", "font/SST-Medium.ttf"
-    std::string getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile="", const std::string& _themePath="");
-    std::string getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile="", const std::string& _themePath="");
+    std::string getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile="", const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile="", const std::string& _themePath="", bool reportError=true);
 
-    std::string getCurrentThemeRootFile(const std::string& file, const std::string& _themePath="");
-    std::string getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath="");
+    std::string getCurrentThemeRootFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
 
-    std::string getCurrentThemeImageFile(const std::string& file, const std::string& _themePath="");
-    std::string getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath="");
+    std::string getCurrentThemeImageFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
 
-    std::string getCurrentThemeFontFile(const std::string& file, const std::string& _themePath="");
-    std::string getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath="");
+    std::string getCurrentThemeFontFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
 
-    std::string getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath="");
-    std::string getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath="");
+    std::string getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
 
     std::vector<SDL_Joystick *> joysticks;
 
