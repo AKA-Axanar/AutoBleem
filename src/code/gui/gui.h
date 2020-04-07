@@ -179,6 +179,17 @@ public:
 
     MenuOption menuOption = MENU_OPTION_SCAN;
 
+    int currentSet = SET_PS1;
+    int currentPS1_SelectState = SET_PS1_All_Games;    // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_Games_Subdir
+
+    // current USB Game Dir
+    int currentUSBGameDirIndex = 0;
+    std::string currentUSBGameDirName = "";
+
+    // current RetroArch Playlist
+    int currentRAPlaylistIndex = 0;
+    std::string currentRAPlaylistName = "";
+
     // these are saved in gui so the next time Start brings up the carousel it can restore to last state
     int lastSet = SET_PS1;          // one of these: all games, internal, usb game dir, favorites, RA playlist
     // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir
