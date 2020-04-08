@@ -247,6 +247,8 @@ bool GamesHierarchy::gamesDoNotMatchAutobleemPrev(const std::string & autobleemP
 
     ifstream prev;
     prev.open(autobleemPrevPath.c_str(), ios::binary);
+    if (!prev.is_open())
+        return true;    // there is no prev file from a prior run so it doesn't match.
     for (const auto game : allGames) {
         string pathInFile, pathInUSB;
         getline(prev, pathInFile);
