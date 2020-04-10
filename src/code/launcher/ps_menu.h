@@ -39,8 +39,6 @@ public:
     bool foreign = false;
     int direction = 0;
 
-    std::string path;
-
     void loadAssets();
     void freeAssets();
     void update(long time);
@@ -50,5 +48,5 @@ public:
 
     int transition =0;
 
-    PsMenu(SDL_Shared<SDL_Renderer> renderer1, std::string name1, std::string texPath = "");
+    PsMenu(SDL_Shared<SDL_Renderer> renderer1, std::string name1);
 };

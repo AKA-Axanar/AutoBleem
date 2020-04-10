@@ -3,6 +3,8 @@
 #include "gui_font_wrapper.h"
 #include <map>
 
+class Gui;
+
 enum FontEnum {
     FONT_15_BOLD,
     FONT_20_BOLD,
@@ -34,6 +36,9 @@ public:
     TTF_Font_Shared & operator [] (FontEnum size) { return fonts[size]; }
 
     static TTF_Font_Shared openNewSharedFont(const std::string &filename, int fontSize);
-    // in gui_launcher.cpp this call is used to change all the fonts to use the fonts in the current theme
-    void openAllFonts(const std::string &_rootPath);
+
+    // this will get the four basic fonts in the sony/font dir
+    void openAllBasicSonyFonts(Gui *gui, const std::string& sonyRootPath);
+    // this will look for the four basic fonts in the theme font dir but if not found there will use the sony font
+    void openAllBasicThemeFonts(Gui *gui, const std::string& themeRootPath);
 };

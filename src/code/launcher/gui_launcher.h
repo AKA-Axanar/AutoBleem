@@ -92,8 +92,6 @@ public:
 
     shared_ptr<Gui> gui;
 
-    int currentSet = SET_PS1;
-    int currentPS1_SelectState = SET_PS1_All_Games;    // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_Games_Subdir
     void switchSet(int newSet, bool noForce);
     void showSetName();
 
@@ -106,14 +104,6 @@ public:
 
     void getGames_SET_RETROARCH(const std::string& playlistName, PsGames *gamesList);
     void getGames_SET_APPS(PsGames* gamesList);
-
-    // current USB Game Dir
-    int currentUSBGameDirIndex = 0;
-    std::string currentUSBGameDirName = "";
-    
-    // current RetroArch Playlist
-    int currentRAPlaylistIndex = 0;
-    std::string currentRAPlaylistName = "";
 
     NotificationLines notificationLines; // top two lines of the screen
     int numberOfNonDuplicatedGamesInCarousel = 0;

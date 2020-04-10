@@ -242,48 +242,6 @@ int main(int argc, char *argv[]) {
         }
 
         if (gui->menuOption == MENU_OPTION_START) {
-#if defined(__x86_64__) || defined(_M_X64)
-            if (!gui->runningGame->app) {
-                cout << "I'm sorry Dave I'm afraid I can't do that." << endl;
-                gui->finish();
-
-                usleep(300 * 1000);
-                gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
-                gui->startingGame = false;
-
-                gui->display(false, pathToGamesDir, db, true);
-            } else
-            {
-                gui->finish();
-                gui->saveSelection();
-                EmuInterceptor *interceptor;
-
-                interceptor = new LaunchInterceptor();
-
-                interceptor->memcardIn(gui->runningGame);
-                interceptor->prepareResumePoint(gui->runningGame, gui->resumepoint);
-                interceptor->execute(gui->runningGame, gui->resumepoint );
-                interceptor->memcardOut(gui->runningGame);
-                delete (interceptor);
-
-                bool reloadFavAndHist {false};
-                if (gui->runningGame->foreign)
-                    reloadFavAndHist = true;
-                else if (gui->emuMode != EMU_PCSX)
-                    reloadFavAndHist = true;
-
-                if (reloadFavAndHist) {
-                    auto ra = RAIntegrator::getInstance();
-                    ra->reloadFavorites();  // they could have changed
-                    ra->reloadHistory();  // they could have changed
-                }
-                gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
-                gui->startingGame = false;
-
-                gui->display(false, pathToGamesDir, db, true);
-            }
-
-#else
             cout << "Starting game" << endl;
             gui->finish();
 
@@ -310,10 +268,9 @@ int main(int argc, char *argv[]) {
                 if (!gui->runningGame->app)
                 {
                     interceptor = new RetroArchInterceptor();
-                } else
-                    {
+                } else {
                      interceptor =  new LaunchInterceptor();
-                    }
+                }
             } else {
                 if (gui->emuMode == EMU_PCSX) {
                     interceptor = new PcsxInterceptor();
@@ -347,7 +304,6 @@ int main(int argc, char *argv[]) {
             gui->startingGame = false;
 
             gui->display(false, pathToGamesDir, db, true);
-#endif
         }
     }
     db->disconnect();

@@ -40,12 +40,16 @@ bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     cout << endl;
 
 
+#if defined(__x86_64__) || defined(_M_X64)
+    Gui::splash("I'm sorry Dave.  I'm afraid I can't do that.");
+#else
     int pid = fork();
     if (!pid) {
         execvp(link.c_str(), (char **) argvNew.data());
     }
     waitpid(pid, NULL, 0);
     usleep(3 * 1000);
+#endif
 
     return true;
 }

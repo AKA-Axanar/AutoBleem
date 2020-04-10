@@ -41,7 +41,7 @@ void GuiLauncher::getGames_SET_SUBDIR(PsGames* gamesList, int rowIndex) {
     gui->db->getGameRowInfos(&gameRowInfos);
     if (gameRowInfos.size() == 0)
         return; // no games!
-    currentUSBGameDirName = gameRowInfos[rowIndex].rowName;
+    gui->currentUSBGameDirName = gameRowInfos[rowIndex].rowName;
 
 #if 0
     for (auto &gameRowInfo : gameRowInfos)
@@ -170,7 +170,7 @@ void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
 // GuiLauncher::switchSet
 //*******************************
 void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet is not used.  probably not the intent.
-    cout << "Switching to Set: " << currentSet << endl;
+    cout << "Switching to Set: " << gui->currentSet << endl;
     // clear the carousel text
     if (!carouselGames.empty()) {
         for (auto &game : carouselGames) {
@@ -181,43 +181,43 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet i
     cout << "Reloading games list" << endl; // get fresh list of games for this set
     PsGames gamesList;
 
-    if (currentSet == SET_PS1) {
+    if (gui->currentSet == SET_PS1) {
 
         // if do not show internal games
         if (gui->cfg.inifile.values["origames"] != "true") {
-            if (currentPS1_SelectState == SET_PS1_All_Games || currentPS1_SelectState == SET_PS1_Internal_Only) {
-                currentPS1_SelectState = SET_PS1_Games_Subdir;
+            if (gui->currentPS1_SelectState == SET_PS1_All_Games || gui->currentPS1_SelectState == SET_PS1_Internal_Only) {
+                gui->currentPS1_SelectState = SET_PS1_Games_Subdir;
                 //if (selGameIndexInCarouselGamesIsValid())
             }
         }
 
-        if (currentPS1_SelectState == SET_PS1_All_Games) {
+        if (gui->currentPS1_SelectState == SET_PS1_All_Games) {
             bool includeInternal = gui->cfg.inifile.values["origames"] == "true";
             gamesList = getAllPS1Games(true, includeInternal);
 
-        } else if (currentPS1_SelectState == SET_PS1_Internal_Only) {
+        } else if (gui->currentPS1_SelectState == SET_PS1_Internal_Only) {
             appendGames_SET_INTERNAL(&gamesList);   // since it starts out empty this sets only internal
 
-        } else if (currentPS1_SelectState == SET_PS1_Games_Subdir) {
+        } else if (gui->currentPS1_SelectState == SET_PS1_Games_Subdir) {
             // get the games in the current subdir of /Games and on down
-            getGames_SET_SUBDIR(&gamesList, currentUSBGameDirIndex);
+            getGames_SET_SUBDIR(&gamesList, gui->currentUSBGameDirIndex);
 
-        } else if (currentPS1_SelectState == SET_PS1_Favorites) {
+        } else if (gui->currentPS1_SelectState == SET_PS1_Favorites) {
             getGames_SET_FAVORITE(&gamesList);
 
-        } else if (currentPS1_SelectState == SET_PS1_History) {
+        } else if (gui->currentPS1_SelectState == SET_PS1_History) {
             getGames_SET_HISTORY(&gamesList);
         }
 
-    } else if (currentSet == SET_RETROARCH) {
-        getGames_SET_RETROARCH(currentRAPlaylistName, &gamesList);
+    } else if (gui->currentSet == SET_RETROARCH) {
+        getGames_SET_RETROARCH(gui->currentRAPlaylistName, &gamesList);
 
-    } else if (currentSet == SET_APPS) {
+    } else if (gui->currentSet == SET_APPS) {
         getGames_SET_APPS(&gamesList);
     }
 
-    if (!(currentSet == SET_RETROARCH && currentRAPlaylistName == raIntegrator->historyDisplayName)) {
-        if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_History) {
+    if (!(gui->currentSet == SET_RETROARCH && gui->currentRAPlaylistName == raIntegrator->historyDisplayName)) {
+        if (gui->currentSet == SET_PS1 && gui->currentPS1_SelectState == SET_PS1_History) {
             // sort by history 1-100.  1 is latest game played, 100 is the oldest
             sort(begin(gamesList), end(gamesList),
                  [&](PsGamePtr p1, PsGamePtr p2) { return p1->history < p2->history; });
@@ -254,7 +254,7 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet i
     }
 
     if (!noForce) {
-        if ((currentSet == SET_RETROARCH) || (currentSet == SET_APPS)) {
+        if ((gui->currentSet == SET_RETROARCH) || (gui->currentSet == SET_APPS)) {
             forceSettingsOnly();
         }
     }
@@ -274,7 +274,7 @@ void GuiLauncher::showSetName() {
                                           _("Showing: Game History") + " ",
                                           _("Showing: USB Games Directory:") + " "
     };
-    assert(currentPS1_SelectState >= 0 && currentPS1_SelectState <= SET_PS1_Games_Subdir);
+    assert(gui->currentPS1_SelectState >= 0 && gui->currentPS1_SelectState <= SET_PS1_Games_Subdir);
     assert(setPS1SubStateNames.size()-1 == SET_PS1_Games_Subdir);  // currentPS1_SelectState out of range
 
     string numGames = " (" + to_string(numberOfNonDuplicatedGamesInCarousel) + " " + _("games") + ")";
@@ -284,24 +284,24 @@ void GuiLauncher::showSetName() {
     if (str != "")
         timeout = stoi(str.c_str()) * TicksPerSecond;
 
-    if (currentSet == SET_PS1) {
-        if (currentPS1_SelectState == SET_PS1_All_Games) {
-            notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + numGames, timeout);
-        } else if (currentPS1_SelectState == SET_PS1_Internal_Only) {
-            notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + numGames, timeout);
-        } else if (currentPS1_SelectState == SET_PS1_Favorites) {
-            notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + numGames, timeout);
-        } else if (currentPS1_SelectState == SET_PS1_History) {
-            notificationLines[0].setText(setPS1SubStateNames[currentPS1_SelectState] + numGames, timeout);
-        } else if (currentPS1_SelectState == SET_PS1_Games_Subdir) {
+    if (gui->currentSet == SET_PS1) {
+        if (gui->currentPS1_SelectState == SET_PS1_All_Games) {
+            notificationLines[0].setText(setPS1SubStateNames[gui->currentPS1_SelectState] + numGames, timeout);
+        } else if (gui->currentPS1_SelectState == SET_PS1_Internal_Only) {
+            notificationLines[0].setText(setPS1SubStateNames[gui->currentPS1_SelectState] + numGames, timeout);
+        } else if (gui->currentPS1_SelectState == SET_PS1_Favorites) {
+            notificationLines[0].setText(setPS1SubStateNames[gui->currentPS1_SelectState] + numGames, timeout);
+        } else if (gui->currentPS1_SelectState == SET_PS1_History) {
+            notificationLines[0].setText(setPS1SubStateNames[gui->currentPS1_SelectState] + numGames, timeout);
+        } else if (gui->currentPS1_SelectState == SET_PS1_Games_Subdir) {
             notificationLines[0].setText(
-                    setPS1SubStateNames[currentPS1_SelectState] + currentUSBGameDirName + numGames, timeout);
+                    setPS1SubStateNames[gui->currentPS1_SelectState] + gui->currentUSBGameDirName + numGames, timeout);
         }
-    } else if (currentSet == SET_RETROARCH) {
-        string playlist = DirEntry::getFileNameWithoutExtension(currentRAPlaylistName);
-        notificationLines[0].setText(setNames[currentSet] + playlist + " " + numGames, timeout);
-    } else if (currentSet == SET_APPS) {
-        notificationLines[0].setText(setNames[currentSet] + numGames, timeout);
+    } else if (gui->currentSet == SET_RETROARCH) {
+        string playlist = DirEntry::getFileNameWithoutExtension(gui->currentRAPlaylistName);
+        notificationLines[0].setText(setNames[gui->currentSet] + playlist + " " + numGames, timeout);
+    } else if (gui->currentSet == SET_APPS) {
+        notificationLines[0].setText(setNames[gui->currentSet] + numGames, timeout);
     }
 }
 
@@ -372,13 +372,13 @@ void GuiLauncher::loadAssets() {
     vector<string> texts = {_("Customize AutoBleem settings"), _("Edit game parameters"),
                             _("Edit Memory Card information"), _("Resume game from saved state point")};
 
-    currentSet = gui->lastSet;
-    if (currentSet == SET_PS1)
-        currentPS1_SelectState = gui->lastPS1_SelectState;
-    currentUSBGameDirIndex = gui->lastUSBGameDirIndex;
-    currentRAPlaylistIndex = gui->lastRAPlaylistIndex;
-    if (currentRAPlaylistIndex < raPlaylists.size())
-        currentRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
+    gui->currentSet = gui->lastSet;
+    if (gui->currentSet == SET_PS1)
+        gui->currentPS1_SelectState = gui->lastPS1_SelectState;
+    gui->currentUSBGameDirIndex = gui->lastUSBGameDirIndex;
+    gui->currentRAPlaylistIndex = gui->lastRAPlaylistIndex;
+    if (gui->currentRAPlaylistIndex < raPlaylists.size())
+        gui->currentRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
     if (gui->lastRAPlaylistIndex < raPlaylists.size())
         gui->lastRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
 #if 0
@@ -404,7 +404,7 @@ void GuiLauncher::loadAssets() {
         secB = gui->getB(colorsFile.values["sec"]);
     }
 
-    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath());
+    gui->themeFonts.openAllBasicThemeFonts(gui.get(), gui->getCurrentThemePath());
 
     // count, x_start, y_start, fontEnum, fontHeight, separationBetweenLines
     notificationLines.createAndSetDefaults(2, 10, 10, FONT_22_MED, 24, 8);
@@ -413,7 +413,7 @@ void GuiLauncher::loadAssets() {
     frontElemets.clear();
     carouselGames.clear();
     carouselPositions.initCoverPositions();
-    switchSet(currentSet, true);
+    switchSet(gui->currentSet, true);
     showSetName();
 
     gameName = "";
@@ -429,12 +429,12 @@ void GuiLauncher::loadAssets() {
     long time = SDL_GetTicks();
 
     cout << "Loading theme and creating objects" << endl;
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png")) {
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/AB_BG.png", "", false))) {
         staticMeta = true;
-        background = new PsObj(renderer, "background", gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png");
+        background = new PsObj(renderer, "background", gui->getCurrentThemeImageFile("GR/AB_BG.png"));
     } else {
         staticMeta = false;
-        background = new PsObj(renderer, "background", gui->getCurrentThemeImagePath() + sep + "GR/JP_US_BG.png");
+        background = new PsObj(renderer, "background", gui->getCurrentThemeImageFile("GR/JP_US_BG.png"));
     }
 
     background->x = 0;
@@ -442,23 +442,23 @@ void GuiLauncher::loadAssets() {
     background->visible = true;
     staticElements.push_back(background);
     string footerFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/Footer_AB.png")) {
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("GR/Footer_AB.png", "", false))) {
         footerFile = "GR/Footer_AB.png";
     } else {
         footerFile = "GR/Footer.png";
     }
-    auto footer = new PsObj(renderer, "footer", gui->getCurrentThemeImagePath() + sep + footerFile);
+    auto footer = new PsObj(renderer, "footer", gui->getCurrentThemeImageFile(footerFile));
     footer->y = 720 - footer->h;
     footer->visible = true;
     staticElements.push_back(footer);
 
-    playButton = new PsObj(renderer, "playButton", gui->getCurrentThemeImagePath() + sep + "GR/Acid_C_Btn.png");
+    playButton = new PsObj(renderer, "playButton", gui->getCurrentThemeImageFile("GR/Acid_C_Btn.png"));
     playButton->y = 428;
     playButton->x = 540;
     playButton->visible = selGameIndex != -1;
     staticElements.push_back(playButton);
 
-    playText = new PsZoomBtn(renderer, "playText", gui->getCurrentThemeImagePath() + sep + "BMP_Text/Play_Text.png");
+    playText = new PsZoomBtn(renderer, "playText", gui->getCurrentThemeImageFile("BMP_Text/Play_Text.png"));
     playText->y = 428;
     playText->x = 640 - 262 / 2;
     playText->visible = selGameIndex != -1;
@@ -468,17 +468,17 @@ void GuiLauncher::loadAssets() {
 
     staticElements.push_back(playText);
     string settingsFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "CB/Function_AB.png")) {
-        settingsFile = "/CB/Function_AB.png";
+    if (DirEntry::exists(gui->getCurrentThemeImageFile("CB/Function_AB.png", "", false))) {
+        settingsFile = "CB/Function_AB.png";
     } else {
-        settingsFile = "/CB/Function_BG.png";
+        settingsFile = "CB/Function_BG.png";
     }
-    settingsBack = new PsSettingsBack(renderer, "playButton", gui->getCurrentThemeImagePath() + settingsFile);
+    settingsBack = new PsSettingsBack(renderer, "playButton", gui->getCurrentThemeImageFile(settingsFile));
     settingsBack->setCurLen(100);
     settingsBack->visible = true;
     staticElements.push_back(settingsBack);
 
-    meta = new PsMeta(renderer, "meta", gui->getCurrentThemeImagePath() + sep + "CB/PlayerOne.png");
+    meta = new PsMeta(renderer, "meta", gui->getCurrentThemeImageFile("CB/PlayerOne.png"));
     meta->fonts = gui->themeFonts;
     meta->x = 785;
     meta->y = 285;
@@ -492,32 +492,32 @@ void GuiLauncher::loadAssets() {
     }
     staticElements.push_back(meta);
 
-    arrow = new PsMoveBtn(renderer, "arrow", gui->getCurrentThemeImagePath() + sep + "GR/arrow.png");
+    arrow = new PsMoveBtn(renderer, "arrow", gui->getCurrentThemeImageFile("GR/arrow.png"));
     arrow->x = 640 - 12;
     arrow->y = 360;
     arrow->originaly = arrow->y;
     arrow->visible = false;
     staticElements.push_back(arrow);
 
-    xButton = new PsObj(renderer, "xbtn", gui->getCurrentThemeImagePath() + sep + "GR/X_Btn_ICN.png");
+    xButton = new PsObj(renderer, "xbtn", gui->getCurrentThemeImageFile("GR/X_Btn_ICN.png"));
     xButton->x = 605;
     xButton->y = 640;
     xButton->visible = true;
     staticElements.push_back(xButton);
 
-    oButton = new PsObj(renderer, "obtn", gui->getCurrentThemeImagePath() + sep + "GR/Circle_Btn_ICN.png");
+    oButton = new PsObj(renderer, "obtn", gui->getCurrentThemeImageFile("GR/Circle_Btn_ICN.png"));
     oButton->x = 765;
     oButton->y = 640;
     oButton->visible = true;
     staticElements.push_back(oButton);
 
-    tButton = new PsObj(renderer, "tbtn", gui->getCurrentThemeImagePath() + sep + "GR/Tri_Btn_ICN.png");
+    tButton = new PsObj(renderer, "tbtn", gui->getCurrentThemeImageFile("GR/Tri_Btn_ICN.png"));
     tButton->x = 910;
     tButton->y = 640;
     tButton->visible = true;
     staticElements.push_back(tButton);
 
-    menu = new PsMenu(renderer, "menu", gui->getCurrentThemeImagePath());
+    menu = new PsMenu(renderer, "menu");
     menu->loadAssets();
 
     menuHead = new PsCenterLabel(renderer, "header");
@@ -562,7 +562,7 @@ void GuiLauncher::loadAssets() {
     frontElemets.push_back(sselector);
 
     //switchSet(currentSet,false);
-    if ((currentSet == SET_RETROARCH) || (currentSet == SET_APPS)) {
+    if ((gui->currentSet == SET_RETROARCH) || (gui->currentSet == SET_APPS)) {
         forceSettingsOnly();
     } else {
         if (menu->foreign) {

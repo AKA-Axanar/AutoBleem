@@ -18,6 +18,7 @@
 #include "gui_sdl_wrapper.h"
 //#include "gui_font_wrapper.h"
 #include "gui_font.h"
+#include "../environment.h"
 
 #define PCS_DEADZONE     32000
 #define PCS_BTN_L2       4
@@ -51,10 +52,16 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir };
 
 //********************
-// GuiBase
+// Gui
 //********************
-class GuiBase {
+class Gui {
+private:
+
+    Gui();
+
 public:
+    ~Gui();
+
     SDL_Shared<SDL_Window> window;
     SDL_Shared<SDL_Renderer> renderer;
 
@@ -63,34 +70,45 @@ public:
     Config cfg;
     bool inGuiLauncher = false;
 
+    //
+    // Themes
+    //
+    std::string currentThemePath;   // set by Gui::loadAssets()
+    void setThemePath(const std::string& path);
+
+    Inifile themeIni;
+    void loadThemeIni();
+
+    // find the UI or RA playlist theme path.  If valid, save the themePath and fill themeIni with the theme settings.
+    void saveCurrentThemePathAndFillThemeIni();
+
+    // looks up the theme in config.ini, example return: /themes/aergb.  it does not return or set currentThemePath
     std::string getCurrentThemePath();
-    std::string getCurrentThemeImagePath();
-    std::string getCurrentThemeFontPath();
-    std::string getCurrentThemeSoundPath();
 
-    GuiBase();
-    ~GuiBase();
-};
+    // give it the filename or path/filename and it searches for the file in the theme paths.
+    // it will search 1) the current theme path, 2) Autobleem/bin/autobleem/sharedThemeFiles, 3) /usr/sony/share/data
+    // example file name or path to search for: "cross.png", "sounds/error.wav", "font/SST-Medium.ttf"
+    std::string getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile="", const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile="", const std::string& _themePath="", bool reportError=true);
 
-//********************
-// Gui
-//********************
-class Gui : public GuiBase {
-private:
+    std::string getCurrentThemeRootFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
 
-    Gui() { mapper.init(); }
+    std::string getCurrentThemeImageFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
 
-    string themePath;
+    std::string getCurrentThemeFontFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
 
-public:
+    std::string getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath="", bool reportError=true);
+    std::string getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath="", bool reportError=true);
+
     std::vector<SDL_Joystick *> joysticks;
 
     int _cb(int button, SDL_Event *e);
 
     vector<string> joynames;
     PadMapper mapper;
-    Inifile themeData;
-    Inifile defaultData;
 
     Coverdb *coverdb = nullptr;
     // db and internalDB are set in main.cpp and remain alive until exit
@@ -162,11 +180,22 @@ public:
     void criticalException(const std::string & text);
 
     SDL_Shared<SDL_Texture>
-    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, std::string themePath, std::string defaultPath, std::string texname);
+    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, std::string texname);   // texname is the theme.ini key string
 
     void exportDBToRetroarch();
 
     MenuOption menuOption = MENU_OPTION_SCAN;
+
+    int currentSet = SET_PS1;
+    int currentPS1_SelectState = SET_PS1_All_Games;    // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_Games_Subdir
+
+    // current USB Game Dir
+    int currentUSBGameDirIndex = 0;
+    std::string currentUSBGameDirName = "";
+
+    // current RetroArch Playlist
+    int currentRAPlaylistIndex = 0;
+    std::string currentRAPlaylistName = "";
 
     // these are saved in gui so the next time Start brings up the carousel it can restore to last state
     int lastSet = SET_PS1;          // one of these: all games, internal, usb game dir, favorites, RA playlist

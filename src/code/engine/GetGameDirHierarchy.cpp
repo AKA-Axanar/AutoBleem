@@ -235,17 +235,30 @@ bool GamesHierarchy::gamesDoNotMatchAutobleemPrev(const std::string & autobleemP
     auto allGames = getAllGames();
     USBGame::sortByFullPath(allGames);
     //cout << "gamesDoNotMatchAutobleemPrev" << endl;
-    for (const auto &g : allGames) cout << g->fullPath << endl;
+    //for (const auto &g : allGames)
+    //    cout << g->fullPath << endl;
+
+    auto removeVMSharePortionOfDirPath = [] (string* path) {
+        size_t indexToSlashAfterMedia = sizeof("/media") - 1;
+        size_t indexToSlashAtStartOfGames = path->find("/Games");
+        if (indexToSlashAtStartOfGames != indexToSlashAfterMedia)
+            path->erase(indexToSlashAfterMedia, indexToSlashAtStartOfGames - indexToSlashAfterMedia);
+    };
 
     ifstream prev;
     prev.open(autobleemPrevPath.c_str(), ios::binary);
+    if (!prev.is_open())
+        return true;    // there is no prev file from a prior run so it doesn't match.
     for (const auto game : allGames) {
-        string pathInFile;
+        string pathInFile, pathInUSB;
         getline(prev, pathInFile);
-        //cout << "compare " << pathInFile << " ======== " << game->fullPath << endl;
-        if (pathInFile != game->fullPath) {
-            //cout << "compare failed" << endl;
-            return true;    // the autobleem.prev file does not match
+        pathInUSB = game->fullPath;
+        removeVMSharePortionOfDirPath(&pathInFile);
+        removeVMSharePortionOfDirPath(&pathInUSB);
+        //cout << "compare " << pathInFile << " ======== " << pathInUSB << endl;
+        if (pathInFile != pathInUSB) {
+            //cout << "autobleem.prev file does not match current /Games" << endl;
+            return true;    // autobleem.prev file does not match current /Games
         }
     }
     prev.close();

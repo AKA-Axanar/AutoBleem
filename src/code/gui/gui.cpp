@@ -33,22 +33,19 @@ template<class K, class V, class dummy_compare, class A>
 using my_workaround_fifo_map = fifo_map<K, V, fifo_map_compare<K>, A>;
 using ordered_json = basic_json<my_workaround_fifo_map>;
 
-
 #define RA_PLAYLIST "AutoBleem.lpl"
 
-                                    //*******************************
-                                    // GuiBase
-                                    //*******************************
+//********************
+// Gui
+//********************
 
-//********************
-// GuiBase::GuiBase
-//********************
-GuiBase::GuiBase() {
+//*******************************
+// Gui::Gui ctor
+//*******************************
+Gui::Gui() {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_InitSubSystem(SDL_INIT_JOYSTICK);
     SDL_InitSubSystem(SDL_INIT_AUDIO);
-
-
 
     window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -61,102 +58,152 @@ GuiBase::GuiBase() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
 
-
     TTF_Init();
-    sonyFonts.openAllFonts(Env::getSonyFontPath());
-    themeFonts.openAllFonts(getCurrentThemeFontPath());
+    sonyFonts.openAllBasicSonyFonts(this, Env::getSonyPath());
+    themeFonts.openAllBasicThemeFonts(this, getCurrentThemePath());
+
+    mapper.init();
 }
 
-//********************
-// GuiBase::~GuiBase
-//********************
-GuiBase::~GuiBase() {
+//*******************************
+// Gui::~Gui dtor
+//*******************************
+Gui::~Gui() {
     SDL_Quit();
 }
 
+//
+// Themes
+//
 //*******************************
-// GuiBase::getCurrentThemePath
+// Gui::setThemePath
 //*******************************
-string GuiBase::getCurrentThemePath() {
-#if defined(__x86_64__) || defined(_M_X64)
-    string path = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
-    if (!DirEntry::exists(path)) {
-        path = Env::getSonyPath();
-    }
-    return path;
-#else
-    string path =  "/media/themes/" + cfg.inifile.values["theme"] + "";
-    if (!DirEntry::exists(path))
-    {
-        path = "/usr/sony/share/data";
-    }
-    return path;
-#endif
+void Gui::setThemePath(const std::string& path) {
+    cout << "set currentThemePath = '" << path << "'" << endl;
+    currentThemePath = path;
 }
 
 //*******************************
-// GuiBase::getCurrentThemeImagePath
+// Gui::loadThemeIni
 //*******************************
-string GuiBase::getCurrentThemeImagePath() {
-#if defined(__x86_64__) || defined(_M_X64)
-    string path = getCurrentThemePath() + sep + "images";
-    if (!DirEntry::exists(path)) {
-        path = Env::getSonyPath() + sep + "images";
-    }
-    return path;
-#else
-    string path =  "/media/themes/" + cfg.inifile.values["theme"] + "/images";
-    if (!DirEntry::exists(path))
-    {
-        path = "/usr/sony/share/data/images";
-    }
-    return path;
-#endif
+void Gui::loadThemeIni() {
+    themeIni.reload(Env::getPathToSharedThemeFiles() + sep + "theme.ini");
+    themeIni.OverwriteAndAppend(currentThemePath + sep + "theme.ini");    // adds to default/theme.ini values
 }
 
 //*******************************
-// GuiBase::getCurrentThemeSoundPath
+// Gui::saveCurrentThemePathAndFillThemeIni
+// find the UI or RA playlist theme path.  If valid, save the themePath and fill themeIni with the theme settings.
 //*******************************
-string GuiBase::getCurrentThemeSoundPath() {
-#if defined(__x86_64__) || defined(_M_X64)
-    string path = getCurrentThemePath() + sep + "sounds";
-    if (!DirEntry::exists(path)) {
-        path = Env::getSonyPath() + sep + "sounds";
+void Gui::saveCurrentThemePathAndFillThemeIni() {
+    // check theme exists - otherwise back to default
+    string newThemePath = getCurrentThemePath();
+
+    if (currentSet != SET_RETROARCH) {
+        // not in RA playlist. using regular UI theme. if theme.ini doesn't exist switch UI theme to default UI theme
+        if (!DirEntry::exists(newThemePath + sep + "theme.ini")) {  // if no theme.ini in path
+            cfg.inifile.values["theme"] = "default";            // change to default theme in the config.ini
+            cfg.save();
+            newThemePath = getCurrentThemePath();               // use the default UI theme path
+        }
     }
-    return path;
-#else
-    string path =  "/media/themes/" + cfg.inifile.values["theme"] + "/sounds";
-    if (!DirEntry::exists(path))
-    {
-        path = "/usr/sony/share/data/sounds";
-    }
-    return path;
-#endif
+
+    cout << "Saving theme path and filling themeIni for: " << currentThemePath << endl;
+    setThemePath(newThemePath);
+    loadThemeIni();
 }
 
 //*******************************
-// GuiBase::getCurrentThemeFontPath
+// Gui::getCurrentThemePath
+// looks up the theme in config.ini, example return: /themes/aergb.  it does not return or set currentThemePath
 //*******************************
-string GuiBase::getCurrentThemeFontPath() {
-#if defined(__x86_64__) || defined(_M_X64)
-    string path = getCurrentThemePath() + sep + "font";
-    if (!DirEntry::exists(path)) {
-        path = Env::getSonyPath() + sep + "font";
+string Gui::getCurrentThemePath() {
+    string themePath = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
+#if 0   // this is only for when we support RA themes
+    if (currentSet == SET_RETROARCH) {
+        string RAthemePath = Env::getPathToRetroarchThemesDir() + sep + cfg.inifile.values["ratheme"] + sep + currentRAPlaylistName;
+        if (DirEntry::exists(RAthemePath + sep + "theme.ini"))
+            themePath = RAthemePath;
     }
-    return path;
-#else
-    string path =  "/media/themes/" + cfg.inifile.values["theme"] + "/font";
-    if (!DirEntry::exists(path))
-    {
-        path = "/usr/sony/share/data/font";
-    }
-    return path;
 #endif
+    if (!DirEntry::exists(themePath)) {
+        themePath = Env::getSonyPath();
+    }
+    return themePath;
 }
 
-                                    //*******************************
-                                    // Gui
-                                    //*******************************
+//*******************************
+// Gui::getCurrentThemeFile
+//*******************************
+// give them the filename with an optional sub dir and theme path and it searches for the file in the theme paths.
+// it will search 1) the current theme path, 2) Autobleem/bin/autobleem/sharedThemeFiles, 3) /usr/sony/share/data
+// example file name or path to search for: ("cross.png"), ("error.wav",SOUNDS), ("SST-Medium.ttf",FONT)
+string Gui::getCurrentThemeFile(const std::string& filename, const std::string& subdirToFile, const std::string& _themePath, bool reportError) {
+    string relativePathToFile = _themePath;
+
+    if (subdirToFile != "")
+        relativePathToFile = subdirToFile + sep + filename;
+    else
+        relativePathToFile = filename;
+
+    string testPath = getCurrentThemePath() + sep + relativePathToFile;
+    if (DirEntry::exists(testPath)) {
+        //cout << "found theme file " << testPath << endl;
+        return testPath;
+    }
+
+    testPath = Env::getPathToSharedThemeFiles() + sep + relativePathToFile;
+    if (DirEntry::exists(testPath)) {
+        //cout << "found theme file " << testPath << endl;
+        return testPath;
+    }
+
+    testPath = Env::getSonyPath() + sep + relativePathToFile;
+    if (DirEntry::exists(testPath)) {
+        //cout << "found theme file " << testPath << endl;
+        return testPath;
+    }
+
+    if (reportError) {
+        string errorMsg = "theme file " + relativePathToFile + " not found for theme " + currentThemePath;
+        cout << errorMsg << endl;
+        splash(errorMsg);
+        usleep(5 * 1000);
+    }
+    return "";
+}
+
+string Gui::getCurrentThemeFileFromIniValue(const std::string& iniKey, const std::string& subdirToFile, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(themeIni.values[iniKey], subdirToFile, _themePath, reportError);
+}
+
+string Gui::getCurrentThemeRootFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "", _themePath, reportError);
+}
+string Gui::getCurrentThemeRootFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "", _themePath, reportError);
+}
+
+string Gui::getCurrentThemeImageFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "images", _themePath, reportError);
+}
+string Gui::getCurrentThemeImageFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "images", _themePath, reportError);
+}
+
+string Gui::getCurrentThemeFontFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "font", _themePath, reportError);
+}
+string Gui::getCurrentThemeFontFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "font", _themePath, reportError);
+}
+
+string Gui::getCurrentThemeSoundFile(const std::string& file, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFile(file, "sounds", _themePath, reportError);
+}
+string Gui::getCurrentThemeSoundFileFromIniValue(const std::string& iniKey, const std::string& _themePath, bool reportError) {
+    return getCurrentThemeFileFromIniValue(iniKey, "sounds", _themePath, reportError);
+}
 
 //*******************************
 // Gui::splash
@@ -165,7 +212,6 @@ void Gui::splash(const string &message) {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->drawText(message);
 }
-
 
 extern "C"
 {
@@ -207,7 +253,7 @@ void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const 
     int text_width;
     int text_height;
     SDL_Shared<SDL_Surface> surface;
-    string fg = themeData.values["text_fg"];
+    string fg = themeIni.values["text_fg"];
     SDL_Color textColor = {getR(fg), getG(fg), getB(fg), 0};
 
     if (strlen(text) == 0) {
@@ -247,8 +293,8 @@ int Gui::renderLogo(bool small) {
         return 0;
     } else {
         SDL_Rect rect;
-        rect.x = atoi(themeData.values["opscreenx"].c_str());
-        rect.y = atoi(themeData.values["opscreeny"].c_str());
+        rect.x = atoi(themeIni.values["opscreenx"].c_str());
+        rect.y = atoi(themeIni.values["opscreeny"].c_str());
         rect.w = logoRect.w / 3;
         rect.h = logoRect.h / 3;
         SDL_RenderCopy(renderer, logo, nullptr, &rect);
@@ -258,15 +304,13 @@ int Gui::renderLogo(bool small) {
 
 //*******************************
 // Gui::loadThemeTexture
+// texname is the theme.ini key string
 //*******************************
 SDL_Shared<SDL_Texture>
-Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string themePath, string defaultPath, string texname) {
+Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string texname) {
     SDL_Shared<SDL_Texture> tex = nullptr;
-    if (DirEntry::exists(themePath + themeData.values[texname])) {
-        tex = IMG_LoadTexture(renderer, (themePath + themeData.values[texname]).c_str());
-    } else {
-        tex = IMG_LoadTexture(renderer, (defaultPath + defaultData.values[texname]).c_str());
-    }
+    tex = IMG_LoadTexture(renderer, getCurrentThemeRootFileFromIniValue(texname).c_str());
+
     return tex;
 }
 
@@ -274,22 +318,8 @@ Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string themePath, strin
 // Gui::loadAssets
 //*******************************
 void Gui::loadAssets(bool reloadMusic) {
-    // check theme exists - otherwise back to aergb
 
-    string defaultPath = Env::getPathToThemesDir() + sep + "default" + sep;
-    themePath = getCurrentThemePath() + sep;
-
-    cout << "Loading UI theme:" << themePath << endl;
-    if (!DirEntry::exists(themePath + "theme.ini"))
-    {
-        themePath=defaultPath;
-        cfg.inifile.values["theme"] = "default";
-        cfg.save();
-    }
-
-    themeData.load(defaultPath + "theme.ini");
-    defaultData.load(defaultPath + "theme.ini");
-    themeData.load(themePath + "theme.ini");
+    saveCurrentThemePathAndFillThemeIni();
 
     bool reloading = false;
 
@@ -302,29 +332,29 @@ void Gui::loadAssets(bool reloadMusic) {
         backgroundImg = nullptr;
     }
 
-    logoRect.x = atoi(themeData.values["lpositionx"].c_str());
-    logoRect.y = atoi(themeData.values["lpositiony"].c_str());
-    logoRect.w = atoi(themeData.values["lw"].c_str());
-    logoRect.h = atoi(themeData.values["lh"].c_str());
+    logoRect.x = atoi(themeIni.values["lpositionx"].c_str());
+    logoRect.y = atoi(themeIni.values["lpositiony"].c_str());
+    logoRect.w = atoi(themeIni.values["lw"].c_str());
+    logoRect.h = atoi(themeIni.values["lh"].c_str());
 
-    backgroundImg = loadThemeTexture(renderer, themePath, defaultPath, "background");
-    logo = loadThemeTexture(renderer, themePath, defaultPath, "logo");
+    backgroundImg = loadThemeTexture(renderer, "background");
+    logo = loadThemeTexture(renderer, "logo");
 
-    buttonO = loadThemeTexture(renderer, themePath, defaultPath, "circle");
-    buttonX = loadThemeTexture(renderer, themePath, defaultPath, "cross");
-    buttonT = loadThemeTexture(renderer, themePath, defaultPath, "triangle");
-    buttonS = loadThemeTexture(renderer, themePath, defaultPath, "square");
-    buttonSelect = loadThemeTexture(renderer, themePath, defaultPath, "select");
-    buttonStart = loadThemeTexture(renderer, themePath, defaultPath, "start");
-    buttonL1 = loadThemeTexture(renderer, themePath, defaultPath, "l1");
-    buttonR1 = loadThemeTexture(renderer, themePath, defaultPath, "r1");
-    buttonL2 = loadThemeTexture(renderer, themePath, defaultPath, "l2");
-    buttonR2 = loadThemeTexture(renderer, themePath, defaultPath, "r2");
-    buttonCheck = loadThemeTexture(renderer, themePath, defaultPath, "check");
-    buttonUncheck = loadThemeTexture(renderer, themePath, defaultPath, "uncheck");
-    buttonEsc = loadThemeTexture(renderer, themePath, defaultPath, "esc");
-    buttonEnter = loadThemeTexture(renderer, themePath, defaultPath, "enter");
-    buttonTab = loadThemeTexture(renderer, themePath, defaultPath, "tab");
+    buttonO = loadThemeTexture(renderer, "circle");
+    buttonX = loadThemeTexture(renderer, "cross");
+    buttonT = loadThemeTexture(renderer, "triangle");
+    buttonS = loadThemeTexture(renderer, "square");
+    buttonSelect = loadThemeTexture(renderer, "select");
+    buttonStart = loadThemeTexture(renderer, "start");
+    buttonL1 = loadThemeTexture(renderer, "l1");
+    buttonR1 = loadThemeTexture(renderer, "r1");
+    buttonL2 = loadThemeTexture(renderer, "l2");
+    buttonR2 = loadThemeTexture(renderer, "r2");
+    buttonCheck = loadThemeTexture(renderer, "check");
+    buttonUncheck = loadThemeTexture(renderer, "uncheck");
+    buttonEsc = loadThemeTexture(renderer, "esc");
+    buttonEnter = loadThemeTexture(renderer, "enter");
+    buttonTab = loadThemeTexture(renderer, "tab");
     if (cfg.inifile.values["jewel"] != "none") {
         if (cfg.inifile.values["jewel"] == "default") {
             cdJewel = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/nofilter.png").c_str());
@@ -336,12 +366,11 @@ void Gui::loadAssets(bool reloadMusic) {
     } else {
         cdJewel = nullptr;
     }
-    string fontPath = (themePath + themeData.values["font"]);
     int fontSize = 0;
-    string fontSizeString = themeData.values["fsize"];
+    string fontSizeString = themeIni.values["fsize"];
     if (fontSizeString != "")
         fontSize = atoi(fontSizeString.c_str());
-    themeFont = Fonts::openNewSharedFont(fontPath, fontSize);
+    themeFont = Fonts::openNewSharedFont(getCurrentThemeFileFromIniValue("font"), fontSize);
 
     if (reloadMusic) {
         if (music != nullptr) {
@@ -352,7 +381,7 @@ void Gui::loadAssets(bool reloadMusic) {
     }
     bool customMusic = false;
     int freq = 32000;
-    string musicPath = themeData.values["music"];
+    string musicPath = themeIni.values["music"];
     if (cfg.inifile.values["music"] != "--") {
         customMusic = true;
         musicPath = cfg.inifile.values["music"];
@@ -375,32 +404,31 @@ void Gui::loadAssets(bool reloadMusic) {
             printf("Unable to open audio: %s\n", Mix_GetError());
         }
     }
-    cursor = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cursor.wav").c_str());
-    cancel = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cancel.wav").c_str());
-    home_up = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "home_up.wav").c_str());
-    home_down = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "home_down.wav").c_str());
-    resume = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "resume_new.wav").c_str());
+    cursor = Mix_LoadWAV(getCurrentThemeSoundFile("cursor.wav").c_str());
+    cancel = Mix_LoadWAV(getCurrentThemeSoundFile("cancel.wav").c_str());
+    home_up = Mix_LoadWAV(getCurrentThemeSoundFile("home_up.wav").c_str());
+    home_down = Mix_LoadWAV(getCurrentThemeSoundFile("home_down.wav").c_str());
+    resume = Mix_LoadWAV(getCurrentThemeSoundFile("resume_new.wav").c_str());
 
-    if (reloadMusic)
-    if (cfg.inifile.values["nomusic"] != "true")
-        if (themeData.values["loop"] != "-1") {
-
-
-            if (!customMusic) {
-                music = Mix_LoadMUS((themePath + themeData.values["music"]).c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, themeData.values["loop"] == "1" ? -1 : 0) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
-                }
-            } else {
-                music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, -1) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
+    if (reloadMusic) {
+        if (cfg.inifile.values["nomusic"] != "true") {
+            if (themeIni.values["loop"] != "-1") {
+                if (!customMusic) {
+                    music = Mix_LoadMUS(getCurrentThemeRootFileFromIniValue("music").c_str());
+                    if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                    if (Mix_PlayMusic(music, themeIni.values["loop"] == "1" ? -1 : 0) == -1) {
+                        printf("Unable to play music file: %s\n", Mix_GetError());
+                    }
+                } else {
+                    music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
+                    if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                    if (Mix_PlayMusic(music, -1) == -1) {
+                        printf("Unable to play music file: %s\n", Mix_GetError());
+                    }
                 }
             }
-
         }
+    }
 }
 
 //*******************************
@@ -869,7 +897,7 @@ void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, TT
         } else {
             SDL_Shared<SDL_Texture> textTex = nullptr;
             SDL_Rect textRec;
-            getTextAndRect(renderer, 0, atoi(themeData.values["ttop"].c_str()), str.c_str(), font, &textTex,
+            getTextAndRect(renderer, 0, atoi(themeIni.values["ttop"].c_str()), str.c_str(), font, &textTex,
                            &textRec);
             textTexures.push_back(textTex);
         }
@@ -929,29 +957,29 @@ void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, TT
 // Gui::renderStatus
 //*******************************
 void Gui::renderStatus(const string &text, int posy) {
-    string bg = themeData.values["text_bg"];
+    string bg = themeIni.values["text_bg"];
 
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
-    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["textalpha"].c_str()));
+    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeIni.values["textalpha"].c_str()));
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_Rect rect;
-    rect.x = atoi(themeData.values["textx"].c_str());
-    rect.y = atoi(themeData.values["texty"].c_str());
-    rect.w = atoi(themeData.values["textw"].c_str());
-    rect.h = atoi(themeData.values["texth"].c_str());
+    rect.x = atoi(themeIni.values["textx"].c_str());
+    rect.y = atoi(themeIni.values["texty"].c_str());
+    rect.w = atoi(themeIni.values["textw"].c_str());
+    rect.h = atoi(themeIni.values["texth"].c_str());
     SDL_RenderFillRect(renderer, &rect);
 
     getEmojiTextTexture(renderer, text, themeFont, &textTex, &textRec);
     int screencenter = 1280 / 2;
     textRec.x = screencenter - (textRec.w / 2);
-    textRec.y = atoi(themeData.values["ttop"].c_str());
+    textRec.y = atoi(themeIni.values["ttop"].c_str());
     if (posy!=-1)
     {
         textRec.y=posy;
     }
-    if (textRec.w > atoi(themeData.values["textw"].c_str()))
-        textRec.w = atoi(themeData.values["textw"].c_str());
+    if (textRec.w > atoi(themeIni.values["textw"].c_str()))
+        textRec.w = atoi(themeIni.values["textw"].c_str());
     SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 }
 
@@ -972,15 +1000,15 @@ void Gui::renderLabelBox(int line, int offset) {
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
 
-    string bg = themeData.values["label_bg"];
+    string bg = themeIni.values["label_bg"];
 
     getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
 
     SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    rect2.x = atoi(themeIni.values["opscreenx"].c_str());
+    rect2.y = atoi(themeIni.values["opscreeny"].c_str());
+    rect2.w = atoi(themeIni.values["opscreenw"].c_str());
+    rect2.h = atoi(themeIni.values["opscreenh"].c_str());
 
     SDL_Rect rectSelection;
     rectSelection.x = rect2.x + 5;
@@ -989,7 +1017,7 @@ void Gui::renderLabelBox(int line, int offset) {
     rectSelection.h = textRec.h;
 
 
-    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["keyalpha"].c_str()));
+    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeIni.values["keyalpha"].c_str()));
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_RenderFillRect(renderer, &rectSelection);
 }
@@ -1004,15 +1032,15 @@ void Gui::renderSelectionBox(int line, int offset, int xoffset, TTF_Font_Shared 
     if (!font)
         font = themeFont;
 
-    string fg = themeData.values["text_fg"];
+    string fg = themeIni.values["text_fg"];
 
     getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
 
     SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    rect2.x = atoi(themeIni.values["opscreenx"].c_str());
+    rect2.y = atoi(themeIni.values["opscreeny"].c_str());
+    rect2.w = atoi(themeIni.values["opscreenw"].c_str());
+    rect2.h = atoi(themeIni.values["opscreenh"].c_str());
 
     SDL_Rect rectSelection;
     rectSelection.x = rect2.x + 5 + xoffset;
@@ -1053,10 +1081,10 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
     SDL_Rect textRec;
     SDL_Rect rect2;
 
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    rect2.x = atoi(themeIni.values["opscreenx"].c_str());
+    rect2.y = atoi(themeIni.values["opscreeny"].c_str());
+    rect2.w = atoi(themeIni.values["opscreenw"].c_str());
+    rect2.h = atoi(themeIni.values["opscreenh"].c_str());
     getTextAndRect(renderer, 0, 0, "*", themeFont, &buttonTex, &textRec);
     int lineh = textRec.h;
     if (button == 1) {
@@ -1090,10 +1118,10 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
         font = themeFont;   // default to themeFont
 
     SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    rect2.x = atoi(themeIni.values["opscreenx"].c_str());
+    rect2.y = atoi(themeIni.values["opscreeny"].c_str());
+    rect2.w = atoi(themeIni.values["opscreenw"].c_str());
+    rect2.h = atoi(themeIni.values["opscreenh"].c_str());
 
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
@@ -1134,10 +1162,10 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
         font = themeFont;   // default to themeFont
 
     SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    rect2.x = atoi(themeIni.values["opscreenx"].c_str());
+    rect2.y = atoi(themeIni.values["opscreeny"].c_str());
+    rect2.w = atoi(themeIni.values["opscreenw"].c_str());
+    rect2.h = atoi(themeIni.values["opscreenh"].c_str());
 
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
@@ -1188,10 +1216,10 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
 void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
 #if 0
     SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    rect2.x = atoi(themeIni.values["opscreenx"].c_str());
+    rect2.y = atoi(themeIni.values["opscreeny"].c_str());
+    rect2.w = atoi(themeIni.values["opscreenw"].c_str());
+    rect2.h = atoi(themeIni.values["opscreenh"].c_str());
 #endif
 
     SDL_Shared<SDL_Texture> textTex;
@@ -1208,15 +1236,15 @@ void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
 // Gui::renderTextBar
 //*******************************
 void Gui::renderTextBar() {
-    string bg = themeData.values["main_bg"];
-    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["mainalpha"].c_str()));
+    string bg = themeIni.values["main_bg"];
+    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeIni.values["mainalpha"].c_str()));
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    rect2.x = atoi(themeIni.values["opscreenx"].c_str());
+    rect2.y = atoi(themeIni.values["opscreeny"].c_str());
+    rect2.w = atoi(themeIni.values["opscreenw"].c_str());
+    rect2.h = atoi(themeIni.values["opscreenh"].c_str());
 
     SDL_RenderFillRect(renderer, &rect2);
 }
@@ -1229,8 +1257,8 @@ void Gui::renderFreeSpace() {
     SDL_Rect textRec;
     SDL_Rect rect;
 
-    rect.x = atoi(themeData.values["fsposx"].c_str());
-    rect.y = atoi(themeData.values["fsposy"].c_str());
+    rect.x = atoi(themeIni.values["fsposx"].c_str());
+    rect.y = atoi(themeIni.values["fsposy"].c_str());
     getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
     getEmojiTextTexture(renderer, _("Free space") + " : " + Util::getAvailableSpace(), themeFont, &textTex, &textRec);
     rect.w = textRec.w;

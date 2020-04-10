@@ -30,7 +30,7 @@ void GuiSplash::render() {
     gui->getEmojiTextTexture(renderer, splashText.c_str(), gui->themeFont, &textTex, &textRec);
     int screencenter = 1280 / 2;
     textRec.x = screencenter - (textRec.w / 2);
-    textRec.y = atoi(gui->themeData.values["ttop"].c_str());
+    textRec.y = atoi(gui->themeIni.values["ttop"].c_str());
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(renderer);
     SDL_SetTextureAlphaMod(gui->backgroundImg, alpha);
@@ -41,17 +41,17 @@ void GuiSplash::render() {
     SDL_RenderCopy(renderer, gui->backgroundImg, NULL, &gui->backgroundRect);
     SDL_RenderCopy(renderer, gui->logo, NULL, &gui->logoRect);
 
-    string bg = gui->themeData.values["text_bg"];
+    string bg = gui->themeIni.values["text_bg"];
 
-    int bg_alpha = atoi(gui->themeData.values["textalpha"].c_str()) * alpha / 255;
+    int bg_alpha = atoi(gui->themeIni.values["textalpha"].c_str()) * alpha / 255;
 
     SDL_SetRenderDrawColor(renderer, gui->getR(bg), gui->getG(bg), gui->getB(bg), bg_alpha);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_Rect rect;
-    rect.x = atoi(gui->themeData.values["textx"].c_str());
-    rect.y = atoi(gui->themeData.values["texty"].c_str());
-    rect.w = atoi(gui->themeData.values["textw"].c_str());
-    rect.h = atoi(gui->themeData.values["texth"].c_str());
+    rect.x = atoi(gui->themeIni.values["textx"].c_str());
+    rect.y = atoi(gui->themeIni.values["texty"].c_str());
+    rect.w = atoi(gui->themeIni.values["textw"].c_str());
+    rect.h = atoi(gui->themeIni.values["texth"].c_str());
     SDL_RenderFillRect(renderer, &rect);
 
     SDL_RenderCopy(renderer, textTex, NULL, &textRec);
