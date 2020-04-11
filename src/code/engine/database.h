@@ -47,8 +47,8 @@ public:
     bool connect(std::string fileName);
     void disconnect();
     bool createInitialDatabase();
-    void createFavoriteColumn();
-    void createHistoryColumn();
+    void addFavoriteColumn();
+    void addHistoryColumn();
     bool truncate();
 
     bool beginTransaction();

@@ -144,16 +144,16 @@ static const char GAMES_DATA_INTERNAL[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, 
                                      GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
                                      ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
-// used by: createFavoriteColumn
+// used by: addFavoriteColumn for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
 static const char ADD_FAVORITE_COLUMN[] = "ALTER TABLE GAME ADD COLUMN FAVORITE INT DEFAULT 0";
 
-// used by: updateFavorite
+// used by: updateFavorite for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
 static const char UPDATE_FAVORITE[] = "UPDATE GAME SET FAVORITE=? WHERE GAME_ID=?";
 
-// used by: createHistoryColumn
+// used by: addHistoryColumn for the internal.db and regional.db
 static const char ADD_HISTORY_COLUMN[] = "ALTER TABLE GAME ADD COLUMN HISTORY INT DEFAULT 0";
 
-// used by: updateHistoy
+// used by: updateHistory for the internal.db and regional.db
 static const char UPDATE_HISTORY[] = "UPDATE GAME SET HISTORY=? WHERE GAME_ID=?";
 
 //*******************************
@@ -905,16 +905,16 @@ bool Database::createInitialDatabase() {
 }
 
 //*******************************
-// Database::createFavoriteColumn
+// Database::addFavoriteColumn
 //*******************************
-void Database::createFavoriteColumn() {
+void Database::addFavoriteColumn() {
     executeCreateStatement((char*) ADD_FAVORITE_COLUMN, "Favorite column" );
 }
 
 //*******************************
-// Database::createHistoryColumn
+// Database::addHistoryColumn
 //*******************************
-void Database::createHistoryColumn() {
+void Database::addHistoryColumn() {
     executeCreateStatement((char*) ADD_HISTORY_COLUMN, "History column" );
 }
 
