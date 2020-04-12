@@ -341,3 +341,25 @@ unsigned int Util::getRandomNumber() {
 unsigned int Util::getRandomIndex(unsigned int size) {
     return getRandomNumber() % size;
 }
+
+//*******************************
+// Util::getCurrentTime
+//*******************************
+time_t Util::getCurrentTime() {
+    return time(nullptr);
+}
+
+//*******************************
+// Util::timeToDisplayTimeString
+//*******************************
+string Util::timeToDisplayTimeString(time_t t, const string& format) {
+    string dateTime;
+    if (t != 0) {
+        tm* local = localtime(&t);
+        if (local->tm_year + 1900 >= 2020) {  // if datetime is from a WiFi enabled datetime
+            char buf[200];
+            dateTime = std::strftime(buf, sizeof(buf), format.c_str(), local);
+        }
+    }
+    return dateTime;
+}

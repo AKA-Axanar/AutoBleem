@@ -15,6 +15,7 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
 
 //******************
 // Util
@@ -53,5 +54,8 @@ public:
 
     static unsigned int getRandomNumber();
     static unsigned int getRandomIndex(unsigned int size);
+
+    static time_t getCurrentTime();
+    static std::string timeToDisplayTimeString(time_t t, const std::string& format = "%F");
 };
 
