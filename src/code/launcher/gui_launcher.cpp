@@ -25,8 +25,7 @@ void GuiLauncher::updateMeta() {
     if (carouselGames.empty()) {
         gameName = "";
         meta->updateTexts(gameName, publisher, year, serial, region, players, false, false, false, 0, false, false,
-                          false, fgR,
-                          fgG, fgB);
+                          false, "", fgR, fgG, fgB);
         return;
     }
     if (selGameIndexInCarouselGamesIsValid())
@@ -487,7 +486,7 @@ void GuiLauncher::loadAssets() {
         meta->updateTexts(carouselGames[selGameIndex], fgR, fgG, fgB);
     } else {
         meta->updateTexts(gameName, publisher, year, serial, region, players,
-                          false, false, false, 0, false, false, false,
+                          false, false, false, 0, false, false, false, "",
                           fgR, fgG, fgB);
     }
     staticElements.push_back(meta);

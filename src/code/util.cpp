@@ -346,7 +346,10 @@ unsigned int Util::getRandomIndex(unsigned int size) {
 // Util::getCurrentTime
 //*******************************
 time_t Util::getCurrentTime() {
-    return time(nullptr);
+    time_t t = time(nullptr);
+    //cout << "Current Time = " << t << ", " << timeToDisplayTimeString(t) << endl;
+
+    return t;
 }
 
 //*******************************
@@ -354,7 +357,7 @@ time_t Util::getCurrentTime() {
 // returns true if using AB kernel and the WiFi updated current time
 //*******************************
 bool Util::usingWiFiUpdatedTime() {
-    auto t =getCurrentTime();
+    time_t t = time(nullptr);
     tm* local = localtime(&t);
 
     return local->tm_year + 1900 >= 2020;
@@ -364,14 +367,15 @@ bool Util::usingWiFiUpdatedTime() {
 // Util::timeToDisplayTimeString
 //*******************************
 string Util::timeToDisplayTimeString(time_t t, const string& format) {
-    string dateTime;
+    string datetime;
     if (t != 0) {
         tm* local = localtime(&t);
         if (local->tm_year + 1900 >= 2020) {  // if datetime is from a WiFi enabled datetime
             char buf[200];
-            dateTime = std::strftime(buf, sizeof(buf), format.c_str(), local);
+            if (std::strftime(buf, sizeof(buf), format.c_str(), local))
+                datetime = buf;
         }
     }
-    
-    return dateTime;
+
+    return datetime;
 }

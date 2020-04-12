@@ -20,6 +20,12 @@ bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     shared_ptr<Gui> gui(Gui::getInstance());
     cout << "Starting External App" << endl;
 
+    if (game->internal) {
+        gui->internalDB->updateDatePlayed(game->gameId, Util::getCurrentTime());
+    } else {
+        gui->db->updateDatePlayed(game->gameId, Util::getCurrentTime());
+    }
+
     if (game->foreign) {
         cout << "FOREIGN MODE" << endl;
     }

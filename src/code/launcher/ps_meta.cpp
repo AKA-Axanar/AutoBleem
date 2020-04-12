@@ -19,6 +19,7 @@ using namespace std;
 void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt, const string & yearTxt,
                          const string & serial, const string & region, const string & playersTxt, bool internal,
                          bool hd, bool locked, int discs, bool favorite,  bool foreign, bool app,
+                         const string& date_played,
                          int r,int g, int b) {
     this->discs = discs;
     this->internal = internal;
@@ -33,6 +34,7 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
     this->players = playersTxt;
     this->foreign = foreign;
     this->app = app;
+    this->date_played = date_played;
 
     gameNameTex = createTextTex(gameName, r,g,b, fonts[FONT_28_BOLD]);
     publisherAndYearTex = createTextTex(publisher + ", " + year, r,g,b, fonts[FONT_15_BOLD]);
@@ -41,7 +43,8 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
 	else
         serialAndRegionTex = createTextTex("", r,g,b, fonts[FONT_15_BOLD]);
     playersTex = createTextTex(playersTxt, r,g,b, fonts[FONT_15_BOLD]);
-    discsTex = createTextTex(to_string(discs),r,g,b,fonts[FONT_15_BOLD]);
+    discsTex = createTextTex(to_string(discs), r,g,b, fonts[FONT_15_BOLD]);
+    datePlayedTex = createTextTex(_("Date Played:") + " " + date_played, r,g,b, fonts[FONT_15_BOLD]);
 
     if (foreign)
     {
@@ -59,9 +62,6 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
 //*******************************
 void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
     string appendText = psGame->players == 1 ? _("Player") : _("Players");
-
-
-
     if (!psGame->foreign) {
         if (psGame->serial == "") {
             Inifile iniFile;
@@ -71,8 +71,9 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
         }
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                     to_string(psGame->players) + " " + appendText,
-                    psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->foreign, psGame->app, r, g,
-                    b);
+                    psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                    psGame->foreign, psGame->app, Util::timeToDisplayTimeString(psGame->date_played),
+                    r, g, b);
     } else
     {
         if (psGame->app)
@@ -82,18 +83,18 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
 
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->foreign, psGame->app, r,
-                        g,
-                        b);
+                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->date_played),
+                        r, g, b);
         } else {
             psGame->serial = "";
             psGame->region = "";
 
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->foreign, psGame->app, r,
-                        g,
-                        b);
+                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->date_played),
+                        r, g, b);
         }
     }
 }
@@ -172,10 +173,24 @@ void PsMeta::render() {
         fullRect.h = h;
         SDL_RenderCopy(renderer, serialAndRegionTex, &fullRect, &rect);
 
+
+        SDL_QueryTexture(datePlayedTex, &format, &access, &w, &h);
+
+        rect.x = x;
+        rect.y = y + 43 + 44;
+        rect.w = w;
+        rect.h = h;
+
+        fullRect.x = 0;
+        fullRect.y = 0;
+        fullRect.w = w;
+        fullRect.h = h;
+        SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+
         if (!foreign) {
             SDL_QueryTexture(playersTex, &format, &access, &w, &h);
             rect.x = x + 35;
-            rect.y = y + 43 + 22 + 30;
+            rect.y = y + 43 + 40 + 30;
             rect.w = w;
             rect.h = h;
 
@@ -187,7 +202,7 @@ void PsMeta::render() {
 
             SDL_QueryTexture(tex, &format, &access, &w, &h);
             rect.x = x;
-            rect.y = y + 43 + 22 + 28;
+            rect.y = y + 43 + 40 + 28;
             rect.w = w;
             rect.h = h;
 
@@ -204,7 +219,7 @@ void PsMeta::render() {
 
             SDL_QueryTexture(discsTex, &format, &access, &w, &h);
             rect.x = x + 170;
-            rect.y = y + 43 + 22 + 30;
+            rect.y = y + 43 + 40 + 30;
             rect.w = w;
             rect.h = h;
 
@@ -215,7 +230,7 @@ void PsMeta::render() {
             SDL_RenderCopy(renderer, discsTex, &fullRect, &rect);
 
             rect.x = x + offset;
-            rect.y = y + 43 + 22 + 28;
+            rect.y = y + 43 + 40 + 28;
             rect.w = 30;
             rect.h = 30;
 
@@ -251,7 +266,7 @@ void PsMeta::render() {
             if (!app) {
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
                 rect.x = x;
-                rect.y = y + 43 + 22 + 28;
+                rect.y = y + 43 + 40 + 28;
                 rect.w = w;
                 rect.h = h;
 

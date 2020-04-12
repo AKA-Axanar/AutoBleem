@@ -567,7 +567,7 @@ void Gui::menuSelection() {
         mainMenu += "  |@O|  " + _("Original") + "  ";
     }
     string RA_or_EA = _("RetroArch");
-    string cfgPath = Env::getPathToRetroarchDir() + sep + "retroarch/retroboot/retroboot.cfg";
+    string cfgPath = Env::getPathToRetroarchDir() + sep + "retroboot/retroboot.cfg";
     if (DirEntry::exists(cfgPath)) {
         Inifile RBcfg;
         RBcfg.load(cfgPath);

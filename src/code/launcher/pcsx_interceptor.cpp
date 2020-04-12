@@ -45,6 +45,12 @@ bool PcsxInterceptor::execute(PsGamePtr & game, int resumepoint) {
 
     shared_ptr<Gui> gui(Gui::getInstance());
 
+    if (game->internal) {
+        gui->internalDB->updateDatePlayed(game->gameId, Util::getCurrentTime());
+    } else {
+        gui->db->updateDatePlayed(game->gameId, Util::getCurrentTime());
+    }
+
     string padMapping = gui->padMapping;
 
     string lastCDpoint = game->ssFolder + sep + "lastcdimg.txt";
