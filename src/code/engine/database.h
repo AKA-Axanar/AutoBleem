@@ -49,6 +49,7 @@ public:
     bool createInitialDatabase();
     void addFavoriteColumn();
     void addHistoryColumn();
+    void addDatePlayedColumn();
     bool truncate();
 
     bool beginTransaction();
@@ -77,6 +78,7 @@ public:
     bool updateTitle(int id, std::string title);
     bool updateFavorite(int id, int fav);
     bool updateHistory(int id, int rank);   // 0 = not in history, 1-100 history from latest game played to oldest
+    bool updateDatePlayed(int id, int date_in_seconds);   // seconds since 1970
     bool refreshGame(PsGamePtr & game);
     bool refreshGameInternal(PsGamePtr & game);
 
