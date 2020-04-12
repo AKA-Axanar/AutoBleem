@@ -11,6 +11,7 @@
 #include "main.h"
 #include <stdio.h>
 #include<time.h>
+#include "gui/gui.h"
 
 using namespace std;
 
@@ -366,8 +367,19 @@ bool Util::usingWiFiUpdatedTime() {
 //*******************************
 // Util::timeToDisplayTimeString
 //*******************************
-string Util::timeToDisplayTimeString(time_t t, const string& format) {
+string Util::timeToDisplayTimeString(time_t t, const string& _format) {
     string datetime;
+    string format = _format;    // if you pass a format it uses that
+
+    if (format == "") {
+        // see if the use has a prefered format in config.ini
+        string datetimeFormat = Gui::getInstance()->cfg.inifile.values["datetimeformat"];
+        if (datetimeFormat != "")
+            format = datetimeFormat;    // use the format in the config.ini
+        else
+            format = "%F %I:%M:%S %p";           // default: YYYY-MM-DD HH:MM:SS
+    }
+
     if (t != 0) {
         tm* local = localtime(&t);
         if (local->tm_year + 1900 >= 2020) {  // if datetime is from a WiFi enabled datetime

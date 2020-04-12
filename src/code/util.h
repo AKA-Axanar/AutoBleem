@@ -57,6 +57,6 @@ public:
 
     static time_t getCurrentTime();
     static bool usingWiFiUpdatedTime(); // returns true if using AB kernel and the WiFi updated current time
-    static std::string timeToDisplayTimeString(time_t t, const std::string& format = "%F %T");
+    static std::string timeToDisplayTimeString(time_t t, const std::string& format = "");
 };
 
