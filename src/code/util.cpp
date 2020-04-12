@@ -350,6 +350,17 @@ time_t Util::getCurrentTime() {
 }
 
 //*******************************
+// Util::usingWiFiUpdatedTime
+// returns true if using AB kernel and the WiFi updated current time
+//*******************************
+bool Util::usingWiFiUpdatedTime() {
+    auto t =getCurrentTime();
+    tm* local = localtime(&t);
+
+    return local->tm_year + 1900 >= 2020;
+}
+
+//*******************************
 // Util::timeToDisplayTimeString
 //*******************************
 string Util::timeToDisplayTimeString(time_t t, const string& format) {
@@ -361,5 +372,6 @@ string Util::timeToDisplayTimeString(time_t t, const string& format) {
             dateTime = std::strftime(buf, sizeof(buf), format.c_str(), local);
         }
     }
+    
     return dateTime;
 }
