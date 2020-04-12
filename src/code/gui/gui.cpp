@@ -594,7 +594,15 @@ void Gui::menuSelection() {
     if (cfg.inifile.values["ui"] == "classic") {
         mainMenu += "  |@O|  " + _("Original") + "  ";
     }
-    mainMenu += "|@S|  " + _("RetroArch") + "   ";
+    string RA_or_EA = _("RetroArch");
+    string cfgPath = Env::getPathToRetroarchDir() + sep + "retroboot/retroboot.cfg";
+    if (DirEntry::exists(cfgPath)) {
+        Inifile RBcfg;
+        RBcfg.load(cfgPath);
+        if (RBcfg.values["use_emulationstation"] == "1")
+            RA_or_EA = _("EmulationStation");
+    }
+    mainMenu += "|@S|  " + RA_or_EA + "   ";
     mainMenu += "|@T|  " + _("About") + "  |@Select|  " + _("Options") + " ";
     mainMenu += "|@L1| " + _("Advanced");
     mainMenu += " |@L2|+|@R2|" + _("Power Off");

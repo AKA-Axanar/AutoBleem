@@ -397,6 +397,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
             game->serial = SerialScanner::scanSerial(game->imageType, game->fullPath + sep, game->firstBinPath);
             game->region = SerialScanner::serialToRegion(game->serial);
             //cout << "serial: " << game->serial << ", region: " << game->region << ", " << game->title <<endl;
+            //cout << "Date Played: " << Util::timeToDisplayTimeString(game->date_played) << endl;
 
             // if there was no ini file before, get the values for the ini, create the cover file if needed, and create/update the game.ini file
             if ( !game->gameIniFound || game->automationUsed || (game->discs.size()==0) ) {

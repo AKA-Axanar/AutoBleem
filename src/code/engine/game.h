@@ -44,6 +44,7 @@ public:
     int players = 0;
     std::vector<Disc> discs;
     std::string favorite;
+    time_t date_played = 0;
 
     std::string memcard;
 
