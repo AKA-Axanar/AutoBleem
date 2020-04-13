@@ -24,7 +24,7 @@ public:
     std::string players;
     std::string serial;
     std::string region;
-    std::string date_played;
+    std::string last_played;
     Fonts fonts;
 
     SDL_Shared<SDL_Texture> discsTex;
@@ -60,7 +60,7 @@ public:
     void updateTexts(const std::string & gameNameTxt, const std::string & publisherTxt,
                      const std::string & yearTxt, const std::string & serial, const std::string & region,
                      const std::string & playersTxt, bool internal, bool hd, bool locked, int discs, bool favorite,
-                     bool foreign, bool app, const std::string& date_played,
+                     bool foreign, bool app, const std::string& last_played,
                      int r, int g, int b);
 
     void updateTexts(PsGamePtr & game, int r, int g, int b);

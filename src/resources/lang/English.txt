@@ -94,6 +94,8 @@ Edit game parameters
 
 Edit Memory Card information
 
+EmulationStation
+
 Emulator config MENU
 
 Enter
@@ -175,6 +177,8 @@ INTERNAL
 Internal Games
 
 Language:
+
+Last Played:
 
 Link Block
 

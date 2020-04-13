@@ -19,7 +19,7 @@ using namespace std;
 void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt, const string & yearTxt,
                          const string & serial, const string & region, const string & playersTxt, bool internal,
                          bool hd, bool locked, int discs, bool favorite,  bool foreign, bool app,
-                         const string& date_played,
+                         const string& last_played,
                          int r,int g, int b) {
     this->discs = discs;
     this->internal = internal;
@@ -34,7 +34,7 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
     this->players = playersTxt;
     this->foreign = foreign;
     this->app = app;
-    this->date_played = date_played;
+    this->last_played = last_played;
 
     gameNameTex = createTextTex(gameName, r,g,b, fonts[FONT_28_BOLD]);
     publisherAndYearTex = createTextTex(publisher + ", " + year, r,g,b, fonts[FONT_15_BOLD]);
@@ -44,7 +44,7 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
         serialAndRegionTex = createTextTex("", r,g,b, fonts[FONT_15_BOLD]);
     playersTex = createTextTex(playersTxt, r,g,b, fonts[FONT_15_BOLD]);
     discsTex = createTextTex(to_string(discs), r,g,b, fonts[FONT_15_BOLD]);
-    datePlayedTex = createTextTex(_("Date Played:") + " " + date_played, r,g,b, fonts[FONT_15_BOLD]);
+    datePlayedTex = createTextTex(_("Last Played:") + " " + last_played, r,g,b, fonts[FONT_15_BOLD]);
 
     if (foreign)
     {
@@ -72,7 +72,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                     to_string(psGame->players) + " " + appendText,
                     psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
-                    psGame->foreign, psGame->app, Util::timeToDisplayTimeString(psGame->date_played),
+                    psGame->foreign, psGame->app, Util::timeToDisplayTimeString(psGame->last_played),
                     r, g, b);
     } else
     {
@@ -84,7 +84,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
-                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->date_played),
+                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->last_played),
                         r, g, b);
         } else {
             psGame->serial = "";
@@ -93,7 +93,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
-                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->date_played),
+                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->last_played),
                         r, g, b);
         }
     }

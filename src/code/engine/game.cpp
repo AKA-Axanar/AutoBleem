@@ -164,8 +164,8 @@ bool USBGame::print() {
     cout << "pcsx.cfg found: " << pcsxCfgFound << endl;
     cout << "TotalDiscs: " << discs.size() << endl;
     cout << "Favorite: " << favorite << endl;
-    cout << "Date Played: " << date_played << endl;
-    cout << "Date Played: " << Util::timeToDisplayTimeString(date_played) << endl;
+    cout << "Last Played: " << last_played << endl;
+    cout << "Last Played: " << Util::timeToDisplayTimeString(last_played) << endl;
 
     for (int i = 0; i < discs.size(); i++) {
         cout << "  Disc:" << i + 1 << "  " << discs[i].diskName << endl;

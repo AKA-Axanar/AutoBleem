@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
     gui->internalDB = internalDB;
     gui->internalDB->addFavoriteColumn(); // add the favorites column if it doesn't exist
     gui->internalDB->addHistoryColumn();  // add the history column if it doesn't exist
-    gui->internalDB->addDatePlayedColumn();  // add the date played column if it doesn't exist
+    gui->internalDB->addLastPlayedColumn();  // add the last played column if it doesn't exist
 
     string dbpath = Env::getPathToRegionalDBFile();
     string pathToGamesDir = Env::getPathToGamesDir();
