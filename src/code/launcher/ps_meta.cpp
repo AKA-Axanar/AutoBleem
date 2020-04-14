@@ -134,36 +134,46 @@ void PsMeta::render() {
         SDL_Rect rect;
         SDL_Rect fullRect;
 
-        SDL_QueryTexture(gameNameTex, &format, &access, &w, &h);
-        rect.x = x;
-        rect.y = y;
-        rect.w = w;
+        int yOffset = 0;
+        // game name line
+        {
+            SDL_QueryTexture(gameNameTex, &format, &access, &w, &h);
+            rect.x = x;
+            rect.y = y + yOffset;
+            rect.w = w;
 
-        if (rect.w > 490) rect.w = 490;
-        rect.h = h;
-        fullRect.x = 0;
-        fullRect.y = 0;
-        fullRect.w = w;
-        fullRect.h = h;
-        SDL_RenderCopy(renderer, gameNameTex, &fullRect, &rect);
+            if (rect.w > 490) rect.w = 490;
+            rect.h = h;
+            fullRect.x = 0;
+            fullRect.y = 0;
+            fullRect.w = w;
+            fullRect.h = h;
+            SDL_RenderCopy(renderer, gameNameTex, &fullRect, &rect);
+        }
 
-        SDL_QueryTexture(publisherAndYearTex, &format, &access, &w, &h);
+        yOffset += 35;
+        // publisher line
+        {
+            SDL_QueryTexture(publisherAndYearTex, &format, &access, &w, &h);
 
-        rect.x = x;
-        rect.y = y + 43;
-        rect.w = w;
-        rect.h = h;
+            rect.x = x;
+            rect.y = y + yOffset;
+            rect.w = w;
+            rect.h = h;
 
-        fullRect.x = 0;
-        fullRect.y = 0;
-        fullRect.w = w;
-        fullRect.h = h;
-        SDL_RenderCopy(renderer, publisherAndYearTex, &fullRect, &rect);
+            fullRect.x = 0;
+            fullRect.y = 0;
+            fullRect.w = w;
+            fullRect.h = h;
+            SDL_RenderCopy(renderer, publisherAndYearTex, &fullRect, &rect);
+        }
 
+        yOffset += 21;
+        // serial number line
         SDL_QueryTexture(serialAndRegionTex, &format, &access, &w, &h);
 
         rect.x = x;
-        rect.y = y + 43 + 22;
+        rect.y = y + yOffset;
         rect.w = w;
         rect.h = h;
 
@@ -174,23 +184,29 @@ void PsMeta::render() {
         SDL_RenderCopy(renderer, serialAndRegionTex, &fullRect, &rect);
 
 
-        SDL_QueryTexture(datePlayedTex, &format, &access, &w, &h);
+        yOffset += 21;
+        // date played line
+        {
+            SDL_QueryTexture(datePlayedTex, &format, &access, &w, &h);
 
-        rect.x = x;
-        rect.y = y + 43 + 44;
-        rect.w = w;
-        rect.h = h;
+            rect.x = x;
+            rect.y = y + yOffset;
+            rect.w = w;
+            rect.h = h;
 
-        fullRect.x = 0;
-        fullRect.y = 0;
-        fullRect.w = w;
-        fullRect.h = h;
-        SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+            fullRect.x = 0;
+            fullRect.y = 0;
+            fullRect.w = w;
+            fullRect.h = h;
+            SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+        }
 
+        yOffset += 22;
         if (!foreign) {
+            // PS1 icons line
             SDL_QueryTexture(playersTex, &format, &access, &w, &h);
             rect.x = x + 35;
-            rect.y = y + 43 + 40 + 30;
+            rect.y = y + yOffset;
             rect.w = w;
             rect.h = h;
 
@@ -202,7 +218,7 @@ void PsMeta::render() {
 
             SDL_QueryTexture(tex, &format, &access, &w, &h);
             rect.x = x;
-            rect.y = y + 43 + 40 + 28;
+            rect.y = y + yOffset - 2;
             rect.w = w;
             rect.h = h;
 
@@ -219,7 +235,7 @@ void PsMeta::render() {
 
             SDL_QueryTexture(discsTex, &format, &access, &w, &h);
             rect.x = x + 170;
-            rect.y = y + 43 + 40 + 30;
+            rect.y = y + yOffset;
             rect.w = w;
             rect.h = h;
 
@@ -230,7 +246,7 @@ void PsMeta::render() {
             SDL_RenderCopy(renderer, discsTex, &fullRect, &rect);
 
             rect.x = x + offset;
-            rect.y = y + 43 + 40 + 28;
+            rect.y = y + yOffset - 2;
             rect.w = 30;
             rect.h = 30;
 
@@ -263,10 +279,11 @@ void PsMeta::render() {
             }
         } else
         {
+            // retroarch icon
             if (!app) {
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
                 rect.x = x;
-                rect.y = y + 43 + 40 + 28;
+                rect.y = y + yOffset - 2;
                 rect.w = w;
                 rect.h = h;
 
