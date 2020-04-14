@@ -198,7 +198,15 @@ void PsMeta::render() {
             fullRect.y = 0;
             fullRect.w = w;
             fullRect.h = h;
-            SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+            if (!foreign) {     // if not RA
+#if defined(__x86_64__) || defined(_M_X64)
+                // the devel system has time
+                SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+#else
+                if (Env::autobleemKernel)
+                    SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+#endif
+            }
         }
 
         yOffset += 22;
