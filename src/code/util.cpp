@@ -381,7 +381,7 @@ bool Util::usingWiFiUpdatedTime() {
     time_t t = time(nullptr);
     tm* local = localtime(&t);
 
-    return local->tm_year + 1900 >= 2020;
+    return (local != nullptr) && (local->tm_year + 1900 >= 2020);
 }
 
 //*******************************
@@ -402,7 +402,7 @@ string Util::timeToDisplayTimeString(time_t t, const string& _format) {
 
     if (t != 0) {
         tm* local = localtime(&t);
-        if (local->tm_year + 1900 >= 2020) {  // if datetime is from a WiFi enabled datetime
+        if ((local != nullptr)  && (local->tm_year + 1900 >= 2020)) {  // if datetime is from a WiFi enabled datetime
             char buf[200];
             if (std::strftime(buf, sizeof(buf), format.c_str(), local))
                 datetime = buf;
