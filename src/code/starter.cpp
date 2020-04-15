@@ -6,7 +6,6 @@
 #include "DirEntry.h"
 #include "engine/inifile.h"
 #include "engine/memcard.h"
-#include "engine/config.h"
 
 using namespace std;
 

@@ -5,6 +5,7 @@
 #include "ps_meta.h"
 #include "ps_game.h"
 #include "../util.h"
+#include "../util_time.h"
 #include <SDL2/SDL_image.h>
 #include "../lang.h"
 #include "../engine/inifile.h"
@@ -72,7 +73,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                     to_string(psGame->players) + " " + appendText,
                     psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
-                    psGame->foreign, psGame->app, Util::timeToDisplayTimeString(psGame->last_played),
+                    psGame->foreign, psGame->app, UtilTime::timeToDisplayTimeString(psGame->last_played),
                     r, g, b);
     } else
     {
@@ -84,7 +85,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
-                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->last_played),
+                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
                         r, g, b);
         } else {
             psGame->serial = "";
@@ -93,7 +94,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
-                        psGame->foreign, psGame->app,  Util::timeToDisplayTimeString(psGame->last_played),
+                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
                         r, g, b);
         }
     }
@@ -185,7 +186,7 @@ void PsMeta::render() {
 
 
         yOffset += 21;
-        // date played line
+        // last played line
         {
             SDL_QueryTexture(datePlayedTex, &format, &access, &w, &h);
 

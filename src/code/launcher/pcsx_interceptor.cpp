@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include "pcsx_interceptor.h"
 #include "../util.h"
+#include "../util_time.h"
 #include "../gui/gui.h"
 #include "../lang.h"
 #include "../engine/memcard.h"
@@ -46,9 +47,9 @@ bool PcsxInterceptor::execute(PsGamePtr & game, int resumepoint) {
     shared_ptr<Gui> gui(Gui::getInstance());
 
     if (game->internal) {
-        gui->internalDB->updateDatePlayed(game->gameId, Util::getCurrentTime());
+        gui->internalDB->updateDatePlayed(game->gameId, UtilTime::getCurrentTime());
     } else {
-        gui->db->updateDatePlayed(game->gameId, Util::getCurrentTime());
+        gui->db->updateDatePlayed(game->gameId, UtilTime::getCurrentTime());
     }
 
     string padMapping = gui->padMapping;
