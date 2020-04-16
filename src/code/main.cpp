@@ -151,14 +151,24 @@ void rewriteGamelistXml() {
     xml << "<?xml version=\"1.0\"?>" << endl;
     xml << "<gameList>" << endl;
 
-    for (const auto game : currentGames) {
+    auto makeGamesPathRelative = [] (const string& oldPath) -> string {
+        string newPath=oldPath;
+        size_t pos = newPath.find("/Games");
+        if (pos != string::npos) {
+            newPath.erase(0, pos-1 + sizeof("/Games"));
+            newPath = "." + newPath;
+        }
+        return newPath;
+    };
+
+    for (const auto& game : currentGames) {
         xml << "\t<game>" << endl;
 
-        xml << "\t\t<path>" << game->folder << "</path>" << endl;
+        xml << "\t\t<path>" << makeGamesPathRelative(game->folder) << "</path>" << endl;
         xml << "\t\t<name>" << game->title << "</name>" << endl;
         xml << "\t\t<desc>" << game->title << "</desc>" << endl;
         string imagePath = game->folder + sep + game->base + ".png";
-        xml << "\t\t<image>" << imagePath << "</image>" << endl;
+        xml << "\t\t<image>" << makeGamesPathRelative(imagePath) << "</image>" << endl;
 
         xml << "\t</game>" << endl;
     }
