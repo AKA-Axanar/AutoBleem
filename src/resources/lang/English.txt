@@ -340,7 +340,7 @@ Starting EvolutionUI
 
 Support via Discord:
 
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
+This is free software. It works AS IS and We take no responsibility for any issues or damage.
 
 to scan
 
