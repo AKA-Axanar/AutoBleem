@@ -8,7 +8,6 @@
 #include <string.h>
 #include <sstream>
 #include <iostream>
-//#include "main.h"
 #include <stdio.h>
 
 using namespace std;
@@ -318,6 +317,7 @@ void Util::removeComment(std::string& str) {
         str.erase(it);
 }
 
+//*******************************
 // Util::cleanPublisherString
 // remove any trailing "." or space or " ."
 //*******************************

@@ -932,10 +932,11 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
     }
 
     editor->show();
+
     if (selGameIndexInCarouselGamesIsValid()) {
         if (!editor->internal) {
             if (editor->changes) {
-                gameIni.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
+                gameIni.reload(carouselGames[selGameIndex]->folder + sep + GAME_INI);
                 gui->db->updateTitle(carouselGames[selGameIndex]->gameId, gameIni.values["title"]);
             }
             gui->db->refreshGame(carouselGames[selGameIndex]);
@@ -943,7 +944,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 editor->gameIni.values["favorite"] == "0") {
                 gui->lastSet = SET_PS1;
                 gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();
+                loadAssets();   // reload - one less favorite game in display
             }
         } else {
             if (editor->changes) {
@@ -954,7 +955,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 editor->gameData->favorite == false) {
                 gui->lastSet = SET_PS1;
                 gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();
+                loadAssets();   // reload - one less favorite game in display
             }
         }
     }
