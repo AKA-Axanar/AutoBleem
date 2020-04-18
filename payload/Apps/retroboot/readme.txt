@@ -1,40 +1,49 @@
-RetroBoot for AutoBleem 1.0.1
------------------------------
+Retroboot 1.1 - The Lightweight Alternative
+-------------------------------------------
 
-Launch RetroArch from AutoBleem!  RetroBoot for AutoBleem comes 
-pre-configured to run all the built-in games on your PlayStation Classic, and
-can scan in games from anywhere on your USB drive.
-
+Launch RetroArch or EmulationStation from Autobleem!  
 
 FAQs
 ----
 
-- "How do I add more games to the menus?"
+- "How do I add more games to the menus in RetroArch?"
 From the RetroArch home screen, scroll down to the icon that looks like a big
 plus sign.  Select it, and then choose the file, or folder of files, you wish
 to scan into the menus.
 
+
 - "I scanned my games, but they didn't all show up in the playlists"
-To scan using the automatic scanner, your games must be in the libretro database.  
-The romsets RetroArch recognizes are listed at 
-https://github.com/libretro/libretro-database. You can add unrecognized games to 
-your playlists manually.  Playlists are stored in /retroarch/playlists/ and you 
-can edit them manually using the instructions at 
-https://docs.libretro.com/guides/roms-playlists-thumbnails/ or a RetroArch playlist 
-editor.  A free web-based editor is available at 
-https://www.marcrobledo.com/retroarch-playlist-editor/.  When editing playlists,
-be sure to specify the path that they will be found on your PSC - your PSC will see
-the USB stick as /media/ so the default roms folder is /media/roms/
-As of version 1.8.4, RetroArch contains an additional manual scanner, which does
-not require roms to be in the database.
+To scan using the automatic scanner, your games must be in the libretro 
+database.  The romsets RetroArch recognizes are listed at 
+https://github.com/libretro/libretro-database. 
+
+You can add unrecognized games to your playlists manually.  Playlists are 
+stored in /retroarch/playlists/ and you can edit them manually using the 
+instructions at https://docs.libretro.com/guides/roms-playlists-thumbnails/ 
+or a RetroArch playlist editor.  
+
+A free web-based editor is available at 
+https://www.marcrobledo.com/retroarch-playlist-editor/.  When editing 
+playlists, be sure to specify the path that they will be found on your PSC - 
+your PSC will see the USB stick as /media/ so the default roms folder is 
+/media/roms/ .  
+
+As of version 1.8.4, RetroArch contains an additional manual scanner, which 
+does not require roms to be in the database.
 
 
 - "How do I set up thumbnails?"
-To install thumbnails, follow the instructions in 
+To install thumbnails, follow the instructions at
 https://docs.libretro.com/guides/roms-playlists-thumbnails/
 The thumbnails folder on Retroboot is located at /retroarch/thumbnails/
 The RetroArch team provides thumbnails for download at 
 https://github.com/libretro/libretro-thumbnails 
+
+
+- "How do I install Eris mods?"
+Create a folder named RB_PATCH on the root of your USB drive, and place the 
+.mod files inside it.  Compatible mods will automatically be installed when
+you next start Retroboot.
 
 
 - "I tried to scan in a folder of games, and now my playlist is blank!"
@@ -43,7 +52,7 @@ playlist while it works in the background;  wait for it to complete, and your
 playlist will be restored.
 
 
-- "Why won't Windows let me format my USB drive as FAT32 ?"
+- "Why won't Windows let me format my USB drive as FAT32?"
 The default Windows format utility will not let you format large drives as 
 FAT32, but this can be accomplished with third party tools.  Try using 
 guiformat by Ridgecrop Consultants. 
@@ -75,6 +84,77 @@ Classic's internal memory to your USB drive the first time it is run.
 Full documentation for RetroArch is available at https://docs.libretro.com/
 
 
+- "How do I configure options for boot and other Retroboot settings?"
+Retroboot's config file is found at /retroarch/retroboot/retroboot.cfg 
+
+
+- "Where do I put games so they show up in EmulationStation?"
+Retroboot comes with the following folders pre-configured for EmulationStation:
+	3DO                                             /roms/3do
+	Amstrad CPC                                     /roms/amstradcpc
+	Arcade (Daphne)                                 /roms/daphne
+	Arcade (FBA 2012)                               /roms/fba2012
+	Arcade (FBNeo)                                  /roms/arcade
+	Arcade (M.A.M.E)                                /roms/mame
+	Atari 2600                                      /roms/a2600
+	Atari 5200                                      /roms/a5200
+	Atari 7800                                      /roms/a7800
+	Atari 800                                       /roms/atari800
+	Atari Jaguar                                    /roms/atarijaguar
+	Atari Lynx                                      /roms/atarilynx
+	Atari ST                                        /roms/atarist
+	Bandai WonderSwan                               /roms/wonderswan
+	Colecovision                                    /roms/colecovision
+	Commodore 64                                    /roms/c64
+	Commodore Amiga                                 /roms/amiga
+	IBM PC                                          /roms/dosbox
+	Magnavox Odyssey2                               /roms/odyssey2
+	Mattel Intellivision                            /roms/intellivision
+	MSX                                             /roms/msx
+	NEC PC Engine                                   /roms/pcengine
+	NEC PC Engine CD                                /roms/pce-cd
+	NEC SuperGrafx                                  /roms/supergrafx
+	NEC TurboGrafx 16                               /roms/tg16
+	NEC TurboGrafx CD                               /roms/tg-cd
+	Nintendo 64                                     /roms/n64
+	Nintendo DS                                     /roms/nds
+	Nintendo Entertainment System                   /roms/nes
+	Nintendo Entertainment System Hacks             /roms/nesh
+	Nintendo Famicom                                /roms/famicom
+	Nintendo Famicom Disk System                    /roms/fds
+	Nintendo Game and Watch                         /roms/gameandwatch
+	Nintendo Game Boy                               /roms/gb
+	Nintendo Game Boy Advance                       /roms/gba
+	Nintendo Game Boy Advance Hacks                 /roms/gbah
+	Nintendo Game Boy Color                         /roms/gbc
+	Nintendo Game Boy Hacks                         /roms/gbh
+	Nintendo Super Famicom                          /roms/sfc
+	Nintendo Virtual Boy                            /roms/virtualboy
+	ScummVM                                         /roms/scummvm
+	Sega 32X                                        /roms/sega32x
+	Sega CD                                         /roms/segacd
+	Sega Dreamcast                                  /roms/dreamcast
+	Sega Game Gear                                  /roms/gamegear
+	Sega Game Gear Hacks                            /roms/ggh
+	Sega Genesis                                    /roms/genesis
+	Sega Genesis Hacks                              /roms/genesish
+	Sega Master System                              /roms/mastersystem
+	Sega Mega Drive                                 /roms/megadrive
+	Sega NAOMI / Atomiswave                         /roms/naomi
+	Sega Saturn                                     /roms/saturn
+	Sega SG-1000                                    /roms/sg1000
+	Sinclair Research ZX Spectrum                   /roms/zxspectrum
+	SNK Neo Geo                                     /roms/neogeo
+	SNK Neo Geo CD                                  /roms/neogeocd
+	SNK Neo Geo Pocket                              /roms/ngp
+	SNK Neo Geo Pocket Color                        /roms/ngpc
+	Sony PlayStation                                /roms/psx
+	Sony PlayStation Portable                       /roms/psp
+	Super Nintendo Entertainment System             /roms/snes
+	Super Nintendo Entertainment System Hacks       /roms/snesh
+	Videos                                          /roms/videos
+
+
 - "What are the risks of this?  Can it brick my system?"
 Retroboot is designed to run directly from your USB drive, with no 
 modification to the system files on your PlayStation Classic.  Access to the 
@@ -87,6 +167,16 @@ implied or otherwise.
 
 Change Log
 ----------
+v1.1.0 (04/??/2020)
+- Updated to RetroArch 1.8.5
+- Fixed video scaling issues
+- Added EmulationStation
+- Added .mod compatibility mode
+- Removed RNDIS support
+- Improved updater experience
+- Updated cores
+- Updated configurations
+- Updated assets and databases
 
 v1.0.1 (03/05/2020)
 - Fixed application playlist issues
