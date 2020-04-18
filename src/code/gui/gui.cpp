@@ -620,7 +620,28 @@ void Gui::menuSelection() {
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
             }
+
+            if (e.type == SDL_JOYDEVICEADDED )
+            {
+                int joyid = e.jdevice.which;
+                SDL_Joystick *joystick = SDL_JoystickOpen(joyid);
+                if (!mapper.isKnownPad(SDL_JoystickInstanceID(joystick))) {
+                    cout << "New pad type" << endl;
+                    // new controller configuration
+                    auto cfgPad = new GuiPadConfig(renderer);
+                    cfgPad->joyid = SDL_JoystickInstanceID(joystick);
+                    cfgPad->show();
+                    delete cfgPad;
+                    if (!forceScan) {
+                        drawText(mainMenu);
+
+                    } else {
+                        drawText(forceScanMenu);
+                    }
+                }
+            }
             switch (e.type) {
+
                 case SDL_JOYBUTTONUP:
                     if (!forceScan) {
                         if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
