@@ -87,25 +87,6 @@ string Environment::getPathToInternalDBFile() {
     return private_pathToInternalDBFile;
 }
 
-#if DISPLAY_NETWORK_MENU
-// for networking
-string Environment::getPathToBleemsyncDir() {
-    return getPathToUSBRoot() + sep + "bleemsync";
-}
-
-string Environment::getPathToBleemsyncCFGDir() {
-    return getPathToBleemsyncDir() + sep + "etc/bleemsync/CFG";
-}
-
-string Environment::getPathToBleemsyncWPADir() {
-    return getPathToBleemsyncDir() + sep + "network/etc/wpa_supplicant";
-}
-
-string Environment::getPathToLogsDir() {
-    return private_pathToUSBDrive + sep + "logs";
-}
-#endif
-
 //*******************************
 // Environment::getWorkingPath
 // 1 arg: "usb:/Autobleem/bin/autobleem"

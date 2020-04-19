@@ -14,6 +14,8 @@
 #include "../engine/scanner.h"
 #include "../environment.h"
 #include "../lang.h"
+#include "../util_time.h"
+#include <ctime>
 
 using namespace std;
 
@@ -163,6 +165,8 @@ bool USBGame::print() {
     cout << "pcsx.cfg found: " << pcsxCfgFound << endl;
     cout << "TotalDiscs: " << discs.size() << endl;
     cout << "Favorite: " << favorite << endl;
+    cout << "Last Played: " << last_played << endl;
+    cout << "Last Played: " << UtilTime::timeToDisplayTimeString(last_played) << endl;
 
     for (int i = 0; i < discs.size(); i++) {
         cout << "  Disc:" << i + 1 << "  " << discs[i].diskName << endl;

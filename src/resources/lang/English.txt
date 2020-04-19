@@ -24,8 +24,6 @@ Are you sure you want to flush all covers?
 
 Are you sure?
 
-Auto Init Network on Boot:
-
 AutoBleem
 
 AutoBleem resume points not available in RetroArch.
@@ -37,8 +35,6 @@ Background Music:
 Backspace
 
 Bin file failed to verify
-
-Bleemsync directory not on USB
 
 Button Guide
 
@@ -98,11 +94,7 @@ Edit game parameters
 
 Edit Memory Card information
 
-Edit Network SSID and Password (ssid.cfg)
-
-Edit Password
-
-Edit SSID
+EmulationStation
 
 Emulator config MENU
 
@@ -116,17 +108,11 @@ Enter new name for card
 
 Enter new name for memory card
 
-Enter Password
-
-Enter SSID
-
 Entry
 
 Exit to EvoUI
 
 Failed to delete
-
-Failed to Initialize Wi-Fi To Network SSID:
 
 Favorite Games
 
@@ -174,6 +160,8 @@ GFX Filter:
 
 Go back
 
+Hardware Information
+
 High res:
 
 In Boot Menu: Safe Power Off The Console
@@ -182,25 +170,15 @@ In Game
 
 In Retroarch Game
 
-Initialize Network
-
-Initialize Wi-Fi Now?
-
-Initialized Wi-Fi To Network SSID:
-
-Initializing Wi-Fi To Network SSID:
-
 Internal
 
 INTERNAL
 
 Internal Games
 
-IP Address:
-
-IP:
-
 Language:
+
+Last Played:
 
 Link Block
 
@@ -224,8 +202,6 @@ Moving :
 
 Music:
 
-Network SSID
-
 New Card
 
 New GamePad found
@@ -245,8 +221,6 @@ Options
 Original
 
 Page
-
-Password:
 
 pcsx.cfg file not found
 
@@ -362,13 +336,11 @@ SpeedHack:
 
 Spu Interpolation:
 
-SSID:
-
 Starting EvolutionUI
 
 Support via Discord:
 
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
+This is free software. It works AS IS and We take no responsibility for any issues or damage.
 
 to scan
 
@@ -391,12 +363,6 @@ WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 
 Widescreen:
-
-Wi-Fi Connection:
-
-Write connect info to ssid.cfg file
-
-Write ssid.cfg file
 
 Year:
 

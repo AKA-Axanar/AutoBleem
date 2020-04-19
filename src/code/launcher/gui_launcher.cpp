@@ -25,8 +25,7 @@ void GuiLauncher::updateMeta() {
     if (carouselGames.empty()) {
         gameName = "";
         meta->updateTexts(gameName, publisher, year, serial, region, players, false, false, false, 0, false, false,
-                          false, fgR,
-                          fgG, fgB);
+                          false, "", fgR, fgG, fgB);
         return;
     }
     if (selGameIndexInCarouselGamesIsValid())
@@ -169,7 +168,7 @@ void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
 //*******************************
 // GuiLauncher::switchSet
 //*******************************
-void GuiLauncher::switchSet(int newSet, bool noForce) {
+void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet is not used.  probably not the intent.
     cout << "Switching to Set: " << currentSet << endl;
     // clear the carousel text
     if (!carouselGames.empty()) {
@@ -487,7 +486,7 @@ void GuiLauncher::loadAssets() {
         meta->updateTexts(carouselGames[selGameIndex], fgR, fgG, fgB);
     } else {
         meta->updateTexts(gameName, publisher, year, serial, region, players,
-                          false, false, false, 0, false, false, false,
+                          false, false, false, 0, false, false, false, "",
                           fgR, fgG, fgB);
     }
     staticElements.push_back(meta);

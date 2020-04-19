@@ -63,6 +63,10 @@ public:
     int lastVisibleIndex = 7;       // current visible range on page
     int firstRow = 2;               // row 0 is the title.  this is the first row of the menu item lines
     int offset = 0;                 // y offset for the line I believe.  set by renderLogo()
+
+    // this is useful in menus that have blank lines like gui_networkMenu.cpp
+    virtual bool skipSelectingThisLineWhenMovingByOne(int index) { return false; }
+
     void adjustPageBy(int moveBy);  // move the page up or down by an amount
     void computePagePosition();     // complete recompute of positions based on the selected value
 
@@ -215,6 +219,8 @@ void GuiMenuBase<LineDataType>::doKeyDown() {
             adjustPageBy(1);
         } else {
             ++selected;
+            while (skipSelectingThisLineWhenMovingByOne(selected) &&  selected < getVerticalSize() - 1)
+                ++selected;
         }
     }
 }
@@ -233,6 +239,8 @@ void GuiMenuBase<LineDataType>::doKeyUp() {
             adjustPageBy(-1);
         } else {
             --selected;
+            while (skipSelectingThisLineWhenMovingByOne(selected) &&  selected > 1)
+                --selected;
         }
     }
 }

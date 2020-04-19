@@ -134,8 +134,6 @@ add_executable(
         src/code/gui/menus/gui_memCardsMenu.cpp
         src/code/gui/menus/gui_memCardsMenu.h
         src/code/gui/menus/gui_menuBase.h
-		src/code/gui/menus/gui_networkMenu.cpp
-		src/code/gui/menus/gui_networkMenu.h 
         src/code/gui/menus/gui_optionsMenu.cpp
         src/code/gui/menus/gui_optionsMenu.h
         src/code/gui/menus/gui_optionsMenuBase.cpp 
@@ -197,7 +195,7 @@ add_executable(
         src/code/util.h
         src/code/ver_migration.cpp
         src/code/ver_migration.h
-		)
+        src/code/util_time.h src/code/util_time.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>

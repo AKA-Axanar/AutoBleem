@@ -757,7 +757,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
     if (currentSet == SET_PS1)
         addGameToPS1GameHistoryAsLatestGamePlayed(gui->runningGame);
 
-        gui->emuMode = EMU_PCSX;
+    gui->emuMode = EMU_PCSX;
     if (gui->runningGame->foreign)
     {
         if (!gui->runningGame->app) {
@@ -859,7 +859,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
         loadAssets();
         gui->resumingGui = false;
         currentSet = lastSet;
-        if (currentSet = SET_PS1)
+        if (currentSet == SET_PS1)
             currentPS1_SelectState = lastPS1_SelectState;
         currentUSBGameDirIndex = lastUSBGameDirIndex;
         currentRAPlaylistIndex = lastRAPlaylistIndex;
@@ -932,10 +932,11 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
     }
 
     editor->show();
+
     if (selGameIndexInCarouselGamesIsValid()) {
         if (!editor->internal) {
             if (editor->changes) {
-                gameIni.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
+                gameIni.reload(carouselGames[selGameIndex]->folder + sep + GAME_INI);
                 gui->db->updateTitle(carouselGames[selGameIndex]->gameId, gameIni.values["title"]);
             }
             gui->db->refreshGame(carouselGames[selGameIndex]);
@@ -943,7 +944,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 editor->gameIni.values["favorite"] == "0") {
                 gui->lastSet = SET_PS1;
                 gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();
+                loadAssets();   // reload - one less favorite game in display
             }
         } else {
             if (editor->changes) {
@@ -954,7 +955,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 editor->gameData->favorite == false) {
                 gui->lastSet = SET_PS1;
                 gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();
+                loadAssets();   // reload - one less favorite game in display
             }
         }
     }
@@ -1071,7 +1072,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
                 gui->resumepoint = slot;
                 gui->lastSet = currentSet;
                 if (currentSet == SET_PS1)
-                    gui->lastPS1_SelectState == currentPS1_SelectState;
+                    gui->lastPS1_SelectState = currentPS1_SelectState;
                 gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
                 gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
                 sselector->cleanSaveStateImages();

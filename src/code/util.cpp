@@ -8,9 +8,7 @@
 #include <string.h>
 #include <sstream>
 #include <iostream>
-#include "main.h"
 #include <stdio.h>
-#include<time.h>
 
 using namespace std;
 
@@ -296,6 +294,27 @@ string Util::getStringWithinChar(string s, char del) {
 void Util::removeCharsFromString(string& str, string charsToRemove) {
     for (char ch : charsToRemove)
         str.erase( std::remove(str.begin(), str.end(), ch), str.end() );
+}
+
+//*******************************
+// Util::getlineRemoveCR
+// does a getline.  if it's a Windows file the CR at the end is removed.
+//*******************************
+istream& Util::getlineRemoveCR(std::istream& is, std::string& str) {
+    istream& ret = getline(is, str);
+    if (!str.empty() && *str.rbegin() == '\r')
+        str.erase(str.length()-1, 1);
+    return ret;
+}
+
+//*******************************
+// Util::removeComment
+// remove "#" to end of line
+//*******************************
+void Util::removeComment(std::string& str) {
+    auto it = str.find("#");
+    if (it != str.npos)
+        str.erase(it);
 }
 
 //*******************************

@@ -24,7 +24,6 @@
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
 #include "../environment.h"
-#include "menus/gui_networkMenu.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -288,9 +287,9 @@ void Gui::loadAssets(bool reloadMusic) {
         cfg.save();
     }
 
-    themeData.load(defaultPath + "theme.ini");
     defaultData.load(defaultPath + "theme.ini");
-    themeData.load(themePath + "theme.ini");
+    themeData.load(defaultPath + "theme.ini");
+    themeData.OverwriteAndAppend(themePath + "theme.ini");    // adds to default/theme.ini values
 
     bool reloading = false;
 
@@ -567,17 +566,24 @@ void Gui::menuSelection() {
     if (cfg.inifile.values["ui"] == "classic") {
         mainMenu += "  |@O|  " + _("Original") + "  ";
     }
-    mainMenu += "|@S|  " + _("RetroArch") + "   ";
+    string RA_or_EA = _("RetroArch");
+    string cfgPath = Env::getPathToRetroarchDir() + sep + "retroboot/retroboot.cfg";
+    if (DirEntry::exists(cfgPath)) {
+        Inifile RBcfg;
+        RBcfg.load(cfgPath);
+        if (RBcfg.values["use_emulationstation"] == "1")
+            RA_or_EA = _("EmulationStation");
+    }
+    mainMenu += "|@S|  " + RA_or_EA + "   ";
     mainMenu += "|@T|  " + _("About") + "  |@Select|  " + _("Options") + " ";
     mainMenu += "|@L1| " + _("Advanced");
     mainMenu += " |@L2|+|@R2|" + _("Power Off");
 
     string forceScanMenu = _("Games changed. Press") + "  |@X|  " + _("to scan") + "|";
-#if DISPLAY_NETWORK_MENU
-    string otherMenu = "|@S|  " + _("Network SSID") + "  |@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
-#else
-    string otherMenu = "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
-#endif
+    string otherMenu;
+    if (Env::autobleemKernel)
+        otherMenu += "|@S|  " + _("Hardware Information") + "  ";
+    otherMenu += "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
     cout << SDL_NumJoysticks() << "joysticks were found." << endl;
 
     if (!forceScan) {
@@ -763,21 +769,14 @@ void Gui::menuSelection() {
                                 };
                         break;
                     } else {
-#if DISPLAY_NETWORK_MENU
                         if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
                             Mix_PlayChannel(-1, cursor, 0);
-                            if (DirEntry::exists(Env::getPathToBleemsyncCFGDir())) {
-                                auto networkMenu = new GuiNetworkMenu(renderer);
-                                networkMenu->show();
-                                delete networkMenu;
-
-                                menuSelection();
-                                menuVisible = false;
-                            } else {
-                                Gui::splash(_("Bleemsync directory not on USB"));
+                            if (Env::autobleemKernel) {
+                                string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
+                                vector<const char *> argvNew { cmd.c_str(), nullptr };
+                                Util::execFork(cmd.c_str(), argvNew);
                             }
                         };
-#endif
 
                         if (e.jbutton.button == _cb(PCS_BTN_CROSS, &e)) {
                             Mix_PlayChannel(-1, cursor, 0);
