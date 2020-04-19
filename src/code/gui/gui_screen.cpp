@@ -14,7 +14,7 @@ void GuiScreen::loop()
         gui->watchJoystickPort();
         SDL_Event e;
 
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (handlePowerShutdownAndQuit(e))
                 continue;
 
