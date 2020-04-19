@@ -430,7 +430,7 @@ void Gui::criticalException(const string &text) {
     drawText(text);
     while (true) {
         SDL_Event e;
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -613,7 +613,7 @@ void Gui::menuSelection() {
             menuVisible = false;
         }
         SDL_Event e;
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
 
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
@@ -626,7 +626,28 @@ void Gui::menuSelection() {
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
             }
+
+            if (e.type == SDL_JOYDEVICEADDED )
+            {
+                int joyid = e.jdevice.which;
+                SDL_Joystick *joystick = SDL_JoystickOpen(joyid);
+                if (!mapper.isKnownPad(SDL_JoystickInstanceID(joystick))) {
+                    cout << "New pad type" << endl;
+                    // new controller configuration
+                    auto cfgPad = new GuiPadConfig(renderer);
+                    cfgPad->joyid = SDL_JoystickInstanceID(joystick);
+                    cfgPad->show();
+                    delete cfgPad;
+                    if (!forceScan) {
+                        drawText(mainMenu);
+
+                    } else {
+                        drawText(forceScanMenu);
+                    }
+                }
+            }
             switch (e.type) {
+
                 case SDL_JOYBUTTONUP:
                     if (!forceScan) {
                         if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
