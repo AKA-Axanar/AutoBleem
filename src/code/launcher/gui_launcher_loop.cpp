@@ -39,7 +39,7 @@ void GuiLauncher::loop() {
         headers = {_("SETTINGS"), _("GAME"), _("MEMORY CARD"), _("RESUME")};
         texts = {_("Customize AutoBleem settings"), _("Edit game parameters"),
                  _("Edit Memory Card information"), _("Resume game from saved state point")};
-        gui->watchJoystickPort();
+
         time = SDL_GetTicks();
         for (auto obj:staticElements) {
             obj->update(time);
@@ -73,6 +73,14 @@ void GuiLauncher::loop() {
         }
 
         while (AB_PollEvent(&e)) {
+            if (e.type == AB_CONTROLLERDEVICEADDED)
+            {
+                gui->registerPad(e.cdevice.which);
+            }
+            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            {
+                gui->removePad(e.cdevice.which);
+            }
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;

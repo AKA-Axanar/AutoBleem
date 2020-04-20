@@ -36,7 +36,6 @@ void GuiPadTest::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     int buttonDownCount = 0;
     while (buttonDownCount >= 0 && buttonDownCount < 3) {
-        gui->watchJoystickPort();
         SDL_Event e;
         auto status = AB_PollEvent(&e);
         if (status) {

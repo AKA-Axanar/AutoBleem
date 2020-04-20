@@ -194,9 +194,7 @@ void GuiBase::removePad(int joyid)
     }
 }
 
-                                    //*******************************
-                                    // Gui
-                                    //*******************************
+
 
 //*******************************
 // Gui::splash
@@ -480,6 +478,14 @@ void Gui::criticalException(const string &text) {
     while (true) {
         SDL_Event e;
         while (AB_PollEvent(&e)) {
+            if (e.type == AB_CONTROLLERDEVICEADDED)
+            {
+                registerPad(e.cdevice.which);
+            }
+            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            {
+                removePad(e.cdevice.which);
+            }
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -614,7 +620,6 @@ void Gui::menuSelection() {
     }
     bool menuVisible = true;
     while (menuVisible) {
-        watchJoystickPort();
         if (startingGame) {
             drawText(runningGame->title);
             this->menuOption = MENU_OPTION_START;
@@ -651,7 +656,6 @@ void Gui::menuSelection() {
             {
                 registerPad(e.cdevice.which);
             }
-
             if (e.type == AB_CONTROLLERDEVICEREMOVED)
             {
                 removePad(e.cdevice.which);
@@ -1305,31 +1309,7 @@ void Gui::renderFreeSpace() {
     SDL_RenderCopy(renderer, textTex, nullptr, &rect);
 }
 
-//*******************************
-// Gui::watchJoystickPort
-//*******************************
-void Gui::watchJoystickPort() {
 
-    int numJoysticks = SDL_NumJoysticks();
-    if (numJoysticks != joysticks.size()) {
-        cout << "Pad changed" << endl;
-        for (SDL_Joystick *joy:joysticks) {
-            if (SDL_JoystickGetAttached(joy)) {
-                SDL_JoystickClose(joy);
-            }
-            joysticks.clear();
-            joynames.clear();
-        }
-        SDL_Joystick *joystick;
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            joystick = SDL_JoystickOpen(i);
-            joysticks.push_back(joystick);
-            joynames.push_back(SDL_JoystickName(joystick));
-            cout << "Pad connected" << endl;
-            cout << "--" << SDL_JoystickName(joystick) << endl;
-        }
-    }
-}
 
 void Gui::exportDBToRetroarch() {
     ordered_json j;

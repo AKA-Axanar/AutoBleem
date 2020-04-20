@@ -435,9 +435,16 @@ void GuiKeyboard::loop() {
 
     menuVisible = true;
     while (menuVisible) {
-        gui->watchJoystickPort();
         SDL_Event e;
         while (AB_PollEvent(&e)) {
+            if (e.type == AB_CONTROLLERDEVICEADDED)
+            {
+                gui->registerPad(e.cdevice.which);
+            }
+            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            {
+                gui->removePad(e.cdevice.which);
+            }
             if (handlePowerShutdownAndQuit(e))
                 continue;
 

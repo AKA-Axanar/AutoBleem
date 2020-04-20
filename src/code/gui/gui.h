@@ -113,7 +113,6 @@ public:
     Database *db = nullptr;
     Database *internalDB = nullptr;
 
-    void watchJoystickPort();
 
     void loadAssets(bool reloadMusic = true);
 

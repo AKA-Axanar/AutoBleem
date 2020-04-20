@@ -87,9 +87,16 @@ void GuiAbout::loop() {
     menuVisible = true;
     while (menuVisible) {
         render();
-        gui->watchJoystickPort();
         SDL_Event e;
         while (AB_PollEvent(&e)) {
+            if (e.type == AB_CONTROLLERDEVICEADDED)
+            {
+                gui->registerPad(e.cdevice.which);
+            }
+            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            {
+                gui->removePad(e.cdevice.which);
+            }
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
