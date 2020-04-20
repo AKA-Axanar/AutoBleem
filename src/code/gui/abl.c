@@ -16,7 +16,7 @@ int AB_DISABLE_ANALOGUE=0;
 
 int AB_PopulateDpadEvent(SDL_Event * ev, SDL_Event * originalEvent, int type, int direction, int resval)
 {
-    memcpy(ev,&originalEvent, sizeof(SDL_Event));
+    memcpy(ev,originalEvent, sizeof(SDL_Event));
     ev->type = type;
     ev->cbutton.button = direction;
     return resval;

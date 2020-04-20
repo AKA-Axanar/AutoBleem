@@ -446,11 +446,7 @@ void Gui::loadAssets(bool reloadMusic) {
 //*******************************
 void Gui::waitForGamepad() {
     int joysticksFound = SDL_NumJoysticks();
-    while (joysticksFound == 0) {
-        drawText(_("PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC"));
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-        SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-        joysticksFound = SDL_NumJoysticks();
+
 #if defined(__x86_64__) || defined(_M_X64)
 
 #else
@@ -458,7 +454,7 @@ void Gui::waitForGamepad() {
     SDL_SetWindowGrab(window, SDL_TRUE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
-    }
+
 
 
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
@@ -570,19 +566,7 @@ bool powerOffShift = false;
 void Gui::menuSelection() {
     shared_ptr<Scanner> scanner(Scanner::getInstance());
 
-    SDL_Joystick *joystick;
-    if (joysticks.empty())
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            joystick = SDL_JoystickOpen(i);
-            joysticks.push_back(joystick);
-            cout << "--" << SDL_JoystickName(joystick) << endl;
-        }
-    // Check if all OK
-// commented this part out.  it was just annoying people who only played RA
-//    if (scanner->noGamesFoundDuringScan) {
-//        criticalException(_("WARNING: NO GAMES FOUND. PRESS ANY BUTTON."));
-//    }
-    //
+
     if (!coverdb->isValid()) {
         criticalException(_("WARNING: NO COVER DB FOUND. PRESS ANY BUTTON."));
     }
@@ -661,27 +645,8 @@ void Gui::menuSelection() {
                 removePad(e.cdevice.which);
             }
 
-            /*
-            if (e.type == SDL_JOYDEVICEADDED )
-            {
-                int joyid = e.jdevice.which;
-                SDL_Joystick *joystick = SDL_JoystickOpen(joyid);
-                if (!mapper.isKnownPad(SDL_JoystickInstanceID(joystick))) {
-                    cout << "New pad type" << endl;
-                    // new controller configuration
-                    auto cfgPad = new GuiPadConfig(renderer);
-                    cfgPad->joyid = SDL_JoystickInstanceID(joystick);
-                    cfgPad->show();
-                    delete cfgPad;
-                    if (!forceScan) {
-                        drawText(mainMenu);
 
-                    } else {
-                        drawText(forceScanMenu);
-                    }
-                }
-            }
-            */
+
             switch (e.type) {
 
                 case AB_CONTROLLERBUTTONUP:
