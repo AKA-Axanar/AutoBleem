@@ -43,16 +43,10 @@ using ordered_json = basic_json<my_workaround_fifo_map>;
 // GuiBase::GuiBase
 //********************
 GuiBase::GuiBase() {
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
-    SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-    SDL_InitSubSystem(SDL_INIT_AUDIO);
-
     string gamedbpath = Environment::getWorkingPath()+"/gamecontrollerdb.txt";
     cout << "GameDBPath: " << gamedbpath << endl;
-    int loadedMappings = SDL_GameControllerAddMappingsFromFile(gamedbpath.c_str());
-    cout << "Loaded Pad mappings:" << to_string(loadedMappings) << endl;
-
+    AB_Init(SDL_INIT_VIDEO, gamedbpath.c_str());
+    SDL_InitSubSystem(SDL_INIT_AUDIO);
 
 
     window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, 0);
@@ -76,7 +70,7 @@ GuiBase::GuiBase() {
 // GuiBase::~GuiBase
 //********************
 GuiBase::~GuiBase() {
-    SDL_Quit();
+    AB_Quit();
 }
 
 //*******************************
@@ -161,37 +155,14 @@ string GuiBase::getCurrentThemeFontPath() {
 
 void GuiBase::registerPad(int joyid)
 {
-    SDL_GameController *controller = NULL;
-    controller = SDL_GameControllerOpen(joyid);
-    if (controller) {
-        cout << "New Game Controller ID:" << to_string(joyid) << endl;
-    } else {
-        cout << "Not a Game Controller:" <<  to_string(joyid) << endl;
-        return;
-    }
+    AB_RegisterPad(joyid);
 
-    ControllerMapInfo * cmi = new ControllerMapInfo;
-    cmi->pad = controller;
-    cmi->joy = SDL_GameControllerGetJoystick(cmi->pad);
-    cmi->instanceId = SDL_JoystickInstanceID(cmi->joy);
-    cmi->name =  SDL_GameControllerName(controller);
-    cout << "New Game Controller Name:" << cmi->name << endl;
-    gameControllers.insert(make_pair(joyid,cmi));
 }
 
 void GuiBase::removePad(int joyid)
 {
-    if (gameControllers.find(joyid)!=gameControllers.end()) {
-        map<int,ControllerMapInfo*>::iterator it = gameControllers.find(joyid);
-        ControllerMapInfo *cmi = it->second;
-        if (cmi) {
-            SDL_GameControllerClose(cmi->pad);
-            cout << "GameController Disconnected: " << cmi->name << endl;
-            gameControllers.erase(it);
-            delete cmi;
+    AB_RemovePad(joyid);
 
-        }
-    }
 }
 
 
@@ -412,6 +383,15 @@ void Gui::loadAssets(bool reloadMusic) {
         if (Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
             printf("Unable to open audio: %s\n", Mix_GetError());
         }
+
+        const char* driver_name = SDL_GetCurrentAudioDriver();
+
+        if (driver_name) {
+            printf("Audio subsystem initialized; driver = %s.\n", driver_name);
+        } else {
+            printf("Audio subsystem not initialized.\n");
+        }
+
     }
     cursor = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cursor.wav").c_str());
     cancel = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cancel.wav").c_str());
@@ -456,13 +436,13 @@ void Gui::waitForGamepad() {
 #endif
 
 
-
+/*
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
          registerPad(i);
         }
     }
-
+*/
 
 }
 
@@ -638,9 +618,31 @@ void Gui::menuSelection() {
 
             if (e.type == AB_CONTROLLERDEVICEADDED)
             {
+                cout << "Registering new gamepad" << endl;
                 registerPad(e.cdevice.which);
             }
             if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            {
+                cout << "Removing gamepad" << endl;
+                removePad(e.cdevice.which);
+            }
+
+            if (e.type == SDL_JOYDEVICEADDED)
+            {
+                SDL_Joystick* js = SDL_JoystickOpen(e.jdevice.which);
+                SDL_JoystickGUID guid = SDL_JoystickGetGUID(js);
+                char guid_str[1024];
+                SDL_JoystickGetGUIDString(guid, guid_str, sizeof(guid_str));
+
+                bool isgamecontroller = SDL_IsGameController(e.jdevice.which);
+                cout << "New Joystick GUID:" << guid_str << "   GameController match:" << to_string(isgamecontroller) << endl;
+                if (isgamecontroller)
+                {
+                    registerPad(e.jdevice.which);
+                }
+            }
+
+            if (e.type == SDL_JOYDEVICEREMOVED)
             {
                 removePad(e.cdevice.which);
             }

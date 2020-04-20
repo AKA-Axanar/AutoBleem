@@ -10,13 +10,25 @@
 extern "C" {
 #endif
 int AB_PollEvent(SDL_Event *event);
+int AB_Init(Uint32 flags, const char * gamecontrollerdb);
+void AB_Quit();
+void AB_RegisterPad(int id);
+void AB_RemovePad(int id);
+int AB_NumJoysticks();
+int AB_JoyInPort();
+int AB_PeepEvents(SDL_Event*       events,
+                  int             numevents,
+                  SDL_eventaction action,
+                  Uint32          minType,
+                  Uint32          maxType);
+
 // all of your legacy C code here
 
 #ifdef __cplusplus
 }
 #endif
 
-
+#define MAXPADS 16
 
 
 #define AB_BTN_TRIANGLE SDL_CONTROLLER_BUTTON_Y
@@ -33,7 +45,8 @@ int AB_PollEvent(SDL_Event *event);
 #define AB_BTN_DDOWN    SDL_CONTROLLER_BUTTON_DPAD_DOWN
 #define AB_BTN_DLEFT    SDL_CONTROLLER_BUTTON_DPAD_LEFT
 #define AB_BTN_DRIGHT   SDL_CONTROLLER_BUTTON_DPAD_RIGHT
-#define AB_BTN_DCENTER  SDL_CONTROLLER_BUTTON_MAX+203
+
+
 
 #define AB_CONTROLLERDEVICEADDED SDL_CONTROLLERDEVICEADDED
 #define AB_CONTROLLERDEVICEREMOVED SDL_CONTROLLERDEVICEREMOVED
@@ -43,7 +56,15 @@ int AB_PollEvent(SDL_Event *event);
 #define AB_HATMOTIONUP   SDL_LASTEVENT-2
 
 
+struct ControllerInfo
+{
+    SDL_GameController * pad;
+    SDL_Joystick * joy;
+    char name[3000];
+    char guid[1024];
+};
 
+extern struct ControllerInfo * padinfo[MAXPADS];
 
 
 #endif //AUTOBLEEM_GUI_ABL_H

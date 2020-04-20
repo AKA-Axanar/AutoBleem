@@ -25,6 +25,7 @@
 #include "launcher/ra_integrator.h"
 #include "launcher/launch_interceptor.h"
 #include "launcher/gui_app_start.h"
+#include "gui/abl.h"
 
 using namespace std;
 
@@ -363,7 +364,7 @@ int main(int argc, char *argv[]) {
 
     Gui::splash(_("Loading ... Please Wait ..."));
     gui->finish();
-    SDL_Quit();
+    AB_Quit();
     delete coverdb;
 
     exit(0);

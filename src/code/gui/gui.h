@@ -55,13 +55,7 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 // SET_PS1 select sub states. keep SET_PS1_Games_Subdir last as it's going to be left off the L2+Select menu
 enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir };
 
-struct ControllerMapInfo
-{
-    SDL_GameController * pad;
-    SDL_Joystick * joy;
-    int instanceId;
-    string name;
-};
+
 //********************
 // GuiBase
 //********************
@@ -70,7 +64,7 @@ public:
     SDL_Shared<SDL_Window> window;
     SDL_Shared<SDL_Renderer> renderer;
 
-    map<int,ControllerMapInfo*> gameControllers;
+
 
     Fonts themeFonts;
     Fonts sonyFonts;
