@@ -10,16 +10,15 @@
 
 using namespace std;
 
-#define PCS_BTN_L2       4
-#define PCS_BTN_R2       5
-#define PCS_BTN_L1       6
-#define PCS_BTN_R1       7
-#define PCS_BTN_START    9
-#define PCS_BTN_SQUARE   3
-#define PCS_BTN_TRIANGLE 0
-#define PCS_BTN_CROSS    2
-#define PCS_BTN_CIRCLE   1
-#define PCS_BTN_SELECT   8
+#define DUP         0
+#define DDOWN       1
+#define DLEFT       2
+#define DRIGHT      3
+
+
+
+
+
 
 #define DIR_UP    1
 #define DIR_DOWN  2
@@ -32,21 +31,19 @@ using namespace std;
 //******************
 class PadMapper {
 public:
+    bool status[4];
     // loads all mapping files
-    void init();
-
-    map<string,Inifile*> configs;
-    map<int, string> buttonNames;
-    int translateButton(int button, SDL_Event* event);
+    PadMapper()
+    {
+        status[0]=false;
+        status[1]=false;
+        status[2]=false;
+        status[3]=false;
+    };
     bool isUp(SDL_Event* event);
     bool isDown(SDL_Event* event);
     bool isLeft(SDL_Event* event);
     bool isRight(SDL_Event* event);
     bool isCenter(SDL_Event* event);
     bool isDirection(SDL_Event* e,  int dir);
-    bool isKnownPad(int id);
-    string getMappingString(int id);
-    void reload();
-    Inifile * defaultConfig;
-
 };

@@ -13,7 +13,6 @@
 #include "../ver_migration.h"
 #include "../lang.h"
 #include "../launcher/gui_launcher.h"
-#include "gui_padconfig.h"
 #include "gui_padTest.h"
 #include <fstream>
 #include <unistd.h>
@@ -45,8 +44,14 @@ using ordered_json = basic_json<my_workaround_fifo_map>;
 //********************
 GuiBase::GuiBase() {
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
     SDL_InitSubSystem(SDL_INIT_JOYSTICK);
     SDL_InitSubSystem(SDL_INIT_AUDIO);
+
+    string gamedbpath = Environment::getWorkingPath()+"/gamecontrollerdb.txt";
+    cout << "GameDBPath: " << gamedbpath << endl;
+    int loadedMappings = SDL_GameControllerAddMappingsFromFile(gamedbpath.c_str());
+    cout << "Loaded Pad mappings:" << to_string(loadedMappings) << endl;
 
 
 
@@ -152,6 +157,41 @@ string GuiBase::getCurrentThemeFontPath() {
     }
     return path;
 #endif
+}
+
+void GuiBase::registerPad(int joyid)
+{
+    SDL_GameController *controller = NULL;
+    controller = SDL_GameControllerOpen(joyid);
+    if (controller) {
+        cout << "New Game Controller ID:" << to_string(joyid) << endl;
+    } else {
+        cout << "Not a Game Controller:" <<  to_string(joyid) << endl;
+        return;
+    }
+
+    ControllerMapInfo * cmi = new ControllerMapInfo;
+    cmi->pad = controller;
+    cmi->joy = SDL_GameControllerGetJoystick(cmi->pad);
+    cmi->instanceId = SDL_JoystickInstanceID(cmi->joy);
+    cmi->name =  SDL_GameControllerName(controller);
+    cout << "New Game Controller Name:" << cmi->name << endl;
+    gameControllers.insert(make_pair(joyid,cmi));
+}
+
+void GuiBase::removePad(int joyid)
+{
+    if (gameControllers.find(joyid)!=gameControllers.end()) {
+        map<int,ControllerMapInfo*>::iterator it = gameControllers.find(joyid);
+        ControllerMapInfo *cmi = it->second;
+        if (cmi) {
+            SDL_GameControllerClose(cmi->pad);
+            cout << "GameController Disconnected: " << cmi->name << endl;
+            gameControllers.erase(it);
+            delete cmi;
+
+        }
+    }
 }
 
                                     //*******************************
@@ -421,6 +461,15 @@ void Gui::waitForGamepad() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
     }
+
+
+    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        if (SDL_IsGameController(i)) {
+         registerPad(i);
+        }
+    }
+
+
 }
 
 //*******************************
@@ -430,7 +479,7 @@ void Gui::criticalException(const string &text) {
     drawText(text);
     while (true) {
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -442,7 +491,7 @@ void Gui::criticalException(const string &text) {
             else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
                 return;
 
-            if (e.type == SDL_JOYBUTTONDOWN) {
+            if (e.type == SDL_CONTROLLERBUTTONDOWN) {
                 return;
             }
         }
@@ -480,33 +529,6 @@ void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, b
         splashScreen->show();
         delete splashScreen;
 
-#if 1
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            SDL_Joystick *joystick = SDL_JoystickOpen(i);
-            if (!mapper.isKnownPad(SDL_JoystickInstanceID(joystick))) {
-                cout << "New pad type" << endl;
-                // new controller configuration
-                auto cfgPad = new GuiPadConfig(renderer);
-                cfgPad->joyid = SDL_JoystickInstanceID(joystick);
-                cfgPad->show();
-                delete cfgPad;
-            }
-        }
-#else   // build verion to test controllers.  GuiPadTest displays the SDL event coming from the controller.
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            SDL_Joystick *joystick = SDL_JoystickOpen(i);
-            // for debugging new controllers
-            // this will display a scrollable window displaying all the events coming from the new controller
-            // for testing.  it also writes the output to ab_out.txt
-            // hold down three buttons to exit and do a safe shutdown!
-            auto cfgTest = new GuiPadTest(renderer);
-            cfgTest->joyid = SDL_JoystickInstanceID(joystick);
-            cfgTest->alsoWriteToCout = true;
-                cfgTest->show();
-            delete cfgTest;
-            Util::powerOff();
-        }
-#endif
 
         waitForGamepad();
     } else {
@@ -534,9 +556,7 @@ void Gui::saveSelection() {
 bool otherMenuShift = false;
 bool powerOffShift = false;
 
-int Gui::_cb(int button, SDL_Event *e) {
-    return mapper.translateButton(button, e);
-}
+
 
 //*******************************
 // Gui::menuSelection
@@ -613,7 +633,7 @@ void Gui::menuSelection() {
             menuVisible = false;
         }
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
 
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
@@ -627,6 +647,17 @@ void Gui::menuSelection() {
                 menuVisible = false;
             }
 
+            if (e.type == AB_CONTROLLERDEVICEADDED)
+            {
+                registerPad(e.cdevice.which);
+            }
+
+            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            {
+                removePad(e.cdevice.which);
+            }
+
+            /*
             if (e.type == SDL_JOYDEVICEADDED )
             {
                 int joyid = e.jdevice.which;
@@ -646,36 +677,37 @@ void Gui::menuSelection() {
                     }
                 }
             }
+            */
             switch (e.type) {
 
-                case SDL_JOYBUTTONUP:
+                case AB_CONTROLLERBUTTONUP:
                     if (!forceScan) {
-                        if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
+                        if (e.cbutton.button == AB_BTN_L1) {
                             Mix_PlayChannel(-1, cursor, 0);
                             drawText(mainMenu);
                             otherMenuShift = false;
                         }
-                        if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
+                        if (e.cbutton.button == AB_BTN_L2) {
                             Mix_PlayChannel(-1, cursor, 0);
                             powerOffShift = false;
                         }
                     }
                     break;
-                case SDL_JOYBUTTONDOWN:
+                case AB_CONTROLLERBUTTONDOWN:
                     if (!forceScan) {
-                        if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
+                        if (e.cbutton.button == AB_BTN_L1) {
                             Mix_PlayChannel(-1, cursor, 0);
                             drawText(otherMenu);
                             otherMenuShift = true;
                         }
-                        if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
+                        if (e.cbutton.button == AB_BTN_L2) {
                             Mix_PlayChannel(-1, cursor, 0);
                             powerOffShift = true;
                         }
                     }
 
                     if (powerOffShift) {
-                        if (e.jbutton.button == _cb(PCS_BTN_R2, &e)) {
+                        if (e.cbutton.button == AB_BTN_R2) {
                             Mix_PlayChannel(-1, cursor, 0);
                             drawText(_("POWERING OFF... PLEASE WAIT"));
 #if defined(__x86_64__) || defined(_M_X64)
@@ -690,7 +722,7 @@ void Gui::menuSelection() {
 
                     if (!otherMenuShift) {
                         if (!forceScan)
-                            if (e.jbutton.button == _cb(PCS_BTN_START, &e)) {
+                            if (e.cbutton.button == AB_BTN_START ) {
                                 if (cfg.inifile.values["ui"] == "classic") {
                                     Mix_PlayChannel(-1, cursor, 0);
                                     this->menuOption = MENU_OPTION_RUN;
@@ -714,7 +746,7 @@ void Gui::menuSelection() {
                             };
 
                         if (!forceScan)
-                            if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
+                            if (e.cbutton.button == AB_BTN_SQUARE) {
                                 Mix_PlayChannel(-1, cursor, 0);
                                 if (!DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
 
@@ -737,13 +769,13 @@ void Gui::menuSelection() {
                                 }
                             };
 
-                        if (e.jbutton.button == _cb(PCS_BTN_CROSS, &e)) {
+                        if (e.cbutton.button == AB_BTN_CROSS) {
                             Mix_PlayChannel(-1, cursor, 0);
                             this->menuOption = MENU_OPTION_SCAN;
 
                             menuVisible = false;
                         };
-                        if (e.jbutton.button == _cb(PCS_BTN_TRIANGLE, &e)) {
+                        if (e.cbutton.button == AB_BTN_TRIANGLE) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto *aboutScreen = new GuiAbout(renderer);
                             aboutScreen->show();
@@ -752,7 +784,7 @@ void Gui::menuSelection() {
                             menuSelection();
                             menuVisible = false;
                         };
-                        if (e.jbutton.button == _cb(PCS_BTN_SELECT, &e)) {
+                        if (e.cbutton.button == AB_BTN_SELECT) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto options = new GuiOptions(renderer);
                             options->show();
@@ -762,14 +794,14 @@ void Gui::menuSelection() {
                         };
                         if (!forceScan)
                             if (cfg.inifile.values["ui"] == "classic")
-                                if (e.jbutton.button == _cb(PCS_BTN_CIRCLE, &e)) {
+                                if (e.cbutton.button == AB_BTN_CIRCLE) {
                                     Mix_PlayChannel(-1, cancel, 0);
                                     this->menuOption = MENU_OPTION_SONY;
                                     menuVisible = false;
                                 };
                         break;
                     } else {
-                        if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
+                        if (e.cbutton.button == AB_BTN_SQUARE) {
                             Mix_PlayChannel(-1, cursor, 0);
                             if (Env::autobleemKernel) {
                                 string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
@@ -778,7 +810,7 @@ void Gui::menuSelection() {
                             }
                         };
 
-                        if (e.jbutton.button == _cb(PCS_BTN_CROSS, &e)) {
+                        if (e.cbutton.button == AB_BTN_CROSS) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto memcardsScreen = new GuiMemcards(renderer);
                             memcardsScreen->show();
@@ -788,7 +820,7 @@ void Gui::menuSelection() {
                             menuVisible = false;
                         };
 
-                        if (e.jbutton.button == _cb(PCS_BTN_CIRCLE, &e)) {
+                        if (e.cbutton.button == AB_BTN_CIRCLE) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto managerScreen = new GuiManager(renderer);
                             managerScreen->show();

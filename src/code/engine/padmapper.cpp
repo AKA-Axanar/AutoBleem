@@ -7,130 +7,56 @@
 #include <iostream>
 #include "../DirEntry.h"
 #include "../environment.h"
+#include "../gui/abl.h"
 
-//*******************************
-// PadMapper::reload
-//*******************************
-void PadMapper::reload() {
-    for (const auto &any : configs) {
-        Inifile *cfg = any.second;
-        delete cfg;
-    }
-    configs.clear();
-    string path = Env::getWorkingPath() + sep + "gpmapping";
-    for (const DirEntry & entry:DirEntry::diru(path)) {
-        if (DirEntry::getFileExtension(entry.name) == "ini") {
-
-            Inifile *mapping = new Inifile();
-            mapping->load(path + "/" + entry.name);
-            cout << "New Pad Config: " << mapping->section << endl;
-            configs[mapping->section] = mapping;
-        }
-    }
-}
-
-//*******************************
-// PadMapper::init
-//*******************************
-void PadMapper::init() {
-    buttonNames.clear();
-    buttonNames[PCS_BTN_CIRCLE] = "circle";
-    buttonNames[PCS_BTN_SQUARE] = "square";
-    buttonNames[PCS_BTN_TRIANGLE] = "triangle";
-    buttonNames[PCS_BTN_CROSS] = "cross";
-    buttonNames[PCS_BTN_START] = "start";
-    buttonNames[PCS_BTN_SELECT] = "select";
-    buttonNames[PCS_BTN_L1] = "l1";
-    buttonNames[PCS_BTN_L2] = "l2";
-    buttonNames[PCS_BTN_R1] = "r1";
-    buttonNames[PCS_BTN_R2] = "r2";
-
-    defaultConfig = new Inifile();
-    defaultConfig->values["cross"] = "2";
-    defaultConfig->values["circle"] = "1";
-    defaultConfig->values["square"] = "3";
-    defaultConfig->values["triangle"] = "0";
-    defaultConfig->values["start"] = "9";
-    defaultConfig->values["select"] = "8";
-    defaultConfig->values["l1"] = "6";
-    defaultConfig->values["l2"] = "4";
-    defaultConfig->values["r1"] = "7";
-    defaultConfig->values["r2"] = "5";
-    defaultConfig->values["dpad"] = "analogue";
-    defaultConfig->values["analogue1"] = "na";
-    defaultConfig->values["analogue2"] = "na";
-    defaultConfig->values["dpaddeadzone"] = "32000";
-
-    configs.clear();
-    reload();
-
-}
-
-//*******************************
-// PadMapper::isKnownPad
-//*******************************
-bool PadMapper::isKnownPad(int id) {
-    SDL_Joystick *joy = SDL_JoystickFromInstanceID(id);
-    string joyname = SDL_JoystickName(joy);
-    if (joyname.find("Sony Interactive Entertainment Controller") != string::npos) {
-        cout << "Original controller attached" << endl;
-        return true;
-    }
-    // fetch mapping
-    Inifile *config = configs[joyname];
-    return config != nullptr;
-}
-
-//*******************************
-// PadMapper::getMappingString
-//*******************************
-string PadMapper::getMappingString(int id) {
-    SDL_Joystick *joy = SDL_JoystickFromInstanceID(id);
-    string joyname = SDL_JoystickName(joy);
-    if (joyname.find("Sony Interactive Entertainment Controller") != string::npos) {
-        return "";
-    }
-
-    Inifile *config = configs[joyname];
-using namespace std;
-
-    if (config == nullptr) {
-        return "";
-    }
-    string mapping;
-    mapping += config->values["triangle"] + "|";
-    mapping += config->values["circle"] + "|";
-    mapping += config->values["cross"] + "|";
-    mapping += config->values["square"] + "|";
-    mapping += config->values["l1"] + "|";
-    mapping += config->values["r1"] + "|";
-    mapping += config->values["l2"] + "|";
-    mapping += config->values["r2"] + "|";
-    mapping += config->values["start"] + "|";
-    mapping += config->values["select"] + "|";
-    if (config->values["dpad"] == "digital") {
-        mapping += "D|";
-    } else {
-        mapping += "A|";
-    }
-    mapping += "1|1|";
-    mapping += config->values["dpaddeadzone"];
-    return mapping;
-}
 
 
 //*******************************
 // PadMapper::isDirection
 //*******************************
 bool PadMapper::isDirection(SDL_Event *e, int dir) {
-    // find pad name
+    if (e->type==AB_HATMOTIONDOWN)
+    {
+        if (e->cbutton.button == AB_BTN_DUP) status[DUP]=true;
+        if (e->cbutton.button == AB_BTN_DDOWN) status[DDOWN]=true;
+        if (e->cbutton.button == AB_BTN_DLEFT) status[DLEFT]=true;
+        if (e->cbutton.button == AB_BTN_DRIGHT) status[DRIGHT]=true;
+    }
 
+    if (e->type==AB_HATMOTIONUP)
+    {
+        if (e->cbutton.button == AB_BTN_DUP) status[DUP]=false;
+        if (e->cbutton.button == AB_BTN_DDOWN) status[DDOWN]=false;
+        if (e->cbutton.button == AB_BTN_DLEFT) status[DLEFT]=false;
+        if (e->cbutton.button == AB_BTN_DRIGHT) status[DRIGHT]=false;
+    }
+
+    switch (dir) {
+        case DIR_UP:
+            return status[DUP];
+        case DIR_DOWN:
+            return status[DDOWN];
+        case DIR_LEFT:
+            return status[DLEFT];
+        case DIR_RIGHT:
+            return status[DRIGHT];
+        case DIR_NONE:
+            return !status[DUP] && !status[DDOWN] && !status[DLEFT] && !status[DRIGHT];
+
+    }
+
+return false;
+/*
     SDL_JoystickID id;
 
-    if (e->type == SDL_JOYHATMOTION) {
+    if (e->type == AB_HATMOTIONUP) {
         id = e->jhat.which;
+        cout << "HAT:" << endl;
+        cout << to_string(e->jhat.hat) << endl;
     } else {
         id = e->jaxis.which;
+        cout << "AXIS:" << endl;
+        cout << to_string(e->jaxis.axis) << endl;
     }
     SDL_Joystick *joy = SDL_JoystickFromInstanceID(id);
     const char *joyname = SDL_JoystickName(joy);
@@ -149,7 +75,7 @@ bool PadMapper::isDirection(SDL_Event *e, int dir) {
     if (config->values["dpad"] == "analogue") {
 
         if (dir != DIR_NONE) {
-            if (e->type == SDL_JOYAXISMOTION) {
+            if (e->type == AB_HATMOTIONDOWN) {
                 if (e->jaxis.axis == axis) {
                     if ((dir == DIR_UP) || (dir == DIR_LEFT)) {
                         return (e->jaxis.value < -deadZone);
@@ -162,7 +88,7 @@ bool PadMapper::isDirection(SDL_Event *e, int dir) {
             return (e->jaxis.value >= -deadZone) && (e->jaxis.value <= deadZone);
         }
     } else {
-        if (e->type == SDL_JOYHATMOTION) {
+        if (e->type == AB_HATMOTIONUP) {
             switch (dir) {
                 case DIR_UP:
                     return (e->jhat.value == SDL_HAT_UP);
@@ -178,6 +104,7 @@ bool PadMapper::isDirection(SDL_Event *e, int dir) {
         }
     }
     return false;
+    */
 }
 
 //*******************************
@@ -215,18 +142,3 @@ bool PadMapper::isRight(SDL_Event *event) {
     return isDirection(event, DIR_RIGHT);
 }
 
-//*******************************
-// PadMapper::translateButton
-//*******************************
-int PadMapper::translateButton(int button, SDL_Event *e) {
-    SDL_Joystick *joy = SDL_JoystickFromInstanceID(e->jbutton.which);
-    const char *joyname = SDL_JoystickName(joy);
-    string buttonName = buttonNames[button];
-    // fetch mapping
-    Inifile *config = configs[joyname];
-    if (config == nullptr) {
-        config = defaultConfig;
-    }
-    int newBtnCode = atoi(config->values[buttonName].c_str());
-    return newBtnCode;
-}

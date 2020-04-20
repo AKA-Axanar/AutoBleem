@@ -437,7 +437,7 @@ void GuiKeyboard::loop() {
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             if (handlePowerShutdownAndQuit(e))
                 continue;
 
@@ -476,38 +476,38 @@ void GuiKeyboard::loop() {
                     doKbdTextInput(e);
                     break;
 
-                case SDL_JOYBUTTONUP:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_L1, &e)) {
+                case AB_CONTROLLERBUTTONUP:
+                    if (e.cbutton.button == AB_BTN_L1) {
                         doL1_up();
-                    } else if (e.jbutton.button == gui->_cb(PCS_BTN_L2, &e)) {
+                    } else if (e.cbutton.button == AB_BTN_L2) {
                         doL2_up();
                     }
                     break;
 
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_L1, &e)) {     // caps shift
+                case AB_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == AB_BTN_L1) {     // caps shift
                         doL1_down();
-                    } else if (e.jbutton.button == gui->_cb(PCS_BTN_L2, &e)) {     // move cursor shift
+                    } else if (e.cbutton.button == AB_BTN_L2) {     // move cursor shift
                         doL2_down();
                     }
 
                     if (!L2_cursor_shift) {
-                        if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE, &e)) {   // delete char on the left
+                        if (e.cbutton.button == AB_BTN_TRIANGLE) {   // delete char on the left
                             doTriangle();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE, &e)) {     //insert space
+                        } else if (e.cbutton.button == AB_BTN_SQUARE) {     //insert space
                             doSquare();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS, &e)) {
+                        } else if (e.cbutton.button == AB_BTN_CROSS) {
                             doCross();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_START, &e)) {  // Confirm
+                        } else if (e.cbutton.button == AB_BTN_START) {  // Confirm
                             doStart();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) { // Cancel
+                        } else if (e.cbutton.button == AB_BTN_CIRCLE) { // Cancel
                             doCircle();
                         }
                     }
                     break;
 
-                case SDL_JOYAXISMOTION:
-                case SDL_JOYHATMOTION:
+                case AB_HATMOTIONDOWN:
+                case AB_HATMOTIONUP:
                     if (gui->mapper.isRight(&e)) {
                         doJoyRight();
                     } else if (gui->mapper.isLeft(&e)) {

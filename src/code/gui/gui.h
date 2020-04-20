@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include "abl.h"
 #include "../main.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -20,6 +21,7 @@
 #include "gui_font.h"
 
 #define PCS_DEADZONE     32000
+/*
 #define PCS_BTN_L2       4
 #define PCS_BTN_R2       5
 #define PCS_BTN_L1       6
@@ -30,6 +32,9 @@
 #define PCS_BTN_CROSS    2
 #define PCS_BTN_CIRCLE   1
 #define PCS_BTN_SELECT   8
+*/
+
+
 
 enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_OPTION_RETRO, MENU_OPTION_START };
 
@@ -50,6 +55,13 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 // SET_PS1 select sub states. keep SET_PS1_Games_Subdir last as it's going to be left off the L2+Select menu
 enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir };
 
+struct ControllerMapInfo
+{
+    SDL_GameController * pad;
+    SDL_Joystick * joy;
+    int instanceId;
+    string name;
+};
 //********************
 // GuiBase
 //********************
@@ -57,6 +69,8 @@ class GuiBase {
 public:
     SDL_Shared<SDL_Window> window;
     SDL_Shared<SDL_Renderer> renderer;
+
+    map<int,ControllerMapInfo*> gameControllers;
 
     Fonts themeFonts;
     Fonts sonyFonts;
@@ -68,6 +82,9 @@ public:
     std::string getCurrentThemeFontPath();
     std::string getCurrentThemeSoundPath();
 
+    void registerPad(int joyid);
+    void removePad(int joyid);
+
     GuiBase();
     ~GuiBase();
 };
@@ -78,14 +95,13 @@ public:
 class Gui : public GuiBase {
 private:
 
-    Gui() { mapper.init(); }
+    Gui() {  }
 
     string themePath;
 
 public:
     std::vector<SDL_Joystick *> joysticks;
 
-    int _cb(int button, SDL_Event *e);
 
     vector<string> joynames;
     PadMapper mapper;

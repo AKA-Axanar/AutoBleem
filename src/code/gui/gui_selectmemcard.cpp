@@ -108,7 +108,7 @@ void GuiSelectMemcard::loop() {
     bool menuVisible = true;
     while (menuVisible) {
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -120,8 +120,8 @@ void GuiSelectMemcard::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_JOYAXISMOTION:
-                case SDL_JOYHATMOTION:
+                case AB_HATMOTIONDOWN:
+                case AB_HATMOTIONUP:
                     if (gui->mapper.isDown(&e)) {
 
                             Mix_PlayChannel(-1, gui->cursor, 0);
@@ -146,8 +146,8 @@ void GuiSelectMemcard::loop() {
                         }
 
                     break;
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button ==  gui->_cb(PCS_BTN_R1,&e)) {
+                case AB_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button ==  AB_BTN_R1) {
 
                         Mix_PlayChannel(-1, gui->home_up, 0);
                         selected += maxVisible;
@@ -158,7 +158,7 @@ void GuiSelectMemcard::loop() {
                         lastVisible = firstVisible + maxVisible;
                         render();
                     };
-                    if (e.jbutton.button ==  gui->_cb(PCS_BTN_L1,&e)) {
+                    if (e.cbutton.button ==  AB_BTN_L1) {
 
                         Mix_PlayChannel(-1, gui->home_down, 0);
                         selected -= maxVisible;
@@ -170,14 +170,14 @@ void GuiSelectMemcard::loop() {
                         render();
                     };
 
-                    if (e.jbutton.button ==  gui->_cb(PCS_BTN_CIRCLE,&e)) {
+                    if (e.cbutton.button ==  AB_BTN_CIRCLE) {
 
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         selected = -1;
                         menuVisible = false;
 
                     };
-                    if (e.jbutton.button ==  gui->_cb(PCS_BTN_CROSS,&e)) {
+                    if (e.cbutton.button ==  AB_BTN_CROSS) {
                         cardSelected = cards[selected];
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         menuVisible = false;

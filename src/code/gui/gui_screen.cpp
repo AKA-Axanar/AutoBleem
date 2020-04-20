@@ -14,13 +14,13 @@ void GuiScreen::loop()
         gui->watchJoystickPort();
         SDL_Event e;
 
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             if (handlePowerShutdownAndQuit(e))
                 continue;
 
             switch (e.type) {
-                case SDL_JOYAXISMOTION:
-                case SDL_JOYHATMOTION:
+                case AB_HATMOTIONDOWN:
+                case AB_HATMOTIONUP:
 
                     if (gui->mapper.isUp(&e))
                         doJoyUp();
@@ -34,49 +34,49 @@ void GuiScreen::loop()
                         doJoyCenter();
                     break;
 
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e))
+                case AB_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == AB_BTN_CROSS)
                         doCross_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE,&e))
+                    else if (e.cbutton.button == AB_BTN_CIRCLE)
                         doCircle_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE,&e))
+                    else if (e.cbutton.button == AB_BTN_TRIANGLE)
                         doTriangle_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE,&e))
+                    else if (e.cbutton.button == AB_BTN_SQUARE)
                         doSquare_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_START,&e))
+                    else if (e.cbutton.button == AB_BTN_START)
                         doStart_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SELECT,&e))
+                    else if (e.cbutton.button == AB_BTN_SELECT)
                         doSelect_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L1,&e))
+                    else if (e.cbutton.button == AB_BTN_L1)
                         doL1_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R1,&e))
+                    else if (e.cbutton.button == AB_BTN_R1)
                         doR1_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L2,&e))
+                    else if (e.cbutton.button == AB_BTN_L2)
                         doL2_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R2,&e))
+                    else if (e.cbutton.button == AB_BTN_R2)
                         doR2_Pressed();
                     break;
 
-                case SDL_JOYBUTTONUP:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e))
+                case AB_CONTROLLERBUTTONUP:
+                    if (e.cbutton.button == AB_BTN_CROSS)
                         doCross_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE,&e))
+                    else if (e.cbutton.button == AB_BTN_CIRCLE)
                         doCircle_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE,&e))
+                    else if (e.cbutton.button == AB_BTN_TRIANGLE)
                         doTriangle_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE,&e))
+                    else if (e.cbutton.button == AB_BTN_SQUARE)
                         doSquare_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_START,&e))
+                    else if (e.cbutton.button == AB_BTN_START)
                         doStart_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SELECT,&e))
+                    else if (e.cbutton.button == AB_BTN_SELECT)
                         doSelect_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L1,&e))
+                    else if (e.cbutton.button == AB_BTN_L1)
                         doL1_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R1,&e))
+                    else if (e.cbutton.button == AB_BTN_R1)
                         doR1_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L2,&e))
+                    else if (e.cbutton.button == AB_BTN_L2)
                         doL2_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R2,&e))
+                    else if (e.cbutton.button == AB_BTN_R2)
                         doR2_Released();
                     break;
 
@@ -184,9 +184,9 @@ bool GuiScreen::fastForwardUntilJoyCenter(Uint32 ticksPerFastForwardRepeat) {
             SDL_PumpEvents();
             int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
             if (ret > 0) {          // if there is an event in the queue
-                SDL_PollEvent(&e);  // eat the event
+                AB_PollEvent(&e);  // eat the event
                 cout << "event type " << hex << e.type << dec << endl;
-                if (e.type == SDL_JOYAXISMOTION || e.type == SDL_JOYHATMOTION) {
+                if (e.type == AB_HATMOTIONDOWN || e.type == AB_HATMOTIONUP) {
                     if (gui->mapper.isCenter(&e)) {
                         cout << "return false" << endl;
                         return false;   // exit fast forward mode
@@ -223,9 +223,9 @@ bool GuiScreen::fastForwardUntilButtonReleased(int button, Uint32 ticksPerFastFo
             SDL_PumpEvents();
             int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
             if (ret > 0) {          // if there is an event in the queue
-                SDL_PollEvent(&e);  // eat the event
+                AB_PollEvent(&e);  // eat the event
                 cout << "event type " << hex << e.type << dec << endl;
-                if ((e.type == SDL_JOYBUTTONUP) && (e.jbutton.button == gui->_cb(button, &e))) {
+                if ((e.type == AB_CONTROLLERBUTTONUP) && (e.cbutton.button == gui->_cb(button, &e))) {
                     cout << "return false" << endl;
                     return false;   // exit fast forward mode
                 }
@@ -248,14 +248,14 @@ int GuiScreen::countMoreJoyPressesInQueue(int direction) {
       SDL_Event e;
       SDL_PumpEvents();     // needed before peek
       int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT , SDL_FIRSTEVENT, SDL_LASTEVENT);   // look in the queue
-      if (ret > 0 && (e.type == SDL_JOYAXISMOTION || e.type == SDL_JOYHATMOTION)) {
+      if (ret > 0 && (e.type == AB_HATMOTIONDOWN || e.type == AB_HATMOTIONUP)) {
           if (gui->mapper.isDirection(&e, direction)) {
               count++;
               SDL_Event e2;
-              SDL_PollEvent(&e2);  // remove the event from the queue
+              AB_PollEvent(&e2);  // remove the event from the queue
           } else if (gui->mapper.isDirection(&e, DIR_NONE)) {
               SDL_Event e2;
-              SDL_PollEvent(&e2);  // remove the event from the queue
+              AB_PollEvent(&e2);  // remove the event from the queue
           } else {
               return count; // done. not the direction we're looking for.
           }

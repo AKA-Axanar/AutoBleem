@@ -41,7 +41,7 @@ void GuiConfirm::loop()
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -55,14 +55,14 @@ void GuiConfirm::loop()
             }
 
             switch (e.type) {
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e)) {
+                case AB_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == AB_BTN_CROSS) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         result = true;
                         menuVisible = false;
                     };
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE,&e)) {
+                    if (e.cbutton.button == AB_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         result = false;
                         menuVisible = false;

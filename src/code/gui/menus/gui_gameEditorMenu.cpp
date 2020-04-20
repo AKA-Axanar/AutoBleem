@@ -426,7 +426,7 @@ void GuiEditor::loop() {
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -438,8 +438,8 @@ void GuiEditor::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                case SDL_JOYHATMOTION:
+                case AB_HATMOTIONDOWN:  /* Handle Joystick Motion */
+                case AB_HATMOTIONUP:
 
                     if (gui->mapper.isDown(&e)) {
 
@@ -474,10 +474,10 @@ void GuiEditor::loop() {
                     }
                     break;
 
-                case SDL_JOYBUTTONDOWN:
+                case AB_CONTROLLERBUTTONDOWN:
                     if (!internal) {
                         if (gameIni.values["memcard"] == "SONY") {
-                            if (e.jbutton.button == gui->_cb(PCS_BTN_START, &e)) {
+                            if (e.cbutton.button == AB_BTN_START) {
                                 Mix_PlayChannel(-1, gui->cursor, 0);
                                 GuiKeyboard *keyboard = new GuiKeyboard(renderer);
                                 keyboard->label = _("Enter new name for memory card");
@@ -505,7 +505,7 @@ void GuiEditor::loop() {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                     }
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE, &e)) {
+                    if (e.cbutton.button == AB_BTN_SQUARE) {
                         if (!internal) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             GuiSelectMemcard *selector = new GuiSelectMemcard(renderer);
@@ -527,14 +527,14 @@ void GuiEditor::loop() {
                         }
                     };
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+                    if (e.cbutton.button == AB_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         cover = nullptr;
                         menuVisible = false;
 
                     };
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE, &e)) {
+                    if (e.cbutton.button == AB_BTN_TRIANGLE) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         GuiKeyboard *keyboard = new GuiKeyboard(renderer);
                         keyboard->label = _("Enter new game name");

@@ -72,7 +72,7 @@ void GuiLauncher::loop() {
             }
         }
 
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
@@ -84,8 +84,8 @@ void GuiLauncher::loop() {
                         Util::powerOff();
                     }
                     break;
-                case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                case SDL_JOYHATMOTION:
+                case AB_HATMOTIONDOWN:  /* Handle Joystick Motion */
+                case AB_HATMOTIONUP:
                     if (powerOffShift)
                         continue;
                     if (gui->mapper.isCenter(&e)) {
@@ -113,15 +113,15 @@ void GuiLauncher::loop() {
                     }
                     break;
 
-                case SDL_JOYBUTTONDOWN:
+                case AB_CONTROLLERBUTTONDOWN:
                     loop_joyButton_Pressed();    // button pressed
                     break;
-                case SDL_JOYBUTTONUP:
+                case AB_CONTROLLERBUTTONUP:
                     loop_joyButtonReleased();   // button released
                     break;
 
             }   // switch (e.type)
-        // end if (SDL_PollEvent(&e))
+        // end if (AB_PollEvent(&e))
         }
 
         { // no event.  see if we're holding down L1 or R1 for fast forward first letter
@@ -257,13 +257,13 @@ void GuiLauncher::loop_joyMoveDown() {
 // button pressed
 //*******************************
 void GuiLauncher::loop_joyButton_Pressed() {
-    if (e.jbutton.button == gui->_cb(PCS_BTN_L2, &e)) {
+    if (e.cbutton.button == AB_BTN_L2) {
         Mix_PlayChannel(-1, gui->cursor, 0);
         powerOffShift = true;
     }
 
     if (powerOffShift) {
-        if (e.jbutton.button == gui->_cb(PCS_BTN_R2, &e)) {
+        if (e.cbutton.button == AB_BTN_R2) {
             Mix_PlayChannel(-1, gui->cursor, 0);
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
             Util::powerOff();
@@ -272,35 +272,35 @@ void GuiLauncher::loop_joyButton_Pressed() {
     }
 
 
-    if (e.jbutton.button == gui->_cb(PCS_BTN_SELECT, &e)) {
+    if (e.cbutton.button == AB_BTN_SELECT) {
         loop_selectButton_Pressed();
     };
 
-    if (e.jbutton.button == gui->_cb(PCS_BTN_START, &e)) {
+    if (e.cbutton.button == AB_BTN_START) {
         loop_startButton_Pressed();
     };
 
     if (powerOffShift)
         return; // none of the following buttons should work if L2 is pressed
 
-    if (e.jbutton.button == gui->_cb(PCS_BTN_L1, &e)) {
+    if (e.cbutton.button == AB_BTN_L1) {
         L1_isPressedForFastForward = true;
         loop_prevGameFirstLetter();
 
-    } else if (e.jbutton.button == gui->_cb(PCS_BTN_R1, &e)) {
+    } else if (e.cbutton.button == AB_BTN_R1) {
         R1_isPressedForFastForward = true;
         loop_nextGameFirstLetter();
 
-    } else if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+    } else if (e.cbutton.button == AB_BTN_CIRCLE) {
         loop_circleButton_Pressed();
 
-    } else if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE, &e)) {
+    } else if (e.cbutton.button == AB_BTN_TRIANGLE) {
         loop_triangleButton_Pressed();
 
-    } else if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE, &e)) {
+    } else if (e.cbutton.button == AB_BTN_SQUARE) {
         loop_squareButton_Pressed();
 
-    } else if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS, &e)) {
+    } else if (e.cbutton.button == AB_BTN_CROSS) {
         loop_crossButton_Pressed();
     };
 }
@@ -687,7 +687,7 @@ void GuiLauncher::loop_triangleButton_Pressed() {
 // GuiLauncher::loop_squareButtonPressed
 //*******************************
 void GuiLauncher::loop_squareButton_Pressed() {
-    gui->padMapping = gui->mapper.getMappingString(e.jbutton.which);
+
 
     if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) { // retroarch is a file!!
 
@@ -721,7 +721,7 @@ void GuiLauncher::loop_squareButton_Pressed() {
 // GuiLauncher::loop_crossButtonPressed
 //*******************************
 void GuiLauncher::loop_crossButton_Pressed() {
-    gui->padMapping = gui->mapper.getMappingString(e.jbutton.which);
+
 
     if (state == STATE_GAMES) {
         loop_crossButtonPressed_STATE_GAMES();
@@ -1112,15 +1112,15 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
 // button released
 //*******************************
 void GuiLauncher::loop_joyButtonReleased() {
-    if (e.jbutton.button == gui->_cb(PCS_BTN_L2, &e)) {
+    if (e.cbutton.button == AB_BTN_L2) {
         Mix_PlayChannel(-1, gui->cursor, 0);
         powerOffShift = false;
     }
 
-    if (L1_isPressedForFastForward && (e.jbutton.button == gui->_cb(PCS_BTN_L1, &e))) {
+    if (L1_isPressedForFastForward && (e.cbutton.button == AB_BTN_L1)) {
         L1_isPressedForFastForward = false;
     }
-    else if (R1_isPressedForFastForward && (e.jbutton.button == gui->_cb(PCS_BTN_R1, &e))) {
+    else if (R1_isPressedForFastForward && (e.cbutton.button == AB_BTN_R1)) {
         R1_isPressedForFastForward = false;
     }
 }

@@ -112,8 +112,6 @@ add_executable(
         src/code/gui/gui_font_wrapper.h
         src/code/gui/gui_keyboard.cpp
         src/code/gui/gui_keyboard.h
-        src/code/gui/gui_padconfig.cpp
-        src/code/gui/gui_padconfig.h
         src/code/gui/gui_padTest.cpp
         src/code/gui/gui_padTest.h
         src/code/gui/gui_screen.cpp
@@ -195,7 +193,7 @@ add_executable(
         src/code/util.h
         src/code/ver_migration.cpp
         src/code/ver_migration.h
-        src/code/util_time.h src/code/util_time.cpp)
+        src/code/util_time.h src/code/util_time.cpp src/code/gui/abl.c src/code/gui/abl.h)
 
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>

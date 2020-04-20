@@ -149,7 +149,7 @@ void GuiAppStart::loop() {
         gui->watchJoystickPort();
         SDL_Event e;
         render();
-        while (SDL_PollEvent(&e)) {
+        while (AB_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -159,19 +159,19 @@ void GuiAppStart::loop() {
             }
 
             switch (e.type) {
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS, &e)) {
+                case AB_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == AB_BTN_CROSS) {
                         result = true;
                         menuVisible = false;
                     };
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+                    if (e.cbutton.button == AB_BTN_CIRCLE) {
                         result = false;
                         menuVisible = false;
                     };
                     break;
 
-                case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                case SDL_JOYHATMOTION:
+                case AB_HATMOTIONDOWN:  /* Handle Joystick Motion */
+                case AB_HATMOTIONUP:
                     if (totalLines!=0) {
                         if (gui->mapper.isUp(&e)) {
                             scrolling = -1;
