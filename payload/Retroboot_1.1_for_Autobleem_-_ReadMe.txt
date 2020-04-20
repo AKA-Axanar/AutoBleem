@@ -1,5 +1,5 @@
-Retroboot 1.1 - The Lightweight Alternative
--------------------------------------------
+Retroboot for Autobleem 1.1
+---------------------------
 
 Launch RetroArch or EmulationStation from Autobleem!  
 
@@ -167,7 +167,6 @@ implied or otherwise.
 
 Change Log
 ----------
-
 v1.1.0 (??/04/2020)
 - Updated to RetroArch 1.8.5
 - Added EmulationStation

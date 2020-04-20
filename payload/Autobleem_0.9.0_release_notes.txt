@@ -8,32 +8,49 @@
 **************************									   
 AutoBleem now has it's own Linux kernel for the Playstation Classic!!!
 
-The new AutoBleem kernel includes support for OTG, RNDIS, WiFi (all Linux drivers), Ethernet (all Linux drivers), Bluetooth, NTFS and exFat support!
+The new AutoBleem kernel includes support for OTG, RNDIS, WiFi (all Linux drivers), Ethernet 
+(all Linux drivers), NTFS and exFat, and partial Bluetooth support.
 
 **** Flashing the new Kernel ****
-The AutoBleem kernel flasher is VERY easy to use.  It will first backup your existing kernel and then quickly flash the new AutoBleem kernel.  If you have BleemSync's kernel installed on your PSC you should first use Bleemsync to restore the BleemSync backup to get your PSC back to it's original state.  See the separate AB_0.9.0_Kernel_Installation.txt document.
+The AutoBleem kernel flasher is VERY easy to use.  It will first backup your existing PSC 
+kernel and then quickly flashes the new AutoBleem kernel.  If you have the BleemSync 1.0, 1.1,
+1.2, or Project Eris kernel installed on your PSC you first first use Bleemsync or Project 
+Eris to restore the PSC back to it's original state.  The AutoBleem kernel flasher will not 
+flash the kernel if BleemSync or Project Eris kernel files are still on the PSC.  See the 
+separate AB_0.9.0_Kernel_Installation.txt document for instructions.
 
 **** WiFi ****
-Setting up WiFi is also very easy.  Go to the Network App or the Advanced menu (press L1 then Square).  AutoBleem will scan WiFi for the network SSID's nearby and let you simply select your SSID from the list.  After the network is initialized (WiFi and/or Ethernet) the I.P. address is displayed.  Set your time zone.  AutoBleem will then set your current date and time.  Once setup, WiFi will automatically reconnect on every boot!  See the separate WiFi setup document for more details.
+Setting up WiFi is also very easy.  Go to the Network App or the Advanced menu (press L1 
+then Square).  AutoBleem will scan the WiFi network for the SSID's of nearby WiFi networks.  
+Simply select your SSID from the list.  Enter the SSID WiFi password.  After the network is 
+initialized (WiFi and/or Ethernet) the I.P. addresses are displayed.  Set your time zone.  
+AutoBleem will then set the current date and time on your PSC.  Once setup, WiFi will 
+automatically reconnect on every boot!  See the WiFi setup document for more details.
 
 **** Date and time ****
-If WiFi or Ethernet has been setup AutoBleem will automatically set the current date & time on the Playstation Classic from the internet.  If the date and time are setup AutoBleem will display the last time a game was played on the game info on the PS1 Game carousel.  If you want to change the date time display format edit the "Datetime format" setting in Autobleem/bin/autobleem/config.ini.  See http://www.cplusplus.com/reference/ctime/strftime/ for date time formatting strings.
+If WiFi or Ethernet has been setup AutoBleem will automatically set the current date & time 
+on the Playstation Classic from the internet.  If the date and time are set AutoBleem will save
+and display the last time a game was played on the PS1 Game carousel.  If you want to change 
+the date time display format edit the "Datetimeformat" setting in Autobleem/bin/autobleem/config.ini.  
+See http://www.cplusplus.com/reference/ctime/strftime/ for date time format strings.
 
-NOTE: Pressing L1 + Square while at the AutoBleem start screen will take you directly to the
-AutoBleem Kernel Bios Hardware Infomation app.  This will display your PSC hardware information including the WiFi or Ethernet 
-connection IP address and the current date and time.  This menu display is only available if you have flashed the AutoBleem Kernel to your PSC.
+NOTE: Pressing L1 + Square while at the AutoBleem start screen will take you directly to 
+the AutoBleem Kernel Bios Hardware Infomation App.  This will display your PSC hardware 
+information including the WiFi and/or Ethernet connection IP address and the current date 
+and time.  This menu display is only available if you have flashed the AutoBleem Kernel 
+to your PSC.
 
 *****************************************
 **** RetroBoot and Emulation Station ****
 *****************************************
 RetroBoot 1.1 is built into AutoBleem.  
-RetroBoot 1.1 now includes Emulation station!
+RetroBoot 1.1 includes Emulation station!!!
 
-Game Emulators: 
+Game Emulators included: 
 	AmiBerry Amiga Emulator)
 	OpenBor (Beats of RAge Emulator)
 
-Game Ports:
+Game Ports included:
 	Doom
 	Wolfenstein 3D
 	Tyrian

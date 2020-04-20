@@ -1,0 +1,57 @@
+AutoBleem Kernel Installation
+
+Please note that following the steps below will modify your consoles firmware which voids your 
+warranty. Doing this is not required to use AutoBleem. Only do this if you wish to add OTG, NTFS, exFAT,
+WIFI and Bluetooth support. 
+
+1. Format your USB drive to fat32 and label it SONY. 
+
+2. Install AutoBleem 0.9.0 on your USB drive.
+
+3. If you have previously installed the Bleemsync or Project Eris kernel on your PSC, follow the MMC 
+   uninstallation guide outlined here: https://modmyclassic.com/?s=uninstall+project+eris
+
+   3b. If step 3 above fails or you do not have a copy of the backup file made when you installed Bleemsync
+       or Project Eris originally, obtain a vanilla copy of the PSC kernel from an unmodified PSC
+       and do the following:
+
+       Place the LBOOT.EPB file obtained from an unmodified PSC on the root of your AutoBleem USB drive. 
+
+NOTE: You are only required to complete step 3 and/or 3b if you have previously installed the Bleemsync or Project Eris Kernel
+on your PSC.
+
+4. Remove your USB drive from your PC and insert it into the player 2 controller port on the front of the PSC.
+
+5. Make sure a controller is connected to the player one port on the front the PSC.
+
+6. Connect the power cable to the PSC and wait until the power light turns orange.
+
+7. Press the power button on the PSC. The power light will blink orange then green repeatedly and will eventually 
+stop blinking and remain a constant green.
+
+8. At the AutoBleem start screen, press start on the controller.
+
+9. Once in AutoBleem, press select on the controller twice to navigate to Apps.  Navigate to the ABFlashkit App.
+
+10. Start the ABFlashkit App by pressing X on the controller.
+
+11. Read the ABFashkit notes that appear, then press X on the controller.
+
+NOTE: Only complete step 12 if you had previously installed the Bleemsync or Project Eris kernel on your PSC. If your PSC is       stock, skip to step 14.
+
+12. Press the Triangle button to select Restore Mode. This will remove either the Bleemsync or Project Eris kernel and restore        your PSC to the backup kernel that was created when you installed either Bleemsync or Project Eris. (If you do not have
+    a copy of your backup file and obtained a vanilla copy of the PSC kernel as described in step 3b above, your system will be       restored using that kernel.)
+
+13. When the process is complete your PSC will boot normally. You now have restored your backup kernel or vanilla PSC kernel to     the PSC.
+
+14. To install the AutoBleem kernel, navigate to the AutoBleem Apps menu and start the ABFlashkit App, (steps 8-11 above).
+
+15. Press X on the controller to flash the AutoBleem kernel to your PSC. Once the kernel installation has completed the screen     will go black. Remove and reinsert the power cable to the PSC. Wait for the power light to turn orange, then press the power     button. 
+
+Congratulations, you have installed AutoBleem 0.9.0 and the AutoBleem kernel!
+
+*** Please see the AutoBleem 0.9.0 for details about this new release and what features the AutoBleem kernel has added to your PSC.
+
+
+
+
