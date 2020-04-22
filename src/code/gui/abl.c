@@ -14,7 +14,7 @@ int lastY = 0;
 
 #define DEADZONE 30000
 
-int AB_DISABLE_ANALOGUE=0;
+int AB_DISABLE_ANALOGUE=1;
 
 int AB_NumJoysticks()
 {
@@ -39,6 +39,14 @@ int AB_JoyInPort(int portnum)
     return -1;
 }
 
+void AB_ProbePads()
+{
+    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        if (SDL_IsGameController(i)) {
+            AB_RegisterPad(i);
+        }
+    }
+}
 void AB_RemovePad(int joyid)
 {
     if (padinfo[joyid]!=NULL)
@@ -64,6 +72,7 @@ void AB_RegisterPad(int joyid)
         printf("Joystick not recognized: %s\n", guid_str);
     }
 
+
     if (padinfo[joyid]!=NULL)
     {
         AB_RemovePad(joyid);
@@ -78,7 +87,8 @@ void AB_RegisterPad(int joyid)
         printf("Can not open Game Controller ID: %d\n", joyid);
         return;
     }
-
+    char * mappingString = SDL_GameControllerMapping(controller);
+    printf("MAP: %s",mappingString);
     struct ControllerInfo * info;
     info = malloc(sizeof(struct ControllerInfo));
     info->pad = controller;

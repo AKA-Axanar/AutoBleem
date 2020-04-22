@@ -14,6 +14,7 @@ int AB_Init(Uint32 flags, const char * gamecontrollerdb);
 void AB_Quit();
 void AB_RegisterPad(int id);
 void AB_RemovePad(int id);
+void AB_ProbePads();
 int AB_NumJoysticks();
 int AB_JoyInPort();
 int AB_PeepEvents(SDL_Event*       events,

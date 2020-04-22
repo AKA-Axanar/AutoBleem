@@ -236,6 +236,7 @@ void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const 
     rect->y = y;
     rect->w = text_width;
     rect->h = text_height;
+
 }
 
 //*******************************

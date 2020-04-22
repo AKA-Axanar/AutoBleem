@@ -300,14 +300,20 @@ int main(int argc, char *argv[]) {
             {
                 Mix_CloseAudio();
             }
-            numtimesopened=Mix_QuerySpec(&frequency, &format, &channels);
+            while(Mix_QuerySpec(&frequency, &format, &channels))
+            {
+                Mix_CloseAudio();
+            }
 
             for (SDL_Joystick* joy:gui->joysticks) {
+                AB_RemovePad(SDL_JoystickInstanceID(joy));
                 if (SDL_JoystickGetAttached(joy)) {
                     SDL_JoystickClose(joy);
                 }
             }
+
             SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+            SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 
             gui->saveSelection();
             EmuInterceptor *interceptor;
@@ -346,8 +352,10 @@ int main(int argc, char *argv[]) {
             }
 
             SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+            SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
 
             usleep(300*1000);
+            AB_ProbePads();
             gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;
 
