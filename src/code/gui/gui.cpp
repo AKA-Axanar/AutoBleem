@@ -43,7 +43,7 @@ using ordered_json = basic_json<my_workaround_fifo_map>;
 // GuiBase::GuiBase
 //********************
 GuiBase::GuiBase() {
-    string gamedbpath = Environment::getWorkingPath()+"/gamecontrollerdb.txt";
+    string gamedbpath = Environment::getPathToAutobleemDir()+"/bin/autobleem/gamecontrollerdb.txt";
     cout << "GameDBPath: " << gamedbpath << endl;
     AB_Init(SDL_INIT_VIDEO, gamedbpath.c_str());
     SDL_InitSubSystem(SDL_INIT_AUDIO);

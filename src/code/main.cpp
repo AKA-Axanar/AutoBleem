@@ -355,7 +355,9 @@ int main(int argc, char *argv[]) {
             SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
 
             usleep(300*1000);
-            AB_ProbePads();
+            string gamedbpath = Environment::getPathToAutobleemDir()+"/bin/autobleem/gamecontrollerdb.txt";
+            cout << "GameDBPath: " << gamedbpath << endl;
+            AB_ProbePads(gamedbpath.c_str());
             gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;
 

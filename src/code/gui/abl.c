@@ -39,8 +39,11 @@ int AB_JoyInPort(int portnum)
     return -1;
 }
 
-void AB_ProbePads()
+void AB_ProbePads(const char * gamecontrollerdb)
 {
+    int loadedMappings = SDL_GameControllerAddMappingsFromFile(gamecontrollerdb);
+    printf("Loaded pad mappings %d\n", loadedMappings);
+
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
             AB_RegisterPad(i);
