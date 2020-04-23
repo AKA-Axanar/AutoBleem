@@ -15,12 +15,14 @@ on the controller to select Edit SSID
 compatible with the 8188eu wifi chipset. The TP-Link TL-WN725N uses this chipset for example.
 For other chipsets such as the rt5370, select the nl80211 Driver Mode. Use this driver mode 
 for the Railink 5370 for example. It is recommended to try the nl80211 Driver Mode first and only
-use the wext Driver Mode if the nl80211 Drive Mode is not compatible with your wifi dongle like
-the model noted above.  We found that WiFi dongles using the rt5370 chipset were more stable than 
-the TL-WN725N chipset.
+use the wext Driver Mode if the nl80211 Driver Mode is not compatible with your wifi dongle like
+the model noted above.  Although both work, we found that WiFi dongles using the rt5370 chipset 
+were more stable than the TL-WN725N chipset.
 
 6. Navigate to the Write Configuration/Restart Network option and press X on the controller 
-This will save your WiFi settings to the PSC
+This will save your WiFi settings to the PSC.
 
 7. Navigate to Timezone and press X on the controller to set your timezone
 Note: Restart Network will allow you to reconnect to your network if you have lost connection
+
+Once setup, the AutoBleem kernel will automatically connect to Wifi during boot.

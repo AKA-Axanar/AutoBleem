@@ -8,14 +8,14 @@
 **************************									   
 AutoBleem now has it's own Linux kernel for the Playstation Classic!!!
 
-The new AutoBleem kernel includes support for OTG, RNDIS, WiFi (all Linux drivers), Ethernet 
-(all Linux drivers), NTFS and exFat, and partial Bluetooth support.
+The new AutoBleem kernel includes support for OTG, RNDIS, easy WiFI setup and auto connect on 
+boot (all Linux drivers), Ethernet (all Linux drivers), NTFS and exFat, and experimental Bluetooth support.  
 
 **** Flashing the new Kernel ****
-The AutoBleem kernel flasher is VERY easy to use.  It will first backup your existing PSC 
-kernel and then quickly flashes the new AutoBleem kernel.  If you have the BleemSync 1.0, 1.1,
-1.2, or Project Eris kernel installed on your PSC you first first use Bleemsync or Project 
-Eris to restore the PSC back to it's original state.  The AutoBleem kernel flasher will not 
+The AutoBleem kernel flasher is VERY easy to use.  The kernel flasher will first backup your existing 
+PSC kernel and then quickly flashes the new AutoBleem kernel.  If you have the BleemSync 1.0, 1.1,
+1.2, or Project Eris kernel installed on your PSC you must first use Bleemsync or Project 
+Eris to restore your PSC back to it's original state.  The AutoBleem kernel flasher will not 
 flash the kernel if BleemSync or Project Eris kernel files are still on the PSC.  See the 
 separate AB_0.9.0_Kernel_Installation.txt document for instructions.
 
@@ -28,7 +28,7 @@ AutoBleem will then set the current date and time on your PSC.  Once setup, WiFi
 automatically reconnect on every boot!  See the WiFi setup document for more details.
 
 **** Date and time ****
-If WiFi or Ethernet has been setup AutoBleem will automatically set the current date & time 
+If WiFi or Ethernet has been setup AutoBleem will automatically set the current date and time 
 on the Playstation Classic from the internet.  If the date and time are set AutoBleem will save
 and display the last time a game was played on the PS1 Game carousel.  If you want to change 
 the date time display format edit the "Datetimeformat" setting in Autobleem/bin/autobleem/config.ini.  
@@ -40,22 +40,32 @@ information including the WiFi and/or Ethernet connection IP address and the cur
 and time.  This menu display is only available if you have flashed the AutoBleem Kernel 
 to your PSC.
 
+**** Bluetooth ****
+Bluetooth is experimental in this release.  The Switch Pro controller works.
+The AutoBleem team will continue to work on supporting more Bluetooth and USB controllers for
+future releases.  See the separate document on how to pair a controller to the PSC with Bluetooth.
+
 *****************************************
 **** RetroBoot and Emulation Station ****
 *****************************************
 RetroBoot 1.1 is built into AutoBleem.  
-RetroBoot 1.1 includes Emulation station!!!
+RetroBoot 1.1 includes Emulation station!!!  You can start Emulation Station from the applications folder in 
+Retroarch.  You can switch back in the ports section in ES.
 
-Game Emulators included: 
-	AmiBerry Amiga Emulator)
-	OpenBor (Beats of RAge Emulator)
+*****************************************
+****   Game Emulators included       ****
+*****************************************
+AmiBerry Amiga Emulator)
+OpenBor (Beats of RAge Emulator)
 
-Game Ports included:
-	Doom
-	Wolfenstein 3D
-	Tyrian
-	Prince of Persia
-	Duke Nukem 3D 
+*****************************************
+****   Game Ports included           ****
+*****************************************
+Doom
+Wolfenstein 3D
+Tyrian
+Prince of Persia
+Duke Nukem 3D 
 
 
                                        *****************************
