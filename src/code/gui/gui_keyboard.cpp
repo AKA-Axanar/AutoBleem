@@ -156,7 +156,7 @@ void GuiKeyboard::render() {
 // returns true if applicable event type and it was handled
 bool GuiKeyboard::handlePowerShutdownAndQuit(SDL_Event &e) {
     if (e.type == SDL_KEYDOWN) {
-        if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+        if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
             Util::powerOff();
             return true;    // but it will never get here

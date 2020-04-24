@@ -158,7 +158,7 @@ void GuiAppStart::loop() {
                 gui->removePad(e.cdevice.which);
             }
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
 
