@@ -31,10 +31,13 @@ DO NOT USE AUTOBLEEM TO RESTORE A BLEEMSYNC BACKUP!  You will brick your PSC!
 **************************	
 How to restore a backup made with AutoBleem
 **************************	
+Important: You are restoring the PSC to original condition.  You MUST format the USB stick as fat32 as it will 
+boot back up as an original stock PSC that only supports fat32.
+
 During the kernel installation process Autobleem will first make a backup of your kernel.  You can restore that backup 
 (made by AutoBleem) to restore the kernel backup to the PSC.  Place the LBOOT.EPB file created by AutoBleem on 
 the root of your AutoBleem USB drive.  Boot AutoBleem on your PSC.  Navigate to Apps and run the ABFashkit App.  
 Press the triangle button to start the restore of the LBOOT.EPB file to the PSC.  If you then want to install 
 the AutoBleem Kernel press the X button.  The install is very quick.  
-Enjoy the features of the new kernel: OTG, NTFS, exFat, easy WiFI setup and auto WiFi connect on boot, Ethernet, 
-and datetime features.
+Enjoy the features of the new kernel: OTG, NTFS, exFat, easy WiFI setup and automatic WiFi re-connect on boot, 
+Ethernet, and datetime features.
