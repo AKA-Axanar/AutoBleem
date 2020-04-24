@@ -16,6 +16,14 @@ int lastY = 0;
 
 int AB_DISABLE_ANALOGUE=1;
 
+void AB_FlushPadInfo()
+{
+    for (int i=0;i<MAXPADS;i++)
+    {
+        padinfo[i]=NULL;
+    }
+
+}
 int AB_NumJoysticks()
 {
     int joys=0;
@@ -61,33 +69,36 @@ void AB_RemovePad(int joyid)
         padinfo[joyid]=NULL;
     }
 }
-void AB_RegisterPad(int joyid)
+void AB_RegisterPad(int joy_idx)
 {
-    SDL_Joystick* js = SDL_JoystickOpen(joyid);
+    if (padinfo[joy_idx]!=NULL)
+    {
+        AB_RemovePad(joy_idx);
+    }
+    SDL_Joystick* js = SDL_JoystickOpen(joy_idx);
     SDL_JoystickGUID guid = SDL_JoystickGetGUID(js);
     char guid_str[1024];
     SDL_JoystickGetGUIDString(guid, guid_str, sizeof(guid_str));
 
-    int isgamecontroller = SDL_IsGameController(joyid);
+    int isgamecontroller = SDL_IsGameController(joy_idx);
     if (!isgamecontroller)
     {
         SDL_JoystickClose(js);
         printf("Joystick not recognized: %s\n", guid_str);
     }
 
+    SDL_JoystickID instanceID =SDL_JoystickInstanceID(js);
 
-    if (padinfo[joyid]!=NULL)
-    {
-        AB_RemovePad(joyid);
-    }
+
     SDL_GameController *controller = NULL;
-    controller = SDL_GameControllerOpen(joyid);
-    const char * name = SDL_GameControllerName(controller);
-    printf("New GameController GUID: %s    name:  %s\n",guid_str,name);
+    controller = SDL_GameControllerOpen(joy_idx);
+    const char * name="";
     if (controller) {
-       printf("New Game Controller ID: %d\n", joyid);
+        name= SDL_GameControllerName(controller);
+        printf("New GameController GUID: %s    name:  %s\n",guid_str,name);
+        printf("New Game Controller index: %d\n", joy_idx);
     } else {
-        printf("Can not open Game Controller ID: %d\n", joyid);
+        printf("Can not open Game Controller ID: %d %s\n", joy_idx, SDL_GetError());
         return;
     }
     char * mappingString = SDL_GameControllerMapping(controller);
@@ -98,7 +109,7 @@ void AB_RegisterPad(int joyid)
     info->joy = SDL_GameControllerGetJoystick(info->pad);
     strcpy(info->guid, guid_str);
     strcpy( info->name, name);
-    padinfo[joyid]=info;
+    padinfo[instanceID]=info;
 
 }
 int AB_Init(Uint32 flags, const char *gamecontrollerdb)
@@ -110,15 +121,10 @@ int AB_Init(Uint32 flags, const char *gamecontrollerdb)
        padinfo[i]=NULL;
    }
 
-    int loadedMappings = SDL_GameControllerAddMappingsFromFile(gamecontrollerdb);
-    printf("Loaded pad mappings %d\n", loadedMappings);
+    AB_ProbePads(gamecontrollerdb);
 
 
-    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-        if (SDL_IsGameController(i)) {
-            AB_RegisterPad(i);
-        }
-    }
+
 
    return res;
 }
@@ -130,6 +136,7 @@ void AB_Quit()
         if (padinfo[i]!=NULL)
         {
             free(padinfo[i]);
+            padinfo[i]=0;
         }
     }
 }

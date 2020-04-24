@@ -12,9 +12,10 @@ extern "C" {
 int AB_PollEvent(SDL_Event *event);
 int AB_Init(Uint32 flags, const char * gamecontrollerdb);
 void AB_Quit();
-void AB_RegisterPad(int id);
+void AB_RegisterPad(int joy_idx);
 void AB_RemovePad(int id);
 void AB_ProbePads(const char * gamecontrollerdb);
+void AB_FlushPadInfo();
 int AB_NumJoysticks();
 int AB_JoyInPort();
 int AB_PeepEvents(SDL_Event*       events,
@@ -29,7 +30,7 @@ int AB_PeepEvents(SDL_Event*       events,
 }
 #endif
 
-#define MAXPADS 16
+#define MAXPADS 100
 
 
 #define AB_BTN_TRIANGLE SDL_CONTROLLER_BUTTON_Y
