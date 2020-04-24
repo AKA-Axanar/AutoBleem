@@ -25,4 +25,10 @@ This will save your WiFi settings to the PSC.
 7. Navigate to Timezone and press X on the controller to set your timezone
 Note: Restart Network will allow you to reconnect to your network if you have lost connection
 
-Once setup, the AutoBleem kernel will automatically connect to Wifi during boot.
+Once setup, the AutoBleem kernel will automatically connect to Wifi during boot!
+
+To connect to your PSC using SSH with Putty, use port 22 for SSH.  To connect to your PSC using 
+FTP with WinSCP or FileZilla use port 21.  Note: SFTP is not supported.  
+The login user name is "root" and the password is "ab".
+
+

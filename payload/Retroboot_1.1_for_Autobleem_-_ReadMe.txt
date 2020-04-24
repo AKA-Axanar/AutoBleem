@@ -110,6 +110,7 @@ Retroboot comes with the following folders pre-configured for EmulationStation:
 	IBM PC                                          /roms/dosbox
 	Magnavox Odyssey2                               /roms/odyssey2
 	Mattel Intellivision                            /roms/intellivision
+	Milton Bradley Vectrex                          /roms/vectrex
 	MSX                                             /roms/msx
 	NEC PC Engine                                   /roms/pcengine
 	NEC PC Engine CD                                /roms/pce-cd
@@ -167,7 +168,7 @@ implied or otherwise.
 
 Change Log
 ----------
-v1.1.0 (??/04/2020)
+v1.1.0 (04/26/2020)
 - Updated to RetroArch 1.8.5
 - Added EmulationStation
 - Added .mod compatibility mode
