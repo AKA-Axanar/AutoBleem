@@ -152,8 +152,6 @@ games
 
 Games changed. Press
 
-Games filter
-
 games scanned
 
 GFX Filter:
@@ -205,6 +203,8 @@ Music:
 New Card
 
 New GamePad found
+
+Next Game Platform
 
 No disc name
 
