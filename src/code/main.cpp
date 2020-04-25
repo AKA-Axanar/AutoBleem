@@ -139,14 +139,20 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
 // the /Games/gamelist.xml is for Emulation Station to find the PS1 cover files
 //*******************************
 void rewriteGamelistXml() {
-    string path = Env::getPathToGamesDir() + sep + "gamelist.xml";
-    DirEntry::removeFile(path);
+    // this file was used during 0.9.0 testing.  it must be removed or ES will use it by mistake.
+    DirEntry::removeFile(Env::getPathToGamesDir() + sep + "gamelist.xml");
+
+    string path = Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx";
+    DirEntry::createDir(path);
+    string filePath = path + sep + "gamelist.xml";
+
+    DirEntry::removeFile(filePath);
 
     PsGames currentGames;
     Gui::getInstance()->db->getGames(&currentGames);
 
     ofstream xml;
-    xml.open(path.c_str(), ios::binary);
+    xml.open(filePath.c_str(), ios::binary);
 
     xml << "<?xml version=\"1.0\"?>" << endl;
     xml << "<gameList>" << endl;
@@ -249,7 +255,7 @@ int main(int argc, char *argv[]) {
 
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
     bool prevFileExists = DirEntry::exists(prevPath);
-    bool gamelistXmlExists = DirEntry::exists(Env::getPathToGamesDir() + sep + "gamelist.xml");
+    bool gamelistXmlExists = DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
 
     GamesHierarchy gamesHierarchy;
     gamesHierarchy.getHierarchy(pathToGamesDir);
