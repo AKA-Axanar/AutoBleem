@@ -135,6 +135,49 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
 }
 
 //*******************************
+// rewriteGamelistXmlFile
+// the /Games/gamelist.xml is for Emulation Station to find the PS1 cover files
+//*******************************
+void rewriteGamelistXml() {
+    string path = Env::getPathToGamesDir() + sep + "gamelist.xml";
+    DirEntry::removeFile(path);
+
+    PsGames currentGames;
+    Gui::getInstance()->db->getGames(&currentGames);
+
+    ofstream xml;
+    xml.open(path.c_str(), ios::binary);
+
+    xml << "<?xml version=\"1.0\"?>" << endl;
+    xml << "<gameList>" << endl;
+
+    auto makeGamesPathRelative = [] (const string& oldPath) -> string {
+        string newPath=oldPath;
+        size_t pos = newPath.find("/Games");
+        if (pos != string::npos) {
+            newPath.erase(0, pos-1 + sizeof("/Games"));
+            newPath = "." + newPath;
+        }
+        return newPath;
+    };
+
+    for (const auto& game : currentGames) {
+        xml << "\t<game>" << endl;
+
+        xml << "\t\t<path>" << makeGamesPathRelative(game->folder) << "</path>" << endl;
+        xml << "\t\t<name>" << game->title << "</name>" << endl;
+        xml << "\t\t<desc>" << game->title << "</desc>" << endl;
+        string imagePath = game->folder + sep + game->base + ".png";
+        xml << "\t\t<image>" << makeGamesPathRelative(imagePath) << "</image>" << endl;
+
+        xml << "\t</game>" << endl;
+    }
+    xml << "</gameList>" << endl;
+
+    xml.close();
+}
+
+//*******************************
 // main
 //*******************************
 int main(int argc, char *argv[]) {
@@ -195,7 +238,7 @@ int main(int argc, char *argv[]) {
     gui->internalDB = internalDB;
     gui->internalDB->addFavoriteColumn(); // add the favorites column if it doesn't exist
     gui->internalDB->addHistoryColumn();  // add the history column if it doesn't exist
-    gui->internalDB->addDatePlayedColumn();  // add the date played column if it doesn't exist
+    gui->internalDB->addLastPlayedColumn();  // add the last played column if it doesn't exist
 
     string dbpath = Env::getPathToRegionalDBFile();
     string pathToGamesDir = Env::getPathToGamesDir();
@@ -206,6 +249,7 @@ int main(int argc, char *argv[]) {
 
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
     bool prevFileExists = DirEntry::exists(prevPath);
+    bool gamelistXmlExists = DirEntry::exists(Env::getPathToGamesDir() + sep + "gamelist.xml");
 
     GamesHierarchy gamesHierarchy;
     gamesHierarchy.getHierarchy(pathToGamesDir);
@@ -216,7 +260,7 @@ int main(int argc, char *argv[]) {
     bool autobleemPrevOutOfDate = gamesHierarchy.gamesDoNotMatchAutobleemPrev(prevPath);
     bool thereAreRawGameFilesInGamesDir = scanner->areThereGameFilesInDir(pathToGamesDir);
 
-    if (!prevFileExists || thereAreRawGameFilesInGamesDir || autobleemPrevOutOfDate) {
+    if (!prevFileExists || !gamelistXmlExists || thereAreRawGameFilesInGamesDir || autobleemPrevOutOfDate) {
         scanner->forceScan = true;
     }
 
@@ -235,6 +279,8 @@ int main(int argc, char *argv[]) {
             // removed from the hierarchy and it force you to rescan on every boot.
             gamesHierarchy.writeAutobleemPrev(prevPath);
             scanGames(gamesHierarchy);
+            rewriteGamelistXml();
+
             if (gui->forceScan) {
                 gui->forceScan = false;
             } else {

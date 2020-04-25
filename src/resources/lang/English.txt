@@ -94,6 +94,8 @@ Edit game parameters
 
 Edit Memory Card information
 
+EmulationStation
+
 Emulator config MENU
 
 Enter
@@ -150,8 +152,6 @@ games
 
 Games changed. Press
 
-Games filter
-
 games scanned
 
 GFX Filter:
@@ -175,6 +175,8 @@ INTERNAL
 Internal Games
 
 Language:
+
+Last Played:
 
 Link Block
 
@@ -201,6 +203,8 @@ Music:
 New Card
 
 New GamePad found
+
+Next Game Platform
 
 No disc name
 
@@ -336,7 +340,7 @@ Starting EvolutionUI
 
 Support via Discord:
 
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
+This is free software. It works AS IS and We take no responsibility for any issues or damage.
 
 to scan
 

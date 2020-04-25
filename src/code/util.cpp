@@ -8,10 +8,7 @@
 #include <string.h>
 #include <sstream>
 #include <iostream>
-#include "main.h"
 #include <stdio.h>
-#include<time.h>
-#include "gui/gui.h"
 
 using namespace std;
 
@@ -362,53 +359,4 @@ unsigned int Util::getRandomNumber() {
 //*******************************
 unsigned int Util::getRandomIndex(unsigned int size) {
     return getRandomNumber() % size;
-}
-
-//*******************************
-// Util::getCurrentTime
-//*******************************
-time_t Util::getCurrentTime() {
-    time_t t = time(nullptr);
-    //cout << "Current Time = " << t << ", " << timeToDisplayTimeString(t) << endl;
-
-    return t;
-}
-
-//*******************************
-// Util::usingWiFiUpdatedTime
-// returns true if using AB kernel and the WiFi updated current time
-//*******************************
-bool Util::usingWiFiUpdatedTime() {
-    time_t t = time(nullptr);
-    tm* local = localtime(&t);
-
-    return local->tm_year + 1900 >= 2020;
-}
-
-//*******************************
-// Util::timeToDisplayTimeString
-//*******************************
-string Util::timeToDisplayTimeString(time_t t, const string& _format) {
-    string datetime;
-    string format = _format;    // if you pass a format it uses that
-
-    if (format == "") {
-        // see if the use has a prefered format in config.ini
-        string datetimeFormat = Gui::getInstance()->cfg.inifile.values["datetimeformat"];
-        if (datetimeFormat != "")
-            format = datetimeFormat;    // use the format in the config.ini
-        else
-            format = "%F %I:%M:%S %p";           // default: YYYY-MM-DD HH:MM:SS
-    }
-
-    if (t != 0) {
-        tm* local = localtime(&t);
-        if (local->tm_year + 1900 >= 2020) {  // if datetime is from a WiFi enabled datetime
-            char buf[200];
-            if (std::strftime(buf, sizeof(buf), format.c_str(), local))
-                datetime = buf;
-        }
-    }
-
-    return datetime;
 }

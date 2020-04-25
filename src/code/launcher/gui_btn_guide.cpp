@@ -40,9 +40,9 @@ void GuiBtnGuide::render() {
     renderTextLineToColumns("|@S|",                      _("Run using RetroBoot"));
     renderTextLineToColumns("|@R1| / |@L1|",             _("Quick scroll to next letter"));
     renderTextLineToColumns("|@Start|",                  _("Random Game"));
-    renderTextLineToColumns("|@Select|",                 _("Games filter"));
+    renderTextLineToColumns("|@Select|",                 _("Next Game Platform"));
     renderTextLineToColumns("|@L2| + |@Select|",         _("Change USB Games Sub-Directory"));
-    renderTextLineToColumns("|@L2| + |@Select|",              _("Change RetroBoot System"));
+    renderTextLineToColumns("|@L2| + |@Select|",         _("Change RetroBoot System"));
     line++;
     renderTextLineToColumns("",                          "-=" + _("In Game") + "=-");
     renderTextLineToColumns("|@Select| + |@T|",          _("Emulator config MENU"));
@@ -67,7 +67,7 @@ void GuiBtnGuide::loop() {
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));

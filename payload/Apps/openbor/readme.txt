@@ -12,12 +12,14 @@ port 1 to the game. Do not use with custom controllers.
 Keys:
 
 DPAD - move the character
-X - Attack 1
-O - Attack 2
-[] - Attack 3
-^ - Attack 4
-L1 - Jump
-R1 - Special
+Square - Attack
+Triangle - Attack 2
+Cross - Jump
+Circle - Special
+L1 - Attack 3
+R1 - Attack 4
+Start - Start
+Select - Take Screenshot
 
 Start - Start
 Select - Make Screenshot

@@ -1,0 +1,21 @@
+AutoBleem 0.9.0 Bluetooth Controller Setup
+
+1. Start BlueTool
+2. Enter your PSC IP Address in the Address field
+3. Click Connect
+4. Put your controller into pair mode
+5. When your controller appears in the Detected Devices (Click to Pair) area
+click the controller listed. For example, "Pro Controller"
+6. Once your controller is listed in the Paired Devices (Click to Unpair) field
+your controller has been successfully paired to the PSC.
+
+NOTE: Bluetooth support is currently experimental at this point. Some controllers
+will work better than others, while some may not work at all. These controllers have
+been tested:
+
+1. The Switch Pro controller has worked well in our testing
+2. The GameSir G3s controller has worked well in our testing.  Press B and Home to pair.
+3. The PlayStation 4 controller mostly works with some minor issues experienced in Evoui
+4. The PlayStation 3 controller does not currently work properly but is being worked on
+
+Support for additional controllers will follow in future releases

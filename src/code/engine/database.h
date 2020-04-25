@@ -49,7 +49,7 @@ public:
     bool createInitialDatabase();
     void addFavoriteColumn();
     void addHistoryColumn();
-    void addDatePlayedColumn();
+    void addLastPlayedColumn();
     bool truncate();
 
     bool beginTransaction();

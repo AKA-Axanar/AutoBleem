@@ -72,7 +72,7 @@ void GuiLauncher::loop() {
             }
         }
 
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
@@ -122,7 +122,9 @@ void GuiLauncher::loop() {
 
             }   // switch (e.type)
         // end if (SDL_PollEvent(&e))
-        }  else { // no event.  see if we're holding down L1 or R1 for fast forward first letter
+        }
+
+        { // no event.  see if we're holding down L1 or R1 for fast forward first letter
             if (L1_isPressedForFastForward) {
                 Uint32 timePressed = (SDL_GetTicks() - L1_fastForwardTimeStart);
                 if (timePressed > prevNextFastForwardTimeLimit) {
