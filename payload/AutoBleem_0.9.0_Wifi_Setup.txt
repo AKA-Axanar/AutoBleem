@@ -1,5 +1,8 @@
 AutoBleem 0.9.0 Wifi Setup:
 
+Note: You can use a USB keyboard on the WiFi menu.  This is particularly useful when entering
+your WiFi password and for paging down the timezone choices.  Enter = X, Escape = O.
+
 1. At the AutoBleem start screen, press the L1 + Square buttons on the controller. This
 will take you to the Playstation Classic Hardware Information screen
 
