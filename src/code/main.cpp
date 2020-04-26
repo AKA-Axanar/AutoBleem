@@ -9,7 +9,6 @@
 #include "engine/database.h"
 #include "engine/scanner.h"
 #include "gui/gui.h"
-#include "gui/menus/gui_networkMenu.h"
 #include "main.h"
 #include "ver_migration.h"
 #include "engine/coverdb.h"
@@ -136,10 +135,61 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
 }
 
 //*******************************
+// rewriteGamelistXmlFile
+// the /Games/gamelist.xml is for Emulation Station to find the PS1 cover files
+//*******************************
+void rewriteGamelistXml() {
+    // this file was used during 0.9.0 testing.  it must be removed or ES will use it by mistake.
+    DirEntry::removeFile(Env::getPathToGamesDir() + sep + "gamelist.xml");
+
+    string path = Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx";
+    DirEntry::createDir(path);
+    string filePath = path + sep + "gamelist.xml";
+
+    DirEntry::removeFile(filePath);
+
+    PsGames currentGames;
+    Gui::getInstance()->db->getGames(&currentGames);
+
+    ofstream xml;
+    xml.open(filePath.c_str(), ios::binary);
+
+    xml << "<?xml version=\"1.0\"?>" << endl;
+    xml << "<gameList>" << endl;
+
+    auto makeGamesPathRelative = [] (const string& oldPath) -> string {
+        string newPath=oldPath;
+        size_t pos = newPath.find("/Games");
+        if (pos != string::npos) {
+            newPath.erase(0, pos-1 + sizeof("/Games"));
+            newPath = "." + newPath;
+        }
+        return newPath;
+    };
+
+    for (const auto& game : currentGames) {
+        xml << "\t<game>" << endl;
+
+        xml << "\t\t<path>" << makeGamesPathRelative(game->folder) << "</path>" << endl;
+        xml << "\t\t<name>" << game->title << "</name>" << endl;
+        xml << "\t\t<desc>" << game->title << "</desc>" << endl;
+        string imagePath = game->folder + sep + game->base + ".png";
+        xml << "\t\t<image>" << makeGamesPathRelative(imagePath) << "</image>" << endl;
+
+        xml << "\t</game>" << endl;
+    }
+    xml << "</gameList>" << endl;
+
+    xml.close();
+}
+
+//*******************************
 // main
 //*******************************
 int main(int argc, char *argv[]) {
+    Env::autobleemKernel = DirEntry::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
+
     if (argc == 1 + 1) {
         // the single arg is the path to the usb drive
         private_singleArgPassed = true;
@@ -192,8 +242,9 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     gui->internalDB = internalDB;
-    gui->internalDB->createFavoriteColumn(); // add the favorites column if it doesn't exist
-    gui->internalDB->createHistoryColumn();  // add the history column if it doesn't exist
+    gui->internalDB->addFavoriteColumn(); // add the favorites column if it doesn't exist
+    gui->internalDB->addHistoryColumn();  // add the history column if it doesn't exist
+    gui->internalDB->addLastPlayedColumn();  // add the last played column if it doesn't exist
 
     string dbpath = Env::getPathToRegionalDBFile();
     string pathToGamesDir = Env::getPathToGamesDir();
@@ -204,6 +255,7 @@ int main(int argc, char *argv[]) {
 
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
     bool prevFileExists = DirEntry::exists(prevPath);
+    bool gamelistXmlExists = DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
 
     GamesHierarchy gamesHierarchy;
     gamesHierarchy.getHierarchy(pathToGamesDir);
@@ -214,7 +266,7 @@ int main(int argc, char *argv[]) {
     bool autobleemPrevOutOfDate = gamesHierarchy.gamesDoNotMatchAutobleemPrev(prevPath);
     bool thereAreRawGameFilesInGamesDir = scanner->areThereGameFilesInDir(pathToGamesDir);
 
-    if (!prevFileExists || thereAreRawGameFilesInGamesDir || autobleemPrevOutOfDate) {
+    if (!prevFileExists || !gamelistXmlExists || thereAreRawGameFilesInGamesDir || autobleemPrevOutOfDate) {
         scanner->forceScan = true;
     }
 
@@ -222,17 +274,6 @@ int main(int argc, char *argv[]) {
 
     if (thereAreRawGameFilesInGamesDir)
         copyGameFilesInGamesDirToSubDirs(pathToGamesDir);   // the gui->display needs to be up first
-
-#if DISPLAY_NETWORK_MENU
-    GuiNetworkMenu::deleteNetworkLog(); // delete info from last wifi connection
-    bool autobootnetwork = (gui->cfg.inifile.values["autobootnetwork"] == "true");
-    if (autobootnetwork) {
-        string ssid = GuiNetworkMenu::getSSID();
-        if (ssid != "") {
-            string ipAddress = GuiNetworkMenu::initializeWifi();
-        }
-    }
-#endif
 
     while (gui->menuOption == MENU_OPTION_SCAN || gui->menuOption == MENU_OPTION_START) {
 
@@ -244,6 +285,8 @@ int main(int argc, char *argv[]) {
             // removed from the hierarchy and it force you to rescan on every boot.
             gamesHierarchy.writeAutobleemPrev(prevPath);
             scanGames(gamesHierarchy);
+            rewriteGamelistXml();
+
             if (gui->forceScan) {
                 gui->forceScan = false;
             } else {
@@ -252,48 +295,6 @@ int main(int argc, char *argv[]) {
         }
 
         if (gui->menuOption == MENU_OPTION_START) {
-#if defined(__x86_64__) || defined(_M_X64)
-            if (!gui->runningGame->app) {
-                cout << "I'm sorry Dave I'm afraid I can't do that." << endl;
-                gui->finish();
-
-                usleep(300 * 1000);
-                gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
-                gui->startingGame = false;
-
-                gui->display(false, pathToGamesDir, db, true);
-            } else
-            {
-                gui->finish();
-                gui->saveSelection();
-                EmuInterceptor *interceptor;
-
-                interceptor = new LaunchInterceptor();
-
-                interceptor->memcardIn(gui->runningGame);
-                interceptor->prepareResumePoint(gui->runningGame, gui->resumepoint);
-                interceptor->execute(gui->runningGame, gui->resumepoint );
-                interceptor->memcardOut(gui->runningGame);
-                delete (interceptor);
-
-                bool reloadFavAndHist {false};
-                if (gui->runningGame->foreign)
-                    reloadFavAndHist = true;
-                else if (gui->emuMode != EMU_PCSX)
-                    reloadFavAndHist = true;
-
-                if (reloadFavAndHist) {
-                    auto ra = RAIntegrator::getInstance();
-                    ra->reloadFavorites();  // they could have changed
-                    ra->reloadHistory();  // they could have changed
-                }
-                gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
-                gui->startingGame = false;
-
-                gui->display(false, pathToGamesDir, db, true);
-            }
-
-#else
             cout << "Starting game" << endl;
             gui->finish();
 
@@ -320,10 +321,9 @@ int main(int argc, char *argv[]) {
                 if (!gui->runningGame->app)
                 {
                     interceptor = new RetroArchInterceptor();
-                } else
-                    {
+                } else {
                      interceptor =  new LaunchInterceptor();
-                    }
+                }
             } else {
                 if (gui->emuMode == EMU_PCSX) {
                     interceptor = new PcsxInterceptor();
@@ -357,7 +357,6 @@ int main(int argc, char *argv[]) {
             gui->startingGame = false;
 
             gui->display(false, pathToGamesDir, db, true);
-#endif
         }
     }
     db->disconnect();

@@ -1,6 +1,5 @@
 #!/bin/bash
 mount -o remount,ro /gaadata
-mount -o remount,ro /data
 
 
 mkdir -p /media/Games/!SaveStates

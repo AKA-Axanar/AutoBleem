@@ -15,6 +15,7 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
 
 //******************
 // Util
@@ -40,6 +41,8 @@ public:
     static std::string getStringWithinChar(std::string s, char del);
     static void removeCharsFromString(std::string& str, std::string charsToRemove);
     static void removeCRLFFromString(std::string& str) { removeCharsFromString(str, "\r\n"); }
+    static std::istream& getlineRemoveCR(std::istream& is, std::string& str);
+    static void removeComment(std::string& str);    // remove "#" to end of line
 
     static std::string getAvailableSpace();
     static std::string floatToString(float f, int n);

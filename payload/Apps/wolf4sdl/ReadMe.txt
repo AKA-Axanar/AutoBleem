@@ -1,7 +1,5 @@
-Wolf4SDL
+Controls
 --------
-
-Controls:
 
 D-Pad: Move / Turn
 Cross:  Fire

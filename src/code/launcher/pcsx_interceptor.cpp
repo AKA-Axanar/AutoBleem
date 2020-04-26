@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include "pcsx_interceptor.h"
 #include "../util.h"
+#include "../util_time.h"
 #include "../gui/gui.h"
 #include "../lang.h"
 #include "../engine/memcard.h"
@@ -44,6 +45,12 @@ bool PcsxInterceptor::execute(PsGamePtr & game, int resumepoint) {
     cout << "calling PcsxInterceptor::execute()" << endl;
 
     shared_ptr<Gui> gui(Gui::getInstance());
+
+    if (game->internal) {
+        gui->internalDB->updateDatePlayed(game->gameId, UtilTime::getCurrentTime());
+    } else {
+        gui->db->updateDatePlayed(game->gameId, UtilTime::getCurrentTime());
+    }
 
     string padMapping = gui->padMapping;
 
@@ -131,12 +138,16 @@ bool PcsxInterceptor::execute(PsGamePtr & game, int resumepoint) {
     }
     cout << endl;
 
+#if defined(__x86_64__) || defined(_M_X64)
+    Gui::splash("I'm sorry Dave.  I'm afraid I can't do that.");
+#else
     int pid = fork();
     if (!pid) {
         execvp(link.c_str(), (char **) argvNew.data());
     }
 
     waitpid(pid, NULL, 0);
+#endif
     cleanupConfig(game);
 
     usleep(3 * 1000);

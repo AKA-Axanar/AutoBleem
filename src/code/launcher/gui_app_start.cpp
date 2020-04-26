@@ -149,7 +149,7 @@ void GuiAppStart::loop() {
         gui->watchJoystickPort();
         SDL_Event e;
         render();
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -168,10 +168,10 @@ void GuiAppStart::loop() {
                         result = false;
                         menuVisible = false;
                     };
+                    break;
 
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
                 case SDL_JOYHATMOTION:
-
                     if (totalLines!=0) {
                         if (gui->mapper.isUp(&e)) {
                             scrolling = -1;
@@ -185,11 +185,8 @@ void GuiAppStart::loop() {
                             scrolling = 0;
                         }
                     }
-
+                    break;
             }
-
-
-
         }
     }
 }

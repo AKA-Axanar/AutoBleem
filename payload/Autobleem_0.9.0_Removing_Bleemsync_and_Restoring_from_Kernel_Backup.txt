@@ -1,0 +1,43 @@
+**************************	
+If you have Bleemsync installed
+**************************	
+The AutoBleem Kernel can only be installed on a Playstation Classic that is in its original condition.  If you have 
+installed Bleemsync or Project Eris you must first uninstall them.  Restore the backup you made when you installed 
+Bleemsync/Eris before installing the AutoBleem Kernel.
+
+Find the backup LBOOT.EPB Bleemsync (or Project Eris) made when you installed Bleemsync or Eris.  Follow the 
+MMC uninstall guide outlined here: https://modmyclassic.com/?s=uninstall+project+eris to uninstall Bleemsync 
+or Project Eris.
+
+If you installed multiple versions of Bleemsync on top of one another then you need to uninstall them in reverse order.  
+For example, if you installed Bleemsync 1.1 and then later installed Bleemsync 1.2 on top of 1.1: 1) Uninstall 
+Bleemsync 1.2 using the backup it made during the 1.2 install.  This will restore your PSC to Bleemsync 1.1. 
+2) Uninstall Bleemsync 1.1 using the backup it made during the 1.1 install.  This will restore your PSC to the
+original state before you installed Bleemsync 1.1.
+
+The AutoBleem kernel will not install on the PSC unless it either is in its original condition or it has been restored 
+to its original condition.
+
+**************************	
+If you have lost your Bleemsync backup file
+**************************	
+Find a friend who has a Playstation Classic in it's original condition.  Ask him to install the Autobleem Kernel.  
+During the install process AutoBleem will first make a backup of the original kernel.  You can use that backup 
+with AutoBleem to restore your PSC to its original condition.  See below on how to use AutoBleem to restore a 
+kernel backup of the PSC that was made by AutoBleem.
+
+DO NOT USE AUTOBLEEM TO RESTORE A BLEEMSYNC BACKUP!  You will brick your PSC!
+
+**************************	
+How to restore a backup made with AutoBleem
+**************************	
+Important: You are restoring the PSC to original condition.  You MUST format the USB stick as fat32 as it will 
+boot back up as an original stock PSC that only supports fat32.
+
+During the kernel installation process Autobleem will first make a backup of your kernel.  You can restore that backup 
+(made by AutoBleem) to restore the kernel backup to the PSC.  Place the LBOOT.EPB file created by AutoBleem on 
+the root of your AutoBleem USB drive.  Boot AutoBleem on your PSC.  Navigate to Apps and run the ABFashkit App.  
+Press the triangle button to start the restore of the LBOOT.EPB file to the PSC.  If you then want to install 
+the AutoBleem Kernel press the X button.  The install is very quick.  
+Enjoy the features of the new kernel: OTG, NTFS, exFat, easy WiFI setup and automatic WiFi re-connect on boot, 
+Ethernet, and datetime features.

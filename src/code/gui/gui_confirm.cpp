@@ -41,38 +41,47 @@ void GuiConfirm::loop()
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
-
                 }
             }
+
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
             }
+
             switch (e.type) {
                 case SDL_JOYBUTTONDOWN:
-
-
                     if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e)) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         result = true;
                         menuVisible = false;
-
                     };
+
                     if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE,&e)) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         result = false;
                         menuVisible = false;
-
                     };
+                    break;
 
-
+                case SDL_KEYDOWN:
+                    if (e.key.keysym.sym == SDLK_RETURN) {
+                        Mix_PlayChannel(-1, gui->cursor, 0);
+                        result = true;
+                        menuVisible = false;
+                    }
+                    if (e.key.keysym.sym == SDLK_ESCAPE) {
+                        Mix_PlayChannel(-1, gui->cancel, 0);
+                        result = false;
+                        menuVisible = false;
+                    }
+                    break;
             }
-
         }
     }
 }

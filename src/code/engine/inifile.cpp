@@ -12,7 +12,6 @@ using namespace std;
 
 //*******************************
 // Inifile::load
-// warning: load()is being used to append/overwrite default theme.ini values to an existing theme.ini values
 //*******************************
 void Inifile::load(const string & _path) {
     this->path = _path;
@@ -26,10 +25,10 @@ void Inifile::load(const string & _path) {
         return;
     }
 
-    while (getline(file, iniLine)) {
+    while (Util::getlineRemoveCR(file, iniLine)) {
+        Util::removeComment(iniLine);   // remove '#' to end of line
         iniLine = trim(iniLine);
         if (iniLine.length() == 0) continue;    // blank line
-        if (iniLine[0] == '#') continue;        // treat a line beginning with # as a comment
         if (iniLine[0]=='[')
         {
             iniLine = ltrim(iniLine);
@@ -48,6 +47,21 @@ void Inifile::load(const string & _path) {
         if (file.eof()) break;
     };
     file.close();
+}
+
+//*******************************
+// Inifile::reload
+//*******************************
+void Inifile::reload(const string & _path) {
+    values.clear();
+    load(_path);
+}
+
+//*******************************
+// Inifile::OverwriteAndAppend
+//*******************************
+void Inifile::OverwriteAndAppend(const string & _path) {
+    load(_path);
 }
 
 //*******************************

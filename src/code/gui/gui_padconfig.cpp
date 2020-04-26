@@ -86,7 +86,7 @@ void GuiPadConfig::loop() {
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -146,7 +146,7 @@ void GuiPadConfig::loop() {
                             newConfig.path = Env::getWorkingPath() + sep + "gpmapping/" + name + ".ini";
                             newConfig.save(newConfig.path);
                             gui->mapper.reload();
-                            menuVisible == false;
+                            menuVisible = false;
                             return;
                         } else if (to_string(e.jbutton.button) == newConfig.values["circle"]) {
                             step = 0;

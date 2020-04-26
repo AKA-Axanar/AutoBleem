@@ -78,7 +78,7 @@ string GuiManager::getStatusLine() {
 //*******************************
 // GuiManager::flushCovers
 //*******************************
-int GuiManager::flushCovers(const char *file, const struct stat *sb, int flag, struct FTW *s)
+int GuiManager::flushCovers(const char *file, const struct stat* /*sb*/, int /*flag*/, struct FTW* /*s*/)
 {
     int retval = 0;
 

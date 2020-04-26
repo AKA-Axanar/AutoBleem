@@ -45,23 +45,28 @@ static const char UPDATE_YEAR[] = "UPDATE GAME SET RELEASE_YEAR=? WHERE GAME_ID=
 static const char UPDATE_MEMCARD[] = "UPDATE GAME SET MEMCARD=? WHERE GAME_ID=?";
 
 // used by: getGames
-static const char GAMES_DATA[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, PATH, SSPATH, MEMCARD, d.BASENAME, HISTORY, COUNT(d.GAME_ID) as NUMD \
+static const char GAMES_DATA[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, \
+                                  PLAYERS, PATH, SSPATH, MEMCARD, d.BASENAME, HISTORY, LAST_PLAYED, \
+                                  COUNT(d.GAME_ID) as NUMD \
                                   FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
-                                     GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
-                                     ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
+                                  GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
+                                  ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
 // used by: refreshGameInternal
 // used by: refreshGame
-static const char GAMES_DATA_SINGLE[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, PATH, SSPATH, MEMCARD, d.BASENAME, HISTORY, COUNT(d.GAME_ID) as NUMD \
-                                  FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
-                                    WHERE g.GAME_ID=?  \
-                                     GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
-                                     ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
+static const char GAMES_DATA_SINGLE[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, \
+                                        PLAYERS, PATH, SSPATH, MEMCARD, d.BASENAME, HISTORY, LAST_PLAYED, \
+                                        COUNT(d.GAME_ID) as NUMD \
+                                        FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
+                                        WHERE g.GAME_ID=?  \
+                                        GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
+                                        ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
 // used by: insertGame
-static const char INSERT_GAME[] = "INSERT INTO GAME ([GAME_ID],[GAME_TITLE_STRING],[PUBLISHER_NAME],[RELEASE_YEAR],[PLAYERS],[RATING_IMAGE],[GAME_MANUAL_QR_IMAGE],[LINK_GAME_ID],\
-                [PATH],[SSPATH],[MEMCARD]) \
-                values (?,?,?,?,?,'CERO_A','QR_Code_GM','',?,?,?)";
+static const char INSERT_GAME[] = "INSERT INTO GAME ([GAME_ID],[GAME_TITLE_STRING],[PUBLISHER_NAME],[RELEASE_YEAR],\
+                                   [PLAYERS],[RATING_IMAGE],[GAME_MANUAL_QR_IMAGE],[LINK_GAME_ID],\
+                                   [PATH],[SSPATH],[MEMCARD]) \
+                                   values (?,?,?,?,?,'CERO_A','QR_Code_GM','',?,?,?)";
 
 // used by: createInitialDatabase
 static const char CREATE_GAME_SQL[] = " CREATE TABLE IF NOT EXISTS GAME  \
@@ -77,6 +82,7 @@ static const char CREATE_GAME_SQL[] = " CREATE TABLE IF NOT EXISTS GAME  \
        SSPATH  text null,   \
        MEMCARD text null,   \
        HISTORY integer,     \
+       LAST_PLAYED integer, \
        PRIMARY KEY ( GAME_ID ) )";
 
 // used by: createInitialDatabase
@@ -133,28 +139,34 @@ static const char DELETE_GAME_ID_FROM_SUBDIR_GAMES_TO_DISPLAY_ON_ROW[] = "DELETE
 
 // used by: refreshGameInternal
 static const char GAMES_DATA_SINGLE_INTERNAL[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
-                                     FAVORITE, HISTORY FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
+                                     FAVORITE, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
                                      WHERE g.GAME_ID=?  \
                                      GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
                                      ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
 // used by: getInternalGames
 static const char GAMES_DATA_INTERNAL[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
-                                     FAVORITE, HISTORY FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
+                                     FAVORITE, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
                                      GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
                                      ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
-// used by: createFavoriteColumn
+// used by: addFavoriteColumn for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
 static const char ADD_FAVORITE_COLUMN[] = "ALTER TABLE GAME ADD COLUMN FAVORITE INT DEFAULT 0";
 
-// used by: updateFavorite
+// used by: updateFavorite for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
 static const char UPDATE_FAVORITE[] = "UPDATE GAME SET FAVORITE=? WHERE GAME_ID=?";
 
-// used by: createHistoryColumn
+// used by: addHistoryColumn for the internal.db and regional.db
 static const char ADD_HISTORY_COLUMN[] = "ALTER TABLE GAME ADD COLUMN HISTORY INT DEFAULT 0";
 
-// used by: updateHistoy
+// used by: updateHistory for the internal.db and regional.db
 static const char UPDATE_HISTORY[] = "UPDATE GAME SET HISTORY=? WHERE GAME_ID=?";
+
+// used by: addLastPlayedColumn for the internal.db and regional.db
+static const char ADD_LAST_PLAYED_COLUMN[] = "ALTER TABLE GAME ADD COLUMN LAST_PLAYED INT DEFAULT 0";
+
+// used by: updateDatePlayed for the internal.db and regional.db
+static const char UPDATE_LAST_PLAYED[] = "UPDATE GAME SET LAST_PLAYED=? WHERE GAME_ID=?";
 
 //*******************************
 // ????.db
@@ -319,6 +331,27 @@ bool Database::updateHistory(int id, int rank) {
 }
 
 //*******************************
+// Database::updateDatePlayed
+// seconds since 1970
+//*******************************
+bool Database::updateDatePlayed(int id, int date_in_seconds) {
+    char *errorReport = nullptr;
+    sqlite3_stmt *res = nullptr;
+    int rc = sqlite3_prepare_v2(db, UPDATE_LAST_PLAYED, -1, &res, nullptr);
+    if (rc != SQLITE_OK) {
+        cerr << "Failed: db:: updateDatePlayed, " << id << ", " << date_in_seconds << endl;
+        cerr << sqlite3_errmsg(db) << endl;
+        if (!errorReport) sqlite3_free(errorReport);
+        return false;
+    }
+    sqlite3_bind_int(res, 1, date_in_seconds);
+    sqlite3_bind_int(res, 2, id);
+    sqlite3_step(res);
+    sqlite3_finalize(res);
+    return true;
+}
+
+//*******************************
 // Database::queryTitle
 //*******************************
 bool Database::queryTitle(string title, Metadata *md) {
@@ -377,6 +410,7 @@ bool Database::getInternalGames(PsGames *result) {
             int discs = sqlite3_column_int(res, 6);
             int fav = sqlite3_column_int(res, 7);
             int history = sqlite3_column_int(res, 8);
+            int last_played = sqlite3_column_int(res, 9);
 
             PsGamePtr psGame{new PsGame};
             psGame->gameId = id;
@@ -395,6 +429,7 @@ bool Database::getInternalGames(PsGames *result) {
             psGame->cds = discs;
             psGame->favorite = (fav != 0);
             psGame->history = history;
+            psGame->last_played = last_played;
             result->push_back(psGame);
             //cout << "getInternalGames: " << game->serial << ", " << game->title << endl;
         }
@@ -425,6 +460,7 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
             int discs = sqlite3_column_int(res, 6);
             int fav = sqlite3_column_int(res, 7);
             int history = sqlite3_column_int(res, 8);
+            int last_played = sqlite3_column_int(res, 9);
 
             psGame->gameId = id;
             psGame->title = string(reinterpret_cast<const char *>(title));
@@ -442,6 +478,7 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
             psGame->cds = discs;
             psGame->favorite = (fav != 0);
             psGame->history = history;
+            psGame->last_played = last_played;
 
             string gameIniPath = psGame->folder + sep + GAME_INI;
             if (DirEntry::exists(gameIniPath)) {
@@ -481,7 +518,8 @@ bool Database::refreshGame(PsGamePtr &game) {
             const unsigned char *memcard = sqlite3_column_text(res, 7);
             const unsigned char *base = sqlite3_column_text(res, 8);
             int history = sqlite3_column_int(res, 9);
-            int discs = sqlite3_column_int(res, 10);
+            int last_played = sqlite3_column_int(res, 10);
+            int discs = sqlite3_column_int(res, 11);
 
             game->gameId = id;
             game->title = string(reinterpret_cast<const char *>(title));
@@ -493,6 +531,7 @@ bool Database::refreshGame(PsGamePtr &game) {
             game->ssFolder = string(reinterpret_cast<const char *>(sspath));
             game->base = string(reinterpret_cast<const char *>(base));
             game->history = history;
+            game->last_played = last_played;
             game->memcard = string(reinterpret_cast<const char *>(memcard));
             game->cds = discs;
 
@@ -532,7 +571,8 @@ bool Database::getGames(PsGames *result) {
             const unsigned char *memcard = sqlite3_column_text(res, 7);
             const unsigned char *base = sqlite3_column_text(res, 8);
             int history = sqlite3_column_int(res, 9);
-            int discs = sqlite3_column_int(res, 10);
+            int last_played = sqlite3_column_int(res, 10);
+            int discs = sqlite3_column_int(res, 11);
 
             PsGamePtr game{new PsGame};
             game->gameId = id;
@@ -545,6 +585,7 @@ bool Database::getGames(PsGames *result) {
             game->ssFolder = string(reinterpret_cast<const char *>(sspath));
             game->base = string(reinterpret_cast<const char *>(base));
             game->history = history;
+            game->last_played = last_played;
             game->memcard = string(reinterpret_cast<const char *>(memcard));
             game->cds = discs;
             //cout << "getGames: " << game->serial << ", " << game->title << endl;
@@ -895,7 +936,8 @@ bool Database::truncate() {
 //*******************************
 bool Database::createInitialDatabase() {
     if (!executeCreateStatement((char *) CREATE_GAME_SQL, "GAME")) return false;
-         executeCreateStatement((char*) ADD_HISTORY_COLUMN, "History column" ); // add column to existing table
+    executeCreateStatement((char*) ADD_HISTORY_COLUMN, "History column" ); // add column to existing table
+    executeCreateStatement((char*) ADD_LAST_PLAYED_COLUMN, "Last_Played column" ); // add column to existing table
     if (!executeCreateStatement((char *) CREATE_DISC_SQL, "DISC")) return false;
     if (!executeCreateStatement((char *) CREATE_LANGUAGE_SPECIFIC_SQL, "LANGUAGE_SPECIFIC")) return false;
     if (!executeCreateStatement((char *) CREATE_SUBDIR_ROW_SQL, "SUBDIR_ROWS")) return false;
@@ -905,17 +947,24 @@ bool Database::createInitialDatabase() {
 }
 
 //*******************************
-// Database::createFavoriteColumn
+// Database::addFavoriteColumn
 //*******************************
-void Database::createFavoriteColumn() {
+void Database::addFavoriteColumn() {
     executeCreateStatement((char*) ADD_FAVORITE_COLUMN, "Favorite column" );
 }
 
 //*******************************
-// Database::createHistoryColumn
+// Database::addHistoryColumn
 //*******************************
-void Database::createHistoryColumn() {
+void Database::addHistoryColumn() {
     executeCreateStatement((char*) ADD_HISTORY_COLUMN, "History column" );
+}
+
+//*******************************
+// Database::addLastPlayedColumn
+//*******************************
+void Database::addLastPlayedColumn() {
+    executeCreateStatement((char*) ADD_LAST_PLAYED_COLUMN, "Last_Played column" );
 }
 
 //*******************************

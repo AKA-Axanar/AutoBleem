@@ -426,7 +426,7 @@ void GuiEditor::loop() {
     while (menuVisible) {
         gui->watchJoystickPort();
         SDL_Event e;
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -448,7 +448,6 @@ void GuiEditor::loop() {
                         if (selOption > OPT_LAST) {
                             selOption = OPT_LAST;
                         }
-                        render();
                     }
                     if (gui->mapper.isUp(&e)) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
@@ -456,21 +455,22 @@ void GuiEditor::loop() {
                         if (selOption < OPT_FIRST) {
                             selOption = OPT_FIRST;
                         }
-                        render();
                     }
 
 
                     if (gui->mapper.isRight(&e)) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        processOptionChange(true);
-
-                        render();
+                        do {
+                            Mix_PlayChannel(-1, gui->cursor, 0);
+                            processOptionChange(true);
+                            render();
+                        } while (fastForwardUntilAnotherEvent(80));
                     }
                     if (gui->mapper.isLeft(&e)) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        processOptionChange(false);
-
-                        render();
+                        do {
+                            Mix_PlayChannel(-1, gui->cursor, 0);
+                            processOptionChange(false);
+                            render();
+                        } while (fastForwardUntilAnotherEvent(80));
                     }
                     break;
 
@@ -499,7 +499,6 @@ void GuiEditor::loop() {
                                     gameIni.values["memcard"] = result;
                                     gameIni.save(gameIni.path);
                                 }
-                                render();
                             };
                         }
                     } else {
@@ -526,7 +525,6 @@ void GuiEditor::loop() {
                         } else {
                             Mix_PlayChannel(-1, gui->cancel, 0);
                         }
-                        render();
                     };
 
                     if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
@@ -562,9 +560,9 @@ void GuiEditor::loop() {
                             }
                         }
                         refreshData();
-                        render();
                     };
             }
         }
+        render();
     }
 }

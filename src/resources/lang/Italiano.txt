@@ -1,4 +1,4 @@
-q.-= Code C++ and shell scripts =-.
+.-= Code C++ and shell scripts =-.
 .-= Codice C++ e shell scripts =-.
 .-= Database maintenance =-.
 .-= Manutenzione database =-.
@@ -142,10 +142,10 @@ Free
 Libero
 Free space
 Spazio libero
-Game
-Gioco
 GAME
 GIOCO
+Game
+Gioco
 Game failed to verify:
 Verifica fallita per questi giochi:
 Game file not found
@@ -282,6 +282,8 @@ Quick scroll to next letter
 Scorri rapidamente alla lettera successiva
 Quit emulation - back to AutoBleem
 Esci dall'emulazione - torna ad AutoBleem
+Random Game
+Gioco Casuale
 Re/Scan
 Ri/Cerca
 ReadMe file not found

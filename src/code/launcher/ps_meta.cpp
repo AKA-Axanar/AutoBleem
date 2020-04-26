@@ -5,6 +5,7 @@
 #include "ps_meta.h"
 #include "ps_game.h"
 #include "../util.h"
+#include "../util_time.h"
 #include <SDL2/SDL_image.h>
 #include "../lang.h"
 #include "../engine/inifile.h"
@@ -19,6 +20,7 @@ using namespace std;
 void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt, const string & yearTxt,
                          const string & serial, const string & region, const string & playersTxt, bool internal,
                          bool hd, bool locked, int discs, bool favorite,  bool foreign, bool app,
+                         const string& last_played,
                          int r,int g, int b) {
     this->discs = discs;
     this->internal = internal;
@@ -33,6 +35,7 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
     this->players = playersTxt;
     this->foreign = foreign;
     this->app = app;
+    this->last_played = last_played;
 
     gameNameTex = createTextTex(gameName, r,g,b, fonts[FONT_28_BOLD]);
     publisherAndYearTex = createTextTex(publisher + ", " + year, r,g,b, fonts[FONT_15_BOLD]);
@@ -41,7 +44,8 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
 	else
         serialAndRegionTex = createTextTex("", r,g,b, fonts[FONT_15_BOLD]);
     playersTex = createTextTex(playersTxt, r,g,b, fonts[FONT_15_BOLD]);
-    discsTex = createTextTex(to_string(discs),r,g,b,fonts[FONT_15_BOLD]);
+    discsTex = createTextTex(to_string(discs), r,g,b, fonts[FONT_15_BOLD]);
+    datePlayedTex = createTextTex(_("Last Played:") + " " + last_played, r,g,b, fonts[FONT_15_BOLD]);
 
     if (foreign)
     {
@@ -59,9 +63,6 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
 //*******************************
 void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
     string appendText = psGame->players == 1 ? _("Player") : _("Players");
-
-
-
     if (!psGame->foreign) {
         if (psGame->serial == "") {
             Inifile iniFile;
@@ -71,8 +72,9 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
         }
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                     to_string(psGame->players) + " " + appendText,
-                    psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->foreign, psGame->app, r, g,
-                    b);
+                    psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                    psGame->foreign, psGame->app, UtilTime::timeToDisplayTimeString(psGame->last_played),
+                    r, g, b);
     } else
     {
         if (psGame->app)
@@ -82,18 +84,18 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
 
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->foreign, psGame->app, r,
-                        g,
-                        b);
+                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
+                        r, g, b);
         } else {
             psGame->serial = "";
             psGame->region = "";
 
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->foreign, psGame->app, r,
-                        g,
-                        b);
+                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
+                        r, g, b);
         }
     }
 }
@@ -133,36 +135,46 @@ void PsMeta::render() {
         SDL_Rect rect;
         SDL_Rect fullRect;
 
-        SDL_QueryTexture(gameNameTex, &format, &access, &w, &h);
-        rect.x = x;
-        rect.y = y;
-        rect.w = w;
+        int yOffset = 0;
+        // game name line
+        {
+            SDL_QueryTexture(gameNameTex, &format, &access, &w, &h);
+            rect.x = x;
+            rect.y = y + yOffset;
+            rect.w = w;
 
-        if (rect.w > 490) rect.w = 490;
-        rect.h = h;
-        fullRect.x = 0;
-        fullRect.y = 0;
-        fullRect.w = w;
-        fullRect.h = h;
-        SDL_RenderCopy(renderer, gameNameTex, &fullRect, &rect);
+            if (rect.w > 490) rect.w = 490;
+            rect.h = h;
+            fullRect.x = 0;
+            fullRect.y = 0;
+            fullRect.w = w;
+            fullRect.h = h;
+            SDL_RenderCopy(renderer, gameNameTex, &fullRect, &rect);
+        }
 
-        SDL_QueryTexture(publisherAndYearTex, &format, &access, &w, &h);
+        yOffset += 35;
+        // publisher line
+        {
+            SDL_QueryTexture(publisherAndYearTex, &format, &access, &w, &h);
 
-        rect.x = x;
-        rect.y = y + 43;
-        rect.w = w;
-        rect.h = h;
+            rect.x = x;
+            rect.y = y + yOffset;
+            rect.w = w;
+            rect.h = h;
 
-        fullRect.x = 0;
-        fullRect.y = 0;
-        fullRect.w = w;
-        fullRect.h = h;
-        SDL_RenderCopy(renderer, publisherAndYearTex, &fullRect, &rect);
+            fullRect.x = 0;
+            fullRect.y = 0;
+            fullRect.w = w;
+            fullRect.h = h;
+            SDL_RenderCopy(renderer, publisherAndYearTex, &fullRect, &rect);
+        }
 
+        yOffset += 21;
+        // serial number line
         SDL_QueryTexture(serialAndRegionTex, &format, &access, &w, &h);
 
         rect.x = x;
-        rect.y = y + 43 + 22;
+        rect.y = y + yOffset;
         rect.w = w;
         rect.h = h;
 
@@ -172,10 +184,38 @@ void PsMeta::render() {
         fullRect.h = h;
         SDL_RenderCopy(renderer, serialAndRegionTex, &fullRect, &rect);
 
+
+        yOffset += 21;
+        // last played line
+        {
+            SDL_QueryTexture(datePlayedTex, &format, &access, &w, &h);
+
+            rect.x = x;
+            rect.y = y + yOffset;
+            rect.w = w;
+            rect.h = h;
+
+            fullRect.x = 0;
+            fullRect.y = 0;
+            fullRect.w = w;
+            fullRect.h = h;
+            if (!foreign) {     // if not RA
+#if defined(__x86_64__) || defined(_M_X64)
+                // the devel system has time
+                SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+#else
+                if (Env::autobleemKernel)
+                    SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+#endif
+            }
+        }
+
+        yOffset += 22;
         if (!foreign) {
+            // PS1 icons line
             SDL_QueryTexture(playersTex, &format, &access, &w, &h);
             rect.x = x + 35;
-            rect.y = y + 43 + 22 + 30;
+            rect.y = y + yOffset;
             rect.w = w;
             rect.h = h;
 
@@ -187,7 +227,7 @@ void PsMeta::render() {
 
             SDL_QueryTexture(tex, &format, &access, &w, &h);
             rect.x = x;
-            rect.y = y + 43 + 22 + 28;
+            rect.y = y + yOffset - 2;
             rect.w = w;
             rect.h = h;
 
@@ -204,7 +244,7 @@ void PsMeta::render() {
 
             SDL_QueryTexture(discsTex, &format, &access, &w, &h);
             rect.x = x + 170;
-            rect.y = y + 43 + 22 + 30;
+            rect.y = y + yOffset;
             rect.w = w;
             rect.h = h;
 
@@ -215,7 +255,7 @@ void PsMeta::render() {
             SDL_RenderCopy(renderer, discsTex, &fullRect, &rect);
 
             rect.x = x + offset;
-            rect.y = y + 43 + 22 + 28;
+            rect.y = y + yOffset - 2;
             rect.w = 30;
             rect.h = 30;
 
@@ -248,10 +288,11 @@ void PsMeta::render() {
             }
         } else
         {
+            // retroarch icon
             if (!app) {
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
                 rect.x = x;
-                rect.y = y + 43 + 22 + 28;
+                rect.y = y + yOffset - 2;
                 rect.w = w;
                 rect.h = h;
 

@@ -215,7 +215,7 @@ void GuiMcManager::loop() {
 
         gui->watchJoystickPort();
         SDL_Event e;
-        if (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -261,7 +261,7 @@ void GuiMcManager::loop() {
                             int gameSize = src->getGameSlots(slot).size();
                             vector<int> destSlots = newCard->findEmptySlot(gameSize);
 
-                            if (destSlots.size()>=0)
+                            if (destSlots.size() > 0)
                             {
                                 Mix_PlayChannel(-1, gui->cursor, 0);
                                 unsigned char * buffer;
@@ -356,7 +356,7 @@ void GuiMcManager::loop() {
                         int gameSize = src->getGameSlots(slot).size();
                         vector<int> destSlots = dest->findEmptySlot(gameSize);
 
-                        if (destSlots.size()>=0)
+                        if (destSlots.size() > 0)
                         {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             unsigned char * buffer;
@@ -367,14 +367,13 @@ void GuiMcManager::loop() {
                             dest->importGame(buffer,exportSize);
                             delete buffer;
                             changes = true;
-
                         } else
                         {
                             Mix_PlayChannel(-1, gui->cancel, 0);
                         }
-
-
                     };
+                    break;
+
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
                 case SDL_JOYHATMOTION:
                     if (gui->mapper.isCenter(&e)) {
@@ -396,7 +395,7 @@ void GuiMcManager::loop() {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         pencilDown();
                     }
-
+                    break;
             }
         }
         counter++;
