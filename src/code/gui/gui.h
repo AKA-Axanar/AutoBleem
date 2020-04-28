@@ -20,20 +20,6 @@
 //#include "gui_font_wrapper.h"
 #include "gui_font.h"
 
-#define PCS_DEADZONE     32000
-/*
-#define PCS_BTN_L2       4
-#define PCS_BTN_R2       5
-#define PCS_BTN_L1       6
-#define PCS_BTN_R1       7
-#define PCS_BTN_START    9
-#define PCS_BTN_SQUARE   3
-#define PCS_BTN_TRIANGLE 0
-#define PCS_BTN_CROSS    2
-#define PCS_BTN_CIRCLE   1
-#define PCS_BTN_SELECT   8
-*/
-
 
 
 enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_OPTION_RETRO, MENU_OPTION_START };
@@ -112,7 +98,7 @@ public:
 
     void display(bool forceScan, const std::string &_pathToGamesDir, Database *db, bool resume);
 
-    void waitForGamepad();
+    void hideMouseCursor();
 
     void finish();
 

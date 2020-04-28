@@ -72,7 +72,7 @@ void GuiLauncher::loop() {
             }
         }
 
-        while (AB_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == AB_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);
@@ -129,7 +129,7 @@ void GuiLauncher::loop() {
                     break;
 
             }   // switch (e.type)
-        // end if (AB_PollEvent(&e))
+        // end if (SDL_PollEvent(&e))
         }
 
         { // no event.  see if we're holding down L1 or R1 for fast forward first letter

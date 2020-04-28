@@ -30,14 +30,14 @@ void GuiPadTest::init() {
 void GuiPadTest::loop() {
     // eat any events in the queue
     SDL_Event e;
-    while (AB_PollEvent(&e))
+    while (SDL_PollEvent(&e))
         ;
 
     shared_ptr<Gui> gui(Gui::getInstance());
     int buttonDownCount = 0;
     while (buttonDownCount >= 0 && buttonDownCount < 3) {
         SDL_Event e;
-        auto status = AB_PollEvent(&e);
+        auto status = SDL_PollEvent(&e);
         if (status) {
             if (e.type == SDL_KEYDOWN) {
                 appendLine("SDL_KEYDOWN = " + to_string(e.key.keysym.scancode));
@@ -81,6 +81,6 @@ void GuiPadTest::loop() {
     }
     appendLine("Release all buttons now");
     sleep(3);
-    while (AB_PollEvent(&e))
+    while (SDL_PollEvent(&e))
         ;   // eat any events in the queue
 }

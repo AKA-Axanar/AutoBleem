@@ -40,7 +40,7 @@ void GuiConfirm::loop()
     menuVisible = true;
     while (menuVisible) {
         SDL_Event e;
-        while (AB_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == AB_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);

@@ -14,7 +14,7 @@ void GuiScreen::loop()
 
         SDL_Event e;
 
-        while (AB_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == AB_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);
@@ -167,83 +167,6 @@ bool GuiScreen::fastForwardUntilAnotherEvent(Uint32 ticksPerFastForwardRepeat) {
     }
 }
 
-#if 0
-//*******************************
-// GuiScreen::fastForwardUntilJoyCenter
-//*******************************
-// usage example:
-// void doSomeJoyEvent() {
-//      do {
-//          whatever you want to do on the event
-//          render();
-//      } while (fastForwardUntilJoyCenter(300);  // repeat every 300 milliseconds
-//
-bool GuiScreen::fastForwardUntilJoyCenter(Uint32 ticksPerFastForwardRepeat) {
-    SDL_Event e;
-    Uint32 startTicks = SDL_GetTicks();
-    cout << "start " << startTicks << endl;
-    while (true) {
-        Uint32 time = SDL_GetTicks() - startTicks;
-        cout << "time " << time << endl;
-        if (time >= ticksPerFastForwardRepeat) {
-            cout << "return true" << endl;
-            return true;    // fast forward - repeat key
-        } else {
-            SDL_PumpEvents();
-            int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
-            if (ret > 0) {          // if there is an event in the queue
-                AB_PollEvent(&e);  // eat the event
-                cout << "event type " << hex << e.type << dec << endl;
-                if (e.type == AB_HATMOTIONDOWN || e.type == AB_HATMOTIONUP) {
-                    if (gui->mapper.isCenter(&e)) {
-                        cout << "return false" << endl;
-                        return false;   // exit fast forward mode
-                    }
-                    else
-                        cout << "not center. is = " << e.jaxis.value << endl;
-                }
-            }
-        }
-    }
-}
-
-//*******************************
-// GuiScreen::fastForwardUntilButtonReleased
-//*******************************
-// usage example:
-// void doSomeJoyEvent() {
-//      do {
-//          whatever you want to do on the event
-//          render();
-//      } while (fastForwardUntilButtonReleased(button, 300);  // repeat every 300 milliseconds
-//
-bool GuiScreen::fastForwardUntilButtonReleased(int button, Uint32 ticksPerFastForwardRepeat) {
-    SDL_Event e;
-    Uint32 startTicks = SDL_GetTicks();
-    cout << "start " << startTicks << endl;
-    while (true) {
-        Uint32 time = SDL_GetTicks() - startTicks;
-        cout << "time " << time << endl;
-        if (time >= ticksPerFastForwardRepeat) {
-            cout << "return true" << endl;
-            return true;    // fast forward - repeat key
-        } else {
-            SDL_PumpEvents();
-            int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
-            if (ret > 0) {          // if there is an event in the queue
-                AB_PollEvent(&e);  // eat the event
-                cout << "event type " << hex << e.type << dec << endl;
-                if ((e.type == AB_CONTROLLERBUTTONUP) && (e.cbutton.button == gui->_cb(button, &e))) {
-                    cout << "return false" << endl;
-                    return false;   // exit fast forward mode
-                }
-                else
-                    cout << "wrong event" << endl;
-            }
-        }
-    }
-}
-#endif
 
 //*******************************
 // GuiScreen::countMoreJoyPressesInQueue
@@ -260,10 +183,10 @@ int GuiScreen::countMoreJoyPressesInQueue(int direction) {
           if (gui->mapper.isDirection(&e, direction)) {
               count++;
               SDL_Event e2;
-              AB_PollEvent(&e2);  // remove the event from the queue
+              SDL_PollEvent(&e2);  // remove the event from the queue
           } else if (gui->mapper.isDirection(&e, DIR_NONE)) {
               SDL_Event e2;
-              AB_PollEvent(&e2);  // remove the event from the queue
+              SDL_PollEvent(&e2);  // remove the event from the queue
           } else {
               return count; // done. not the direction we're looking for.
           }

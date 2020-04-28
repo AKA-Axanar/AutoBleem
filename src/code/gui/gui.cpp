@@ -423,28 +423,16 @@ void Gui::loadAssets(bool reloadMusic) {
 }
 
 //*******************************
-// Gui::waitForGamepad
+// Gui::hideMouseCursor
 //*******************************
-void Gui::waitForGamepad() {
-    int joysticksFound = SDL_NumJoysticks();
+void Gui::hideMouseCursor() {
 
 #if defined(__x86_64__) || defined(_M_X64)
-
 #else
-        SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
     SDL_SetWindowGrab(window, SDL_TRUE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
-
-
-/*
-    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-        if (SDL_IsGameController(i)) {
-         registerPad(i);
-        }
-    }
-*/
-
 }
 
 //*******************************
@@ -454,7 +442,7 @@ void Gui::criticalException(const string &text) {
     drawText(text);
     while (true) {
         SDL_Event e;
-        while (AB_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == AB_CONTROLLERDEVICEADDED)
             {
                 registerPad(e.cdevice.which);
@@ -511,9 +499,7 @@ void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, b
         auto *splashScreen = new GuiSplash(renderer);
         splashScreen->show();
         delete splashScreen;
-
-
-        waitForGamepad();
+        hideMouseCursor();
     } else {
         resumingGui = true;
     }
@@ -603,7 +589,7 @@ void Gui::menuSelection() {
             menuVisible = false;
         }
         SDL_Event e;
-        while (AB_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
 
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {

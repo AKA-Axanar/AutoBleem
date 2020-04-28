@@ -148,7 +148,7 @@ void GuiAppStart::loop() {
     while (menuVisible) {
         SDL_Event e;
         render();
-        while (AB_PollEvent(&e)) {
+        while (SDL_PollEvent(&e)) {
             if (e.type == AB_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);

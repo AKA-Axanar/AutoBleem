@@ -9,7 +9,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-int AB_PollEvent(SDL_Event *event);
 int AB_Init(Uint32 flags, const char * gamecontrollerdb);
 void AB_Quit();
 void AB_RegisterPad(int joy_idx);
