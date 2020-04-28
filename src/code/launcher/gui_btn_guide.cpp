@@ -45,7 +45,7 @@ void GuiBtnGuide::render() {
     renderTextLineToColumns("|@L2| + |@Select|",              _("Change RetroBoot System"));
     line++;
     renderTextLineToColumns("",                          "-=" + _("In Game") + "=-");
-    renderTextLineToColumns("|@Select| + |@T|",          _("Emulator config MENU"));
+    renderTextLineToColumns("|@Select| + |@Start|",          _("Emulator config MENU"));
     renderTextLineToColumns(_("RESET"),                  _("Quit emulation - back to AutoBleem"));
     line++;
     renderTextLineToColumns("",                          "-=" + _("In Retroarch Game") + "=-");

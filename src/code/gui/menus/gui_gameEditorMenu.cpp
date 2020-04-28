@@ -449,19 +449,24 @@ void GuiEditor::loop() {
                 case SDL_CONTROLLERHATMOTIONUP:
 
                     if (gui->mapper.isDown(&e)) {
-
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        selOption++;
-                        if (selOption > OPT_LAST) {
-                            selOption = OPT_LAST;
-                        }
+                        do {
+                            Mix_PlayChannel(-1, gui->cursor, 0);
+                            selOption++;
+                            if (selOption > OPT_LAST) {
+                                selOption = OPT_LAST;
+                            }
+                            render();
+                        } while (fastForwardUntilAnotherEvent(120));
                     }
                     if (gui->mapper.isUp(&e)) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        selOption--;
-                        if (selOption < OPT_FIRST) {
-                            selOption = OPT_FIRST;
-                        }
+                        do {
+                            Mix_PlayChannel(-1, gui->cursor, 0);
+                            selOption--;
+                            if (selOption < OPT_FIRST) {
+                                selOption = OPT_FIRST;
+                            }
+                            render();
+                        } while (fastForwardUntilAnotherEvent(120));
                     }
 
 
@@ -470,14 +475,14 @@ void GuiEditor::loop() {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             processOptionChange(true);
                             render();
-                        } while (fastForwardUntilAnotherEvent(80));
+                        } while (fastForwardUntilAnotherEvent(120));
                     }
                     if (gui->mapper.isLeft(&e)) {
                         do {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             processOptionChange(false);
                             render();
-                        } while (fastForwardUntilAnotherEvent(80));
+                        } while (fastForwardUntilAnotherEvent(120));
                     }
                     break;
 

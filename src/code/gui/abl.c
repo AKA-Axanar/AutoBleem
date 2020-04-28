@@ -6,7 +6,7 @@
 
 struct ControllerInfo *padinfo[MAXPADS];
 #define DEADZONE 30000
-//#define ANALOG_TO_DPAD
+#define ANALOG_TO_DPAD
 
 
 void AB_FlushPadInfo() {
@@ -189,7 +189,6 @@ int playstation_event_filter(void *data, SDL_Event *originalEvent) {
             case SDL_CONTROLLER_AXIS_RIGHTX:
             case SDL_CONTROLLER_AXIS_RIGHTY:
                 res = process_stick_event(originalEvent,ev);
-                if (res==EVENT_FILTERED)last_event_joyid = originalEvent->caxis.which;
                 break;
 
 #endif
