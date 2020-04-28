@@ -43,12 +43,6 @@ using ordered_json = basic_json<my_workaround_fifo_map>;
 // GuiBase::GuiBase
 //********************
 GuiBase::GuiBase() {
-    string gamedbpath = Environment::getPathToAutobleemDir()+"/bin/autobleem/gamecontrollerdb.txt";
-    cout << "GameDBPath: " << gamedbpath << endl;
-    AB_Init(SDL_INIT_VIDEO, gamedbpath.c_str());
-    SDL_InitSubSystem(SDL_INIT_AUDIO);
-
-
     window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -70,7 +64,7 @@ GuiBase::GuiBase() {
 // GuiBase::~GuiBase
 //********************
 GuiBase::~GuiBase() {
-    AB_Quit();
+   SDL_Quit();
 }
 
 //*******************************
@@ -153,17 +147,7 @@ string GuiBase::getCurrentThemeFontPath() {
 #endif
 }
 
-void GuiBase::registerPad(int joyid)
-{
-    AB_RegisterPad(joyid);
 
-}
-
-void GuiBase::removePad(int joyid)
-{
-    AB_RemovePad(joyid);
-
-}
 
 
 
@@ -443,14 +427,7 @@ void Gui::criticalException(const string &text) {
     while (true) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_CONTROLLERDEVICEADDED)
-            {
-                registerPad(e.cdevice.which);
-            }
-            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
-            {
-                removePad(e.cdevice.which);
-            }
+            mapper.handleHotPlug(&e);
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     drawText(_("POWERING OFF... PLEASE WAIT"));
@@ -473,8 +450,6 @@ void Gui::criticalException(const string &text) {
 // Gui::display
 //*******************************
 void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, bool resume) {
-    joysticks.clear();
-    joynames.clear();
     this->db = db;
     this->pathToGamesDir = _pathToGamesDir;
     this->forceScan = forceScan;
@@ -590,52 +565,17 @@ void Gui::menuSelection() {
         }
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-
+            mapper.handleHotPlug(&e);
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
                 }
             }
-
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
             }
-
-            if (e.type == SDL_CONTROLLERDEVICEADDED)
-            {
-                cout << "Registering new gamepad" << endl;
-                registerPad(e.cdevice.which);
-            }
-            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
-            {
-                cout << "Removing gamepad" << endl;
-                removePad(e.cdevice.which);
-            }
-
-            if (e.type == SDL_JOYDEVICEADDED)
-            {
-                SDL_Joystick* js = SDL_JoystickOpen(e.jdevice.which);
-                SDL_JoystickGUID guid = SDL_JoystickGetGUID(js);
-                char guid_str[1024];
-                SDL_JoystickGetGUIDString(guid, guid_str, sizeof(guid_str));
-
-                bool isgamecontroller = SDL_IsGameController(e.jdevice.which);
-                cout << "New Joystick GUID:" << guid_str << "   GameController match:" << to_string(isgamecontroller) << endl;
-                if (isgamecontroller)
-                {
-                    registerPad(e.jdevice.which);
-                }
-            }
-
-            if (e.type == SDL_JOYDEVICEREMOVED)
-            {
-                removePad(e.cdevice.which);
-            }
-
-
-
             switch (e.type) {
 
                 case SDL_CONTROLLERBUTTONUP:

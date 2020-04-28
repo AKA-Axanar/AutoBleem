@@ -89,14 +89,8 @@ void GuiAbout::loop() {
         render();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_CONTROLLERDEVICEADDED)
-            {
-                gui->registerPad(e.cdevice.which);
-            }
-            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
-            {
-                gui->removePad(e.cdevice.which);
-            }
+            gui->mapper.handleHotPlug(&e);
+
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));

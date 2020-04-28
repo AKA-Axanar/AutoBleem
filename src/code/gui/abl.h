@@ -4,18 +4,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-int AB_Init(Uint32 flags, const char * gamecontrollerdb);
-void AB_Quit();
-void AB_RegisterPad(int joy_idx);
-void AB_RemovePad(int id);
-void AB_ProbePads(const char * gamecontrollerdb);
-void AB_FlushPadInfo();
 // all of your legacy C code here
+int playstation_event_filter(void *data, SDL_Event *originalEvent);
 #ifdef __cplusplus
 }
 #endif
-
-#define MAXPADS 100
 
 // Nice names for Playstation developers
 #define SDL_BTN_TRIANGLE SDL_CONTROLLER_BUTTON_Y
@@ -36,16 +29,6 @@ void AB_FlushPadInfo();
 // Custom event types
 #define SDL_CONTROLLERHATMOTIONDOWN SDL_LASTEVENT-1
 #define SDL_CONTROLLERHATMOTIONUP   SDL_LASTEVENT-2
-
-
-struct ControllerInfo
-{
-    SDL_GameController * pad;
-    SDL_Joystick * joy;
-    char name[3000];
-    char guid[1024];
-};
-extern struct ControllerInfo * padinfo[MAXPADS];
 
 
 

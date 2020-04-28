@@ -182,6 +182,9 @@ void rewriteGamelistXml() {
 // main
 //*******************************
 int main(int argc, char *argv[]) {
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_InitSubSystem(SDL_INIT_AUDIO);
+    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
     Env::autobleemKernel = DirEntry::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
 
@@ -212,7 +215,7 @@ int main(int argc, char *argv[]) {
     // now that Environment is setup, routines that need the paths can be called
     shared_ptr<Gui> gui(Gui::getInstance());
     shared_ptr<Scanner> scanner(Scanner::getInstance());
-
+    gui->mapper.init();
     lang->load(gui->cfg.inifile.values["language"]);
 
     Coverdb *coverdb = new Coverdb();
@@ -305,17 +308,10 @@ int main(int argc, char *argv[]) {
                 Mix_CloseAudio();
             }
 
-            for (SDL_Joystick* joy:gui->joysticks) {
-                AB_RemovePad(SDL_JoystickInstanceID(joy));
-                if (SDL_JoystickGetAttached(joy)) {
-                    SDL_JoystickClose(joy);
-                }
-            }
 
+            gui->mapper.flushPads();
             SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
             SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
-            AB_FlushPadInfo();
-
             gui->saveSelection();
             EmuInterceptor *interceptor;
             if (gui->runningGame->foreign)
@@ -356,9 +352,8 @@ int main(int argc, char *argv[]) {
             SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
 
             usleep(300*1000);
-            string gamedbpath = Environment::getPathToAutobleemDir()+"/bin/autobleem/gamecontrollerdb.txt";
-            cout << "GameDBPath: " << gamedbpath << endl;
-            AB_ProbePads(gamedbpath.c_str());
+            gui->mapper.probePads(gui->gamedbpaths);
+            //AB_ProbePads(gamedbpath.c_str());
             gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;
 
@@ -375,7 +370,7 @@ int main(int argc, char *argv[]) {
 
     Gui::splash(_("Loading ... Please Wait ..."));
     gui->finish();
-    AB_Quit();
+    SDL_Quit();
     delete coverdb;
 
     exit(0);

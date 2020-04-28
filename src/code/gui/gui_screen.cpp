@@ -15,14 +15,8 @@ void GuiScreen::loop()
         SDL_Event e;
 
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_CONTROLLERDEVICEADDED)
-            {
-                gui->registerPad(e.cdevice.which);
-            }
-            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
-            {
-                gui->removePad(e.cdevice.which);
-            }
+            gui->mapper.handleHotPlug(&e);
+
             if (handlePowerShutdownAndQuit(e))
                 continue;
 

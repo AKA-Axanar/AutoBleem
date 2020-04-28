@@ -4,6 +4,7 @@
 #pragma once
 
 #include <SDL2/SDL_events.h>
+#include <vector>
 #include "../main.h"
 #include "inifile.h"
 
@@ -26,11 +27,22 @@ using namespace std;
 #define DIR_RIGHT 4
 #define DIR_NONE  5
 
+class ControllerInfo
+{
+public:
+    SDL_GameController * pad;
+    SDL_Joystick * joy;
+    string name;
+    string guid;
+    int index;
+};
+using namespace std;
 //******************
 // PadMapper
 //******************
 class PadMapper {
 public:
+    vector<ControllerInfo*> connectedPads;
     bool status[4];
     // loads all mapping files
     PadMapper()
@@ -46,4 +58,10 @@ public:
     bool isRight(SDL_Event* event);
     bool isCenter(SDL_Event* event);
     bool isDirection(SDL_Event* e,  int dir);
+    void init();
+    void probePads(vector<string> gamecontrollerdb);
+    void registerPad(int joy_idx);
+    void removePad(int joy_idx);
+    void flushPads();
+    void handleHotPlug(SDL_Event * event);
 };

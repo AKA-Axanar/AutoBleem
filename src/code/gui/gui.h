@@ -19,10 +19,12 @@
 #include "gui_sdl_wrapper.h"
 //#include "gui_font_wrapper.h"
 #include "gui_font.h"
+#include "../environment.h"
 
 
-
-enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_OPTION_RETRO, MENU_OPTION_START };
+enum MenuOption {
+    MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_OPTION_RETRO, MENU_OPTION_START
+};
 
 #define EMU_PCSX          0
 #define EMU_RETROARCH     1
@@ -39,7 +41,9 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 #define SET_LAST 2
 
 // SET_PS1 select sub states. keep SET_PS1_Games_Subdir last as it's going to be left off the L2+Select menu
-enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir };
+enum {
+    SET_PS1_All_Games = 0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir
+};
 
 
 //********************
@@ -51,21 +55,21 @@ public:
     SDL_Shared<SDL_Renderer> renderer;
 
 
-
     Fonts themeFonts;
     Fonts sonyFonts;
     Config cfg;
     bool inGuiLauncher = false;
 
     std::string getCurrentThemePath();
+
     std::string getCurrentThemeImagePath();
+
     std::string getCurrentThemeFontPath();
+
     std::string getCurrentThemeSoundPath();
 
-    void registerPad(int joyid);
-    void removePad(int joyid);
-
     GuiBase();
+
     ~GuiBase();
 };
 
@@ -75,15 +79,15 @@ public:
 class Gui : public GuiBase {
 private:
 
-    Gui() {  }
+    Gui() { mapper.probePads(gamedbpaths); }
 
     string themePath;
 
 public:
-    std::vector<SDL_Joystick *> joysticks;
+    vector<string> gamedbpaths = {
+            Environment::getWorkingPath() + "/gamecontrollerdb.txt",
+            Environment::getPathToAutobleemDir() + "/bin/autobleem/gamecontrollerdb.txt"};
 
-
-    vector<string> joynames;
     PadMapper mapper;
     Inifile themeData;
     Inifile defaultData;
@@ -102,12 +106,12 @@ public:
 
     void finish();
 
-    void drawText(const std::string & text);
+    void drawText(const std::string &text);
 
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
 
-    static void splash(const std::string & message);
+    static void splash(const std::string &message);
 
     void menuSelection();
 
@@ -117,47 +121,49 @@ public:
 
     int renderLogo(bool small);
 
-    void renderStatus(const std::string & text, int pos=-1);
+    void renderStatus(const std::string &text, int pos = -1);
 
     void renderTextBar();
 
     // returns rectangle height
-    int renderTextLine(const std::string & text, int line,
+    int renderTextLine(const std::string &text, int line,
                        int offset = 0, int position = POS_LEFT, int xoffset = 0,
                        TTF_Font_Shared font = TTF_Font_Shared());   // font will default to themeFont in the cpp
 
     // returns the SDL_Rect of the screen positions if your rendered this text with these args
     // this is basically renderTextLine but doesn't render the texct and instead returns the bounding rectangle
-    SDL_Rect getTextRectangleOnScreen(const std::string & text, int line,
-                       int offset = 0, int position = POS_LEFT, int xoffset = 0,
-                       TTF_Font_Shared font = TTF_Font_Shared());    // font will default to themeFont in the cpp
+    SDL_Rect getTextRectangleOnScreen(const std::string &text, int line,
+                                      int offset = 0, int position = POS_LEFT, int xoffset = 0,
+                                      TTF_Font_Shared font = TTF_Font_Shared());    // font will default to themeFont in the cpp
 
     int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
                                 int offset = 0, TTF_Font_Shared font = TTF_Font_Shared());
 
-    int renderTextLineOptions(const std::string & text, int line, int offset = 0,  int position = POS_LEFT, int xoffset = 0);
+    int
+    renderTextLineOptions(const std::string &text, int line, int offset = 0, int position = POS_LEFT, int xoffset = 0);
 
     void renderSelectionBox(int line, int offset, int xoffset = 0, TTF_Font_Shared font = TTF_Font_Shared());
 
     void renderLabelBox(int line, int offset);
 
-    void renderTextChar(const std::string & text, int line, int offset, int posx);
+    void renderTextChar(const std::string &text, int line, int offset, int posx);
 
     void renderFreeSpace();
 
     void getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text,
                         TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
 
-    Uint8 getR(const std::string & val);
+    Uint8 getR(const std::string &val);
 
-    Uint8 getG(const std::string & val);
+    Uint8 getG(const std::string &val);
 
-    Uint8 getB(const std::string & val);
+    Uint8 getB(const std::string &val);
 
-    void criticalException(const std::string & text);
+    void criticalException(const std::string &text);
 
     SDL_Shared<SDL_Texture>
-    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, std::string themePath, std::string defaultPath, std::string texname);
+    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, std::string themePath, std::string defaultPath,
+                     std::string texname);
 
     void exportDBToRetroarch();
 
@@ -223,5 +229,7 @@ public:
         return s;
     }
 
-    static bool sortByTitle(const PsGamePtr &i, const PsGamePtr &j) { return SortByCaseInsensitive(i->title, j->title); }
+    static bool sortByTitle(const PsGamePtr &i, const PsGamePtr &j) {
+        return SortByCaseInsensitive(i->title, j->title);
+    }
 };
