@@ -5,12 +5,7 @@
 #include "abl.h"
 
 struct ControllerInfo *padinfo[MAXPADS];
-
-int lastX = 0;
-int lastY = 0;
-
 #define DEADZONE 30000
-
 #define ANALOG_TO_DPAD
 
 void AB_FlushPadInfo() {
@@ -91,7 +86,42 @@ void AB_RegisterPad(int joy_idx) {
 
 int process_stick_event(SDL_Event *originalEvent, SDL_Event *ev)
 {
+    int res = EVENT_ORIGINAL;
+    static int lastAxisPos[4];
+    int axis = -1;
+    int final_button=-1;
+    int val = originalEvent->caxis.value;
+    switch (originalEvent->caxis.axis) {
+        case SDL_CONTROLLER_AXIS_LEFTX: axis=0;  break;
+        case SDL_CONTROLLER_AXIS_LEFTY: axis=1;  break;
+        case SDL_CONTROLLER_AXIS_RIGHTX: axis=2; break;
+        case SDL_CONTROLLER_AXIS_RIGHTY: axis=3; break;
+    }
 
+    if (axis != -1) {
+
+        int switch_down_positive = originalEvent->caxis.value > DEADZONE && lastAxisPos[axis] < DEADZONE;
+        int switch_up_positive = originalEvent->caxis.value < DEADZONE && lastAxisPos[axis] > DEADZONE;
+        int switch_down_negative = originalEvent->caxis.value < -DEADZONE && lastAxisPos[axis] > -DEADZONE;
+        int switch_up_negative = originalEvent->caxis.value > -DEADZONE && lastAxisPos[axis] < -DEADZONE;
+        if (switch_down_positive || switch_up_positive) {
+            ev->type = switch_down_positive ? SDL_CONTROLLERBUTTONDOWN : SDL_CONTROLLERBUTTONUP;
+            ev->cbutton.button = final_button;
+            lastAxisPos[axis] = originalEvent->caxis.value;
+            res = EVENT_FILTERED;
+            goto out;
+        } else if (switch_down_negative || switch_up_negative)
+        {
+            ev->type = switch_down_negative ? SDL_CONTROLLERBUTTONDOWN : SDL_CONTROLLERBUTTONUP;
+            ev->cbutton.button = final_button;
+            lastAxisPos[axis] = originalEvent->caxis.value;
+            res = EVENT_FILTERED;
+            goto out;
+        }
+        res = EVENT_NONE;
+    }
+    out:
+    return res;
 }
 
 int process_trigger_event(SDL_Event *originalEvent, SDL_Event *ev) {
@@ -203,75 +233,5 @@ void AB_Quit() {
 }
 
 
-int AB_ProcessEvent(SDL_Event *originalEvent, SDL_Event *ev) {
-    /*
-    if (AB_DISABLE_ANALOGUE == 0) {
-        if (originalEvent->type == SDL_CONTROLLERAXISMOTION) {
-            if (originalEvent->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
-                int val = originalEvent->caxis.value;
-
-                if (val > DEADZONE && lastX < DEADZONE) {
-
-                    lastX = originalEvent->caxis.value;
-                    process_dpad_event(ev, originalEvent, AB_HATMOTIONDOWN, AB_BTN_DRIGHT);
-                    return 1;
-                }
-                if (val < DEADZONE && lastX > DEADZONE) {
-
-                    lastX = originalEvent->caxis.value;
-                    AB_PopulateDpadEvent(ev, originalEvent, AB_HATMOTIONUP, AB_BTN_DRIGHT);
-                    return 1;
-                }
-                if (val < -DEADZONE && lastX > -DEADZONE) {
-
-                    lastX = originalEvent->caxis.value;
-                    AB_PopulateDpadEvent(ev, originalEvent, AB_HATMOTIONDOWN, AB_BTN_DLEFT);
-                    return 1;
-                }
-                if (val > -DEADZONE && lastX < -DEADZONE) {
-
-                    lastX = originalEvent->caxis.value;
-                    AB_PopulateDpadEvent(ev, originalEvent, AB_HATMOTIONUP, AB_BTN_DLEFT);
-                    return 1;
-                }
-                return 0;
-
-            }
-            if (originalEvent->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
-                int val = originalEvent->caxis.value;
-
-                if (val > DEADZONE && lastY < DEADZONE) {
-
-                    lastY = originalEvent->caxis.value;
-                    AB_PopulateDpadEvent(ev, originalEvent, AB_HATMOTIONDOWN, AB_BTN_DDOWN);
-                    return 1;
-                }
-                if (val < DEADZONE && lastY > DEADZONE) {
-
-                    lastY = originalEvent->caxis.value;
-                    AB_PopulateDpadEvent(ev, originalEvent, AB_HATMOTIONUP, AB_BTN_DDOWN);
-                    return 1;
-                }
-                if (val < -DEADZONE && lastY > -DEADZONE) {
-
-                    lastY = originalEvent->caxis.value;
-                    AB_PopulateDpadEvent(ev, originalEvent, AB_HATMOTIONDOWN, AB_BTN_DUP);
-                    return 1;
-                }
-                if (val > -DEADZONE && lastY < -DEADZONE) {
-
-                    lastY = originalEvent->caxis.value;
-                    AB_PopulateDpadEvent(ev, originalEvent, AB_HATMOTIONUP, AB_BTN_DUP);
-                    return 1;
-                }
-                return 0;
-
-            }
-        }
-    }
-*/
-
-    return 1;
-}
 
 
