@@ -6,7 +6,8 @@
 
 struct ControllerInfo *padinfo[MAXPADS];
 #define DEADZONE 30000
-#define ANALOG_TO_DPAD
+//#define ANALOG_TO_DPAD
+
 
 void AB_FlushPadInfo() {
     for (int i = 0; i < MAXPADS; i++) {
@@ -153,6 +154,7 @@ void populate_dpad_event(SDL_Event *ev, SDL_Event *originalEvent, int type, int 
     memcpy(ev, originalEvent, sizeof(SDL_Event));
     ev->type = type;
     ev->cbutton.button = button;
+    ev->cbutton.state = (type==SDL_CONTROLLERHATMOTIONDOWN)?SDL_PRESSED:SDL_RELEASED;
 }
 
 
@@ -167,11 +169,10 @@ int playstation_event_filter(void *data, SDL_Event *originalEvent) {
         switch (originalEvent->window.event) {
             case SDL_WINDOWEVENT_SHOWN:
                 SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
-                SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+                printf ("First event %d\n");
                 break;
             case SDL_WINDOWEVENT_CLOSE:
                 SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
-                SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
                 break;
         }
     }
@@ -188,6 +189,7 @@ int playstation_event_filter(void *data, SDL_Event *originalEvent) {
             case SDL_CONTROLLER_AXIS_RIGHTX:
             case SDL_CONTROLLER_AXIS_RIGHTY:
                 res = process_stick_event(originalEvent,ev);
+                if (res==EVENT_FILTERED)last_event_joyid = originalEvent->caxis.which;
                 break;
 
 #endif
@@ -227,10 +229,7 @@ int AB_Init(Uint32 flags, const char *gamecontrollerdb) {
     for (int i = 0; i < MAXPADS; i++) {
         padinfo[i] = NULL;
     }
-
     AB_ProbePads(gamecontrollerdb);
-
-
     return res;
 }
 

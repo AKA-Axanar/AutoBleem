@@ -11,7 +11,6 @@ void AB_RemovePad(int id);
 void AB_ProbePads(const char * gamecontrollerdb);
 void AB_FlushPadInfo();
 // all of your legacy C code here
-
 #ifdef __cplusplus
 }
 #endif
@@ -46,7 +45,7 @@ struct ControllerInfo
     char name[3000];
     char guid[1024];
 };
-
 extern struct ControllerInfo * padinfo[MAXPADS];
+
 
 
