@@ -149,11 +149,11 @@ void GuiAppStart::loop() {
         SDL_Event e;
         render();
         while (SDL_PollEvent(&e)) {
-            if (e.type == AB_CONTROLLERDEVICEADDED)
+            if (e.type == SDL_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);
             }
-            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
             {
                 gui->removePad(e.cdevice.which);
             }
@@ -166,19 +166,19 @@ void GuiAppStart::loop() {
             }
 
             switch (e.type) {
-                case AB_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == AB_BTN_CROSS) {
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_CROSS) {
                         result = true;
                         menuVisible = false;
                     };
-                    if (e.cbutton.button == AB_BTN_CIRCLE) {
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         result = false;
                         menuVisible = false;
                     };
                     break;
 
-                case AB_HATMOTIONDOWN:  /* Handle Joystick Motion */
-                case AB_HATMOTIONUP:
+                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
+                case SDL_CONTROLLERHATMOTIONUP:
                     if (totalLines!=0) {
                         if (gui->mapper.isUp(&e)) {
                             scrolling = -1;

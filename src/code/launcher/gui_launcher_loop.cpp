@@ -73,11 +73,11 @@ void GuiLauncher::loop() {
         }
 
         while (SDL_PollEvent(&e)) {
-            if (e.type == AB_CONTROLLERDEVICEADDED)
+            if (e.type == SDL_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);
             }
-            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
             {
                 gui->removePad(e.cdevice.which);
             }
@@ -92,8 +92,8 @@ void GuiLauncher::loop() {
                         Util::powerOff();
                     }
                     break;
-                case AB_HATMOTIONDOWN:  /* Handle Joystick Motion */
-                case AB_HATMOTIONUP:
+                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
+                case SDL_CONTROLLERHATMOTIONUP:
                     if (powerOffShift)
                         continue;
                     if (gui->mapper.isCenter(&e)) {
@@ -121,10 +121,10 @@ void GuiLauncher::loop() {
                     }
                     break;
 
-                case AB_CONTROLLERBUTTONDOWN:
+                case SDL_CONTROLLERBUTTONDOWN:
                     loop_joyButton_Pressed();    // button pressed
                     break;
-                case AB_CONTROLLERBUTTONUP:
+                case SDL_CONTROLLERBUTTONUP:
                     loop_joyButtonReleased();   // button released
                     break;
 
@@ -265,13 +265,13 @@ void GuiLauncher::loop_joyMoveDown() {
 // button pressed
 //*******************************
 void GuiLauncher::loop_joyButton_Pressed() {
-    if (e.cbutton.button == AB_BTN_L2) {
+    if (e.cbutton.button == SDL_BTN_L2) {
         Mix_PlayChannel(-1, gui->cursor, 0);
         powerOffShift = true;
     }
 
     if (powerOffShift) {
-        if (e.cbutton.button == AB_BTN_R2) {
+        if (e.cbutton.button == SDL_BTN_R2) {
             Mix_PlayChannel(-1, gui->cursor, 0);
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
             Util::powerOff();
@@ -280,35 +280,35 @@ void GuiLauncher::loop_joyButton_Pressed() {
     }
 
 
-    if (e.cbutton.button == AB_BTN_SELECT) {
+    if (e.cbutton.button == SDL_BTN_SELECT) {
         loop_selectButton_Pressed();
     };
 
-    if (e.cbutton.button == AB_BTN_START) {
+    if (e.cbutton.button == SDL_BTN_START) {
         loop_startButton_Pressed();
     };
 
     if (powerOffShift)
         return; // none of the following buttons should work if L2 is pressed
 
-    if (e.cbutton.button == AB_BTN_L1) {
+    if (e.cbutton.button == SDL_BTN_L1) {
         L1_isPressedForFastForward = true;
         loop_prevGameFirstLetter();
 
-    } else if (e.cbutton.button == AB_BTN_R1) {
+    } else if (e.cbutton.button == SDL_BTN_R1) {
         R1_isPressedForFastForward = true;
         loop_nextGameFirstLetter();
 
-    } else if (e.cbutton.button == AB_BTN_CIRCLE) {
+    } else if (e.cbutton.button == SDL_BTN_CIRCLE) {
         loop_circleButton_Pressed();
 
-    } else if (e.cbutton.button == AB_BTN_TRIANGLE) {
+    } else if (e.cbutton.button == SDL_BTN_TRIANGLE) {
         loop_triangleButton_Pressed();
 
-    } else if (e.cbutton.button == AB_BTN_SQUARE) {
+    } else if (e.cbutton.button == SDL_BTN_SQUARE) {
         loop_squareButton_Pressed();
 
-    } else if (e.cbutton.button == AB_BTN_CROSS) {
+    } else if (e.cbutton.button == SDL_BTN_CROSS) {
         loop_crossButton_Pressed();
     };
 }
@@ -1120,15 +1120,15 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
 // button released
 //*******************************
 void GuiLauncher::loop_joyButtonReleased() {
-    if (e.cbutton.button == AB_BTN_L2) {
+    if (e.cbutton.button == SDL_BTN_L2) {
         Mix_PlayChannel(-1, gui->cursor, 0);
         powerOffShift = false;
     }
 
-    if (L1_isPressedForFastForward && (e.cbutton.button == AB_BTN_L1)) {
+    if (L1_isPressedForFastForward && (e.cbutton.button == SDL_BTN_L1)) {
         L1_isPressedForFastForward = false;
     }
-    else if (R1_isPressedForFastForward && (e.cbutton.button == AB_BTN_R1)) {
+    else if (R1_isPressedForFastForward && (e.cbutton.button == SDL_BTN_R1)) {
         R1_isPressedForFastForward = false;
     }
 }

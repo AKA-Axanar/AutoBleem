@@ -109,11 +109,11 @@ void GuiSelectMemcard::loop() {
     while (menuVisible) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == AB_CONTROLLERDEVICEADDED)
+            if (e.type == SDL_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);
             }
-            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
             {
                 gui->removePad(e.cdevice.which);
             }
@@ -128,8 +128,8 @@ void GuiSelectMemcard::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case AB_HATMOTIONDOWN:
-                case AB_HATMOTIONUP:
+                case SDL_CONTROLLERHATMOTIONDOWN:
+                case SDL_CONTROLLERHATMOTIONUP:
                     if (gui->mapper.isDown(&e)) {
 
                             Mix_PlayChannel(-1, gui->cursor, 0);
@@ -154,8 +154,8 @@ void GuiSelectMemcard::loop() {
                         }
 
                     break;
-                case AB_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button ==  AB_BTN_R1) {
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_R1) {
 
                         Mix_PlayChannel(-1, gui->home_up, 0);
                         selected += maxVisible;
@@ -166,7 +166,7 @@ void GuiSelectMemcard::loop() {
                         lastVisible = firstVisible + maxVisible;
                         render();
                     };
-                    if (e.cbutton.button ==  AB_BTN_L1) {
+                    if (e.cbutton.button == SDL_BTN_L1) {
 
                         Mix_PlayChannel(-1, gui->home_down, 0);
                         selected -= maxVisible;
@@ -178,14 +178,14 @@ void GuiSelectMemcard::loop() {
                         render();
                     };
 
-                    if (e.cbutton.button ==  AB_BTN_CIRCLE) {
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
 
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         selected = -1;
                         menuVisible = false;
 
                     };
-                    if (e.cbutton.button ==  AB_BTN_CROSS) {
+                    if (e.cbutton.button == SDL_BTN_CROSS) {
                         cardSelected = cards[selected];
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         menuVisible = false;

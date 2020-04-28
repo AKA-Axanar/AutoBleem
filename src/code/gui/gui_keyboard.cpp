@@ -437,11 +437,11 @@ void GuiKeyboard::loop() {
     while (menuVisible) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == AB_CONTROLLERDEVICEADDED)
+            if (e.type == SDL_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);
             }
-            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
             {
                 gui->removePad(e.cdevice.which);
             }
@@ -483,38 +483,38 @@ void GuiKeyboard::loop() {
                     doKbdTextInput(e);
                     break;
 
-                case AB_CONTROLLERBUTTONUP:
-                    if (e.cbutton.button == AB_BTN_L1) {
+                case SDL_CONTROLLERBUTTONUP:
+                    if (e.cbutton.button == SDL_BTN_L1) {
                         doL1_up();
-                    } else if (e.cbutton.button == AB_BTN_L2) {
+                    } else if (e.cbutton.button == SDL_BTN_L2) {
                         doL2_up();
                     }
                     break;
 
-                case AB_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == AB_BTN_L1) {     // caps shift
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_L1) {     // caps shift
                         doL1_down();
-                    } else if (e.cbutton.button == AB_BTN_L2) {     // move cursor shift
+                    } else if (e.cbutton.button == SDL_BTN_L2) {     // move cursor shift
                         doL2_down();
                     }
 
                     if (!L2_cursor_shift) {
-                        if (e.cbutton.button == AB_BTN_TRIANGLE) {   // delete char on the left
+                        if (e.cbutton.button == SDL_BTN_TRIANGLE) {   // delete char on the left
                             doTriangle();
-                        } else if (e.cbutton.button == AB_BTN_SQUARE) {     //insert space
+                        } else if (e.cbutton.button == SDL_BTN_SQUARE) {     //insert space
                             doSquare();
-                        } else if (e.cbutton.button == AB_BTN_CROSS) {
+                        } else if (e.cbutton.button == SDL_BTN_CROSS) {
                             doCross();
-                        } else if (e.cbutton.button == AB_BTN_START) {  // Confirm
+                        } else if (e.cbutton.button == SDL_BTN_START) {  // Confirm
                             doStart();
-                        } else if (e.cbutton.button == AB_BTN_CIRCLE) { // Cancel
+                        } else if (e.cbutton.button == SDL_BTN_CIRCLE) { // Cancel
                             doCircle();
                         }
                     }
                     break;
 
-                case AB_HATMOTIONDOWN:
-                case AB_HATMOTIONUP:
+                case SDL_CONTROLLERHATMOTIONDOWN:
+                case SDL_CONTROLLERHATMOTIONUP:
                     if (gui->mapper.isRight(&e)) {
                         doJoyRight();
                     } else if (gui->mapper.isLeft(&e)) {

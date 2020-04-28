@@ -44,25 +44,25 @@ void GuiPadTest::loop() {
             } else if (e.type == SDL_KEYUP) {
                 appendLine("SDL_KEYUP = " + to_string(e.key.keysym.scancode));
 
-            } else if (e.type == AB_CONTROLLERBUTTONDOWN) {
-                appendLine("AB_CONTROLLERBUTTONDOWN = " + to_string(e.cbutton.button));
+            } else if (e.type == SDL_CONTROLLERBUTTONDOWN) {
+                appendLine("SDL_CONTROLLERBUTTONDOWN = " + to_string(e.cbutton.button));
                 buttonDownCount++;
-            } else if (e.type == AB_CONTROLLERBUTTONUP) {
-                appendLine("AB_CONTROLLERBUTTONUP = " + to_string(e.cbutton.button));
+            } else if (e.type == SDL_CONTROLLERBUTTONUP) {
+                appendLine("SDL_CONTROLLERBUTTONUP = " + to_string(e.cbutton.button));
                 if (buttonDownCount > 0)
                     buttonDownCount--;
 
-            } else if (e.type == AB_HATMOTIONUP) {
-                appendLine("AB_HATMOTIONUP = " + to_string(e.jhat.value));
-            } else if (e.type == AB_HATMOTIONDOWN) {
+            } else if (e.type == SDL_CONTROLLERHATMOTIONUP) {
+                appendLine("SDL_CONTROLLERHATMOTIONUP = " + to_string(e.jhat.value));
+            } else if (e.type == SDL_CONTROLLERHATMOTIONDOWN) {
 #if 0
                 // controller on valium
                 if (e.jaxis.value == -32768 || e.jaxis.value == 32767 || e.jaxis.value == 0 ||
                     e.jaxis.value == -1 || e.jaxis.value == 1) {
-                    appendLine("AB_HATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
+                    appendLine("SDL_CONTROLLERHATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
                 }
 #else
-                appendLine("AB_HATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
+                appendLine("SDL_CONTROLLERHATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
 #endif
             } else if (e.type == SDL_MOUSEMOTION ||
                        e.type == SDL_MOUSEBUTTONDOWN ||

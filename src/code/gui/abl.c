@@ -138,7 +138,7 @@ int process_trigger_event(SDL_Event *originalEvent, SDL_Event *ev) {
         int trigger_up = originalEvent->caxis.value < DEADZONE && lastTriggerPos[trigger] > DEADZONE;
         if (trigger_down || trigger_up) {
             ev->type = trigger_down ? SDL_CONTROLLERBUTTONDOWN : SDL_CONTROLLERBUTTONUP;
-            ev->cbutton.button = (trigger == TRIGGER_LEFT) ? AB_BTN_L2 : AB_BTN_R2;
+            ev->cbutton.button = (trigger == TRIGGER_LEFT) ? SDL_BTN_L2 : SDL_BTN_R2;
             lastTriggerPos[trigger] = originalEvent->caxis.value;
             res = EVENT_FILTERED;
             goto out;
@@ -162,6 +162,19 @@ int playstation_event_filter(void *data, SDL_Event *originalEvent) {
     int eventType;
     int res = EVENT_ORIGINAL;
     memcpy(ev, originalEvent, sizeof(SDL_Event));
+    // AutoInit GamecontrollerAPI
+    if (originalEvent->type == SDL_WINDOWEVENT) {
+        switch (originalEvent->window.event) {
+            case SDL_WINDOWEVENT_SHOWN:
+                SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
+                SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+                break;
+            case SDL_WINDOWEVENT_CLOSE:
+                SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+                SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+                break;
+        }
+    }
     // L2/R2 simulation
     if (originalEvent->type == SDL_CONTROLLERAXISMOTION) {
         switch (originalEvent->caxis.axis) {
@@ -187,7 +200,7 @@ int playstation_event_filter(void *data, SDL_Event *originalEvent) {
             case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
             case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
             case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                eventType = (originalEvent->type == SDL_CONTROLLERBUTTONDOWN) ? AB_HATMOTIONDOWN : AB_HATMOTIONUP;
+                eventType = (originalEvent->type == SDL_CONTROLLERBUTTONDOWN) ? SDL_CONTROLLERHATMOTIONDOWN : SDL_CONTROLLERHATMOTIONUP;
                 populate_dpad_event(ev, originalEvent, eventType, originalEvent->cbutton.button);
                 res = EVENT_FILTERED;
                 goto out;
@@ -210,8 +223,6 @@ int playstation_event_filter(void *data, SDL_Event *originalEvent) {
 
 int AB_Init(Uint32 flags, const char *gamecontrollerdb) {
     int res = SDL_Init(flags);
-    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
-    SDL_InitSubSystem(SDL_INIT_JOYSTICK);
     SDL_SetEventFilter(&playstation_event_filter, NULL);
     for (int i = 0; i < MAXPADS; i++) {
         padinfo[i] = NULL;

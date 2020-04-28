@@ -15,20 +15,20 @@
 // PadMapper::isDirection
 //*******************************
 bool PadMapper::isDirection(SDL_Event *e, int dir) {
-    if (e->type==AB_HATMOTIONDOWN)
+    if (e->type == SDL_CONTROLLERHATMOTIONDOWN)
     {
-        if (e->cbutton.button == AB_BTN_DUP) status[DUP]=true;
-        if (e->cbutton.button == AB_BTN_DDOWN) status[DDOWN]=true;
-        if (e->cbutton.button == AB_BTN_DLEFT) status[DLEFT]=true;
-        if (e->cbutton.button == AB_BTN_DRIGHT) status[DRIGHT]=true;
+        if (e->cbutton.button == SDL_BTN_DUP) status[DUP]=true;
+        if (e->cbutton.button == SDL_BTN_DDOWN) status[DDOWN]=true;
+        if (e->cbutton.button == SDL_BTN_DLEFT) status[DLEFT]=true;
+        if (e->cbutton.button == SDL_BTN_DRIGHT) status[DRIGHT]=true;
     }
 
-    if (e->type==AB_HATMOTIONUP)
+    if (e->type == SDL_CONTROLLERHATMOTIONUP)
     {
-        if (e->cbutton.button == AB_BTN_DUP) status[DUP]=false;
-        if (e->cbutton.button == AB_BTN_DDOWN) status[DDOWN]=false;
-        if (e->cbutton.button == AB_BTN_DLEFT) status[DLEFT]=false;
-        if (e->cbutton.button == AB_BTN_DRIGHT) status[DRIGHT]=false;
+        if (e->cbutton.button == SDL_BTN_DUP) status[DUP]=false;
+        if (e->cbutton.button == SDL_BTN_DDOWN) status[DDOWN]=false;
+        if (e->cbutton.button == SDL_BTN_DLEFT) status[DLEFT]=false;
+        if (e->cbutton.button == SDL_BTN_DRIGHT) status[DRIGHT]=false;
     }
 
     switch (dir) {
@@ -49,7 +49,7 @@ return false;
 /*
     SDL_JoystickID id;
 
-    if (e->type == AB_HATMOTIONUP) {
+    if (e->type == SDL_CONTROLLERHATMOTIONUP) {
         id = e->jhat.which;
         cout << "HAT:" << endl;
         cout << to_string(e->jhat.hat) << endl;
@@ -75,7 +75,7 @@ return false;
     if (config->values["dpad"] == "analogue") {
 
         if (dir != DIR_NONE) {
-            if (e->type == AB_HATMOTIONDOWN) {
+            if (e->type == SDL_CONTROLLERHATMOTIONDOWN) {
                 if (e->jaxis.axis == axis) {
                     if ((dir == DIR_UP) || (dir == DIR_LEFT)) {
                         return (e->jaxis.value < -deadZone);
@@ -88,7 +88,7 @@ return false;
             return (e->jaxis.value >= -deadZone) && (e->jaxis.value <= deadZone);
         }
     } else {
-        if (e->type == AB_HATMOTIONUP) {
+        if (e->type == SDL_CONTROLLERHATMOTIONUP) {
             switch (dir) {
                 case DIR_UP:
                     return (e->jhat.value == SDL_HAT_UP);

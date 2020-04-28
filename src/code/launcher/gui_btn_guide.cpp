@@ -67,11 +67,11 @@ void GuiBtnGuide::loop() {
     while (menuVisible) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == AB_CONTROLLERDEVICEADDED)
+            if (e.type == SDL_CONTROLLERDEVICEADDED)
             {
                 gui->registerPad(e.cdevice.which);
             }
-            if (e.type == AB_CONTROLLERDEVICEREMOVED)
+            if (e.type == SDL_CONTROLLERDEVICEREMOVED)
             {
                 gui->removePad(e.cdevice.which);
             }
@@ -87,10 +87,10 @@ void GuiBtnGuide::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case AB_CONTROLLERBUTTONUP:
+                case SDL_CONTROLLERBUTTONUP:
 
 
-                    if (e.cbutton.button == AB_BTN_CIRCLE) {
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         menuVisible = false;
 
