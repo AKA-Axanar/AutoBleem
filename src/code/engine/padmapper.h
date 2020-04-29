@@ -64,4 +64,5 @@ public:
     void removePad(int joy_idx);
     void flushPads();
     void handleHotPlug(SDL_Event * event);
+    void setAnalogEmulation(int value);
 };

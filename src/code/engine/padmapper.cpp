@@ -9,6 +9,9 @@
 #include "../environment.h"
 #include "../gui/abl.h"
 
+extern int sdl_filter_analog_on ;
+
+
 void PadMapper::init() {
     SDL_SetEventFilter(&playstation_event_filter, NULL);
 }
