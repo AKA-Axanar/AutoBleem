@@ -428,12 +428,8 @@ void Gui::criticalException(const string &text) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             mapper.handleHotPlug(&e);
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
-                    drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
-                }
-            }
+            mapper.handlePowerBtn(&e);
+
             if (e.type == SDL_QUIT)
                 return;
             else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
@@ -575,12 +571,7 @@ void Gui::menuSelection() {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             mapper.handleHotPlug(&e);
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
-                    drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
-                }
-            }
+            mapper.handlePowerBtn(&e);
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;

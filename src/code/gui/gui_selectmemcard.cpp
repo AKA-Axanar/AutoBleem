@@ -110,7 +110,7 @@ void GuiSelectMemcard::loop() {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             gui->mapper.handleHotPlug(&e);
-
+            gui->mapper.handlePowerBtn(&e);
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));

@@ -11,6 +11,6 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-SET(CMAKE_C_FLAGS "-mfloat-abi=hard -march=armv7ve -g -O0")
-SET(CMAKE_CXX_FLAGS " -mfloat-abi=hard -march=armv7ve -g -O0")
+SET(CMAKE_C_FLAGS "-mfloat-abi=hard -march=armv7ve -s -O3")
+SET(CMAKE_CXX_FLAGS " -mfloat-abi=hard -march=armv7ve -s -O3")
 

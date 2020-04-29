@@ -74,7 +74,7 @@ void GuiLauncher::loop() {
 
         while (SDL_PollEvent(&e)) {
             gui->mapper.handleHotPlug(&e);
-
+            gui->mapper.handlePowerBtn(&e);
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;

@@ -82,6 +82,8 @@ public:
 
     void handleHotPlug(SDL_Event *event);
 
+    void handlePowerBtn(SDL_Event *event);
+
     string getControllerDBPath() { return currentControllerdb; };
 
     int getActivePadNum() { return connectedPads.size(); };

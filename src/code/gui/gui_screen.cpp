@@ -16,7 +16,7 @@ void GuiScreen::loop()
 
         while (SDL_PollEvent(&e)) {
             gui->mapper.handleHotPlug(&e);
-
+            gui->mapper.handlePowerBtn(&e);
             if (handlePowerShutdownAndQuit(e))
                 continue;
 

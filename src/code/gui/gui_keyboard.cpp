@@ -438,7 +438,7 @@ void GuiKeyboard::loop() {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             gui->mapper.handleHotPlug(&e);
-
+            gui->mapper.handlePowerBtn(&e);
             if (handlePowerShutdownAndQuit(e))
                 continue;
 

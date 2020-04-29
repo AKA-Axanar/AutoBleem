@@ -8,6 +8,8 @@
 #include "../DirEntry.h"
 #include "../environment.h"
 #include "../gui/abl.h"
+#include "../lang.h"
+#include "../gui/gui.h"
 
 extern int sdl_filter_analog_on ;
 
@@ -42,7 +44,17 @@ void PadMapper::registerPad(int joy_idx) {
     cout << "New GameController GUID: " << guid_str << "  Name:" << name << endl;
     cout << "MAP: " << mappingString << endl;
 }
-
+void PadMapper::handlePowerBtn(SDL_Event *event)
+{
+    shared_ptr<Gui> gui(Gui::getInstance());
+    if (event->type == SDL_KEYDOWN) {
+        cout << event->key.keysym.scancode << " " <<  event->key.keysym.sym << endl;
+        if (event->key.keysym.scancode == SDL_SCANCODE_SLEEP || event->key.keysym.sym == SDLK_ESCAPE) {
+            gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+            Util::powerOff();
+        }
+    }
+}
 void PadMapper::handleHotPlug(SDL_Event *event) {
     if (event->type == SDL_JOYDEVICEADDED) {
         registerPad(event->jdevice.which);
