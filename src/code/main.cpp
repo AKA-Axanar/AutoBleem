@@ -310,8 +310,7 @@ int main(int argc, char *argv[]) {
 
 
             gui->mapper.flushPads();
-            SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-            SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+
             gui->saveSelection();
             EmuInterceptor *interceptor;
             if (gui->runningGame->foreign)
@@ -348,11 +347,10 @@ int main(int argc, char *argv[]) {
                 ra->reloadHistory();  // they could have changed
             }
 
-            SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-            SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
+
 
             usleep(300*1000);
-            gui->mapper.probePads(gui->gamedbpaths);
+            gui->mapper.probePads();
             //AB_ProbePads(gamedbpath.c_str());
             gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;

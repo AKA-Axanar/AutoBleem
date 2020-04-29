@@ -6,6 +6,7 @@
 #include <SDL2/SDL_events.h>
 #include <vector>
 #include "../main.h"
+#include "../environment.h"
 #include "inifile.h"
 
 
@@ -17,52 +18,71 @@ using namespace std;
 #define DRIGHT      3
 
 
-
-
-
-
 #define DIR_UP    1
 #define DIR_DOWN  2
 #define DIR_LEFT  3
 #define DIR_RIGHT 4
 #define DIR_NONE  5
 
-class ControllerInfo
-{
+class ControllerInfo {
 public:
-    SDL_GameController * pad;
-    SDL_Joystick * joy;
+    SDL_GameController *pad;
+    SDL_Joystick *joy;
     string name;
     string guid;
     int index;
 };
+
 using namespace std;
+
 //******************
 // PadMapper
 //******************
 class PadMapper {
-public:
-    vector<ControllerInfo*> connectedPads;
+private:
+    string currentControllerdb = "";
+    vector<string> gamedbpaths = {
+            "/etc/autobleem/gamecontrollerdb.txt",
+            Environment::getWorkingPath() + "/gamecontrollerdb.txt",
+            Environment::getPathToAutobleemDir() + "/bin/autobleem/gamecontrollerdb.txt"};
+    vector<ControllerInfo *> connectedPads;
     bool status[4];
+public:
+
+
     // loads all mapping files
-    PadMapper()
-    {
-        status[0]=false;
-        status[1]=false;
-        status[2]=false;
-        status[3]=false;
+    PadMapper() {
+        status[0] = false;
+        status[1] = false;
+        status[2] = false;
+        status[3] = false;
     };
-    bool isUp(SDL_Event* event);
-    bool isDown(SDL_Event* event);
-    bool isLeft(SDL_Event* event);
-    bool isRight(SDL_Event* event);
-    bool isCenter(SDL_Event* event);
-    bool isDirection(SDL_Event* e,  int dir);
+
+    bool isUp(SDL_Event *event);
+
+    bool isDown(SDL_Event *event);
+
+    bool isLeft(SDL_Event *event);
+
+    bool isRight(SDL_Event *event);
+
+    bool isCenter(SDL_Event *event);
+
+    bool isDirection(SDL_Event *e, int dir);
+
     void init();
-    void probePads(vector<string> gamecontrollerdb);
+
+    void probePads();
+
     void registerPad(int joy_idx);
+
     void removePad(int joy_idx);
+
     void flushPads();
-    void handleHotPlug(SDL_Event * event);
-    void setAnalogEmulation(int value);
+
+    void handleHotPlug(SDL_Event *event);
+
+    string getControllerDBPath() { return currentControllerdb; };
+
+    int getActivePadNum() { return connectedPads.size(); };
 };

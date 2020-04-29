@@ -58,6 +58,8 @@ void PadMapper::flushPads() {
         delete ci;
     }
     connectedPads.clear();
+    SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+    SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 }
 
 void PadMapper::removePad(int joy_idx) {
@@ -76,16 +78,19 @@ void PadMapper::removePad(int joy_idx) {
     if (indexToRemove != -1) connectedPads.erase(connectedPads.begin() + indexToRemove);
 }
 
-void PadMapper::probePads(vector<string> gamecontrollerdb) {
+void PadMapper::probePads() {
+    SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
     if (connectedPads.size() > 0) {
         flushPads();
     }
     bool mappingsLoaded = false;
-    for (string controllerdbPath:gamecontrollerdb) {
+    for (string controllerdbPath:gamedbpaths) {
         if (DirEntry::exists(controllerdbPath)) {
             int loadedMappings = SDL_GameControllerAddMappingsFromFile(controllerdbPath.c_str());
             cout << "Loaded pad mappings " << loadedMappings << " from " << controllerdbPath << endl;
             mappingsLoaded = true;
+            currentControllerdb = controllerdbPath;
             break;
         }
     }

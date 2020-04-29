@@ -79,14 +79,12 @@ public:
 class Gui : public GuiBase {
 private:
 
-    Gui() { mapper.probePads(gamedbpaths); }
+    Gui() { mapper.probePads(); }
 
     string themePath;
 
 public:
-    vector<string> gamedbpaths = {
-            Environment::getWorkingPath() + "/gamecontrollerdb.txt",
-            Environment::getPathToAutobleemDir() + "/bin/autobleem/gamecontrollerdb.txt"};
+
 
     PadMapper mapper;
     Inifile themeData;
