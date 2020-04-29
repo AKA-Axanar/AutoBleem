@@ -536,14 +536,23 @@ void Gui::menuSelection() {
     if (Env::autobleemKernel)
         otherMenu += "|@S|  " + _("Hardware Information") + "  ";
     otherMenu += "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
-    cout << SDL_NumJoysticks() << "joysticks were found." << endl;
+
+
+
+    string gamepadNotice="";
+    if (SDL_NumJoysticks()>mapper.getActivePadNum())
+    {
+        gamepadNotice=_("NOTICE: ")+to_string(SDL_NumJoysticks()-mapper.getActivePadNum())+" connected gamepads were not recognized.";
+    }
 
     if (!forceScan) {
-        drawText(mainMenu);
+        drawText(mainMenu,gamepadNotice);
 
     } else {
-        drawText(forceScanMenu);
+        drawText(forceScanMenu,gamepadNotice);
     }
+
+
     bool menuVisible = true;
     while (menuVisible) {
         if (startingGame) {
@@ -922,10 +931,11 @@ void Gui::renderStatus(const string &text, int posy) {
 //*******************************
 // Gui::drawText
 //*******************************
-void Gui::drawText(const string &text) {
+void Gui::drawText(const string &text, const string &topLine) {
     renderBackground();
     renderLogo(false);
     renderStatus(text);
+    renderStatus(topLine,5);
     SDL_RenderPresent(renderer);
 }
 

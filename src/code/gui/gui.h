@@ -104,7 +104,7 @@ public:
 
     void finish();
 
-    void drawText(const std::string &text);
+    void drawText(const std::string &text, const string &topLine="");
 
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);

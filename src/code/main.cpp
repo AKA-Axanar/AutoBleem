@@ -347,14 +347,10 @@ int main(int argc, char *argv[]) {
                 ra->reloadHistory();  // they could have changed
             }
 
-
-
             usleep(300*1000);
             gui->mapper.probePads();
-            //AB_ProbePads(gamedbpath.c_str());
             gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;
-
             gui->display(false, pathToGamesDir, db, true);
         }
     }
