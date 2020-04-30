@@ -41,10 +41,7 @@ using namespace std;
 class PadMapper {
 private:
     string currentControllerdb = "";
-    vector<string> gamedbpaths = {
-            "/etc/autobleem/gamecontrollerdb.txt",
-            Environment::getWorkingPath() + "/gamecontrollerdb.txt",
-            Environment::getPathToAutobleemDir() + "/bin/autobleem/gamecontrollerdb.txt"};
+    vector<string> gamedbpaths;
     vector<ControllerInfo *> connectedPads;
     bool status[4];
 public:
@@ -56,6 +53,9 @@ public:
         status[1] = false;
         status[2] = false;
         status[3] = false;
+        gamedbpaths.push_back("/etc/autobleem/gamecontrollerdb.txt");
+        gamedbpaths.push_back(Environment::getWorkingPath() + "/gamecontrollerdb.txt");
+        gamedbpaths.push_back(Environment::getPathToUSBRoot() + "/Autobleem/bin/autobleem/gamecontrollerdb.txt");
     };
 
     bool isUp(SDL_Event *event);

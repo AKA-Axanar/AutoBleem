@@ -706,6 +706,7 @@ void Gui::menuSelection() {
                                 string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
                                 vector<const char *> argvNew { cmd.c_str(), nullptr };
                                 Util::execFork(cmd.c_str(), argvNew);
+                                SDL_FlushEvents(SDL_FIRSTEVENT,SDL_LASTEVENT);
                                 mapper.probePads();
                             }
                         };
