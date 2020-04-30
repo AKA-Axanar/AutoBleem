@@ -702,9 +702,11 @@ void Gui::menuSelection() {
                         if (e.cbutton.button == SDL_BTN_SQUARE) {
                             Mix_PlayChannel(-1, cursor, 0);
                             if (Env::autobleemKernel) {
+                                mapper.flushPads();
                                 string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
                                 vector<const char *> argvNew { cmd.c_str(), nullptr };
                                 Util::execFork(cmd.c_str(), argvNew);
+                                mapper.probePads();
                             }
                         };
 
