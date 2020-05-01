@@ -1,0 +1,130 @@
+(Ask on our discord for a link) 
+(Poproś o link na naszym Discord)
+.-= Code C++ and shell scripts =-.
+.-= Kodowanie i skrypty =-.
+.-= Linux Kernel Patching =-.
+.-= Poprawki Kernela Linux  =-.
+.-= Localization support =-.
+.-= Wsparcie językowe =-.
+.-= Testing =-.
+.-= Testowanie =-.
+About
+O programie
+Active
+Aktywny
+Backspace
+Powrót
+Cancel
+Anuluj
+Caps
+Duże
+Change
+Zmień
+Close
+Zamknij
+Confirm
+Potwierdź
+Current Time:
+Aktualny czas:
+Custom Firmware Kernel Not Found !
+Brak zainstalowanego kernela
+Dongle status:
+Urzadzenie USB:
+Download latest:
+Pobierz najnowszy
+Driver mode:
+Tryb sterownika:
+Edit Network WPA WiFi Credentials
+Edytuj dane logowania WiFi WPA
+Edit Password
+Edytuj Hasło
+Edit SSID
+Edytuj SSID
+Enter Password
+Podaj hasło
+Enter SSID
+Podaj SSID
+Entry
+Pozycja
+Ethernet information:
+Informacja sieci Ethernet:
+Found
+Znaleziono
+Go back
+Powrót
+IP Address:
+Adres IP:
+IP configuration:
+Konfiguracja IP:
+Loading timezones...
+Sprawdzam strefy czasowe...
+Move Cursor
+Przesuń kursor
+New GamePad found
+Nowy kontroler znaleziony
+No networks found
+Brak widocznych sieci
+Not active
+Nie aktywny
+Not found
+Nie znaleziono
+Page
+Strona
+Password:
+Hasło:
+Playstation Classic Hardware Information
+Informacje sprzętowe Playstation Classic
+Please confirm
+Proszę potwierdzić
+PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
+PROSZĘ PODŁACZYĆ KONTROLER DO PLAYSTATION CLASSIC
+POWERING OFF... PLEASE WAIT
+ZAMYKAM.... PROSZĘ CZEKAC....
+Press |@X| to save controller mapping, or |@O| to retry configuration
+|@X| aby zapisać mapowanie, lub |@O| aby powtórzyć konfiguracje
+Press a key for
+Wciśnij klawisz dla
+Press any DPAD button (to determine if it's digital or analogue)
+Naciśnij dowolny kierunek (aby sprawdzić czy kontroler jest analogowy)
+Reinitializing Network
+Uruchamianie modułu sieci
+Restart Network
+Zrestartuj sieć
+Restart Networking Now?
+Zrestartować sieć teraz
+Restarted Wi-Fi  With SSID:
+Sieć skonfigurowana z SSID:
+Scan SSID
+Skanuj SSID
+Scanning networks
+Skanuje dostępne sieci
+Select
+Wybierz
+Select Time Zone for Your Location
+Wybierz Strefę Czasową dla twojej lokacji
+Select WiFi Network to connect
+Wybierz siec Wifi do podlaczenia
+Space
+Spacja
+SSID:
+SSID:
+Support via Discord:
+Wsparcie poprzez discord
+This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
+To jest darmowe  oprogramowanie. Działa jak działa. Nie bierzemy odpowiedzialności za szkody nim wywołane
+Timezone:
+Strefa Czasowa:
+Use Controller
+Użyj kontrolera
+Waiting for IP Address...
+Oczekiwanie na adres IP…
+Wi-Fi Connection:
+Połączenie poprzez WiFi:
+WiFi information:
+Informacja o WiFi:
+WiFi Settings
+Ustawienia WiFi
+Write Config/Restart Network
+Zapisz konfigurację/Restartuj siec
+Write Configuration/Restart Network
+Zapisz konfigurację/Restartuj siec

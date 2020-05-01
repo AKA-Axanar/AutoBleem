@@ -1,0 +1,130 @@
+ (Ask on our discord for a link) 
+
+.-= Code C++ and shell scripts =-.
+
+.-= Linux Kernel Patching =-.
+
+.-= Localization support =-.
+
+.-= Testing =-.
+
+About
+
+Active
+
+Backspace
+
+Cancel
+
+Caps
+
+Change
+
+Close
+
+Confirm
+
+Current Time:
+
+Custom Firmware Kernel Not Found !
+
+Dongle status:
+
+Download latest:
+
+Driver mode:
+
+Edit Network WPA WiFi Credentials
+
+Edit Password
+
+Edit SSID
+
+Enter Password
+
+Enter SSID
+
+Entry
+
+Ethernet information:
+
+Found
+
+Go back
+
+IP Address:
+
+IP configuration:
+
+Loading timezones...
+
+Move Cursor
+
+New GamePad found
+
+No networks found
+
+Not active
+
+Not found
+
+Page
+
+Password:
+
+Playstation Classic Hardware Information
+
+Please confirm
+
+PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
+
+POWERING OFF... PLEASE WAIT
+
+Press |@X| to save controller mapping, or |@O| to retry configuration
+
+Press a key for
+
+Press any DPAD button (to determine if it's digital or analogue)
+
+Reinitializing Network
+
+Restart Network
+
+Restart Networking Now?
+
+Restarted Wi-Fi  With SSID:
+
+Scan SSID
+
+Scanning networks
+
+Select
+
+Select Time Zone for Your Location
+
+Select WiFi Network to connect
+
+Space
+
+SSID:
+
+Support via Discord:
+
+This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
+
+Timezone:
+
+Use Controller
+
+Waiting for IP Address...
+
+Wi-Fi Connection: 
+
+WiFi information:
+
+WiFi Settings
+
+Write Config/Restart Network
+
+Write Configuration/Restart Network
+
