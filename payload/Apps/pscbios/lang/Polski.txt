@@ -1,4 +1,4 @@
-(Ask on our discord for a link) 
+(Ask on our discord for a link)
 (Poproś o link na naszym Discord)
 .-= Code C++ and shell scripts =-.
 .-= Kodowanie i skrypty =-.
@@ -14,6 +14,12 @@ Active
 Aktywny
 Backspace
 Powrót
+Bluetooth Configuration
+Konfiguracja Bluetooth
+Bluetooth information:
+Informacja Bluetooth:
+BT Manager
+Menadżer BT
 Cancel
 Anuluj
 Caps
@@ -24,12 +30,14 @@ Close
 Zamknij
 Confirm
 Potwierdź
+Controller:
+Kontroler:
 Current Time:
 Aktualny czas:
 Custom Firmware Kernel Not Found !
 Brak zainstalowanego kernela
 Dongle status:
-Urzadzenie USB:
+Urządzenie USB:
 Download latest:
 Pobierz najnowszy
 Driver mode:
@@ -52,6 +60,8 @@ Found
 Znaleziono
 Go back
 Powrót
+Interface details:
+Szczegóły Interfejsu:
 IP Address:
 Adres IP:
 IP configuration:
@@ -60,6 +70,8 @@ Loading timezones...
 Sprawdzam strefy czasowe...
 Move Cursor
 Przesuń kursor
+New devices:
+Nowe  urządzenia:
 New GamePad found
 Nowy kontroler znaleziony
 No networks found
@@ -68,6 +80,10 @@ Not active
 Nie aktywny
 Not found
 Nie znaleziono
+Not Found
+Nie Znaleziono
+Operations:
+Operacje:
 Page
 Strona
 Password:
@@ -80,12 +96,12 @@ PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
 PROSZĘ PODŁACZYĆ KONTROLER DO PLAYSTATION CLASSIC
 POWERING OFF... PLEASE WAIT
 ZAMYKAM.... PROSZĘ CZEKAC....
-Press |@X| to save controller mapping, or |@O| to retry configuration
-|@X| aby zapisać mapowanie, lub |@O| aby powtórzyć konfiguracje
 Press a key for
 Wciśnij klawisz dla
 Press any DPAD button (to determine if it's digital or analogue)
 Naciśnij dowolny kierunek (aby sprawdzić czy kontroler jest analogowy)
+Press |@X| to save controller mapping, or |@O| to retry configuration
+|@X| aby zapisać mapowanie, lub |@O| aby powtórzyć konfiguracje
 Reinitializing Network
 Uruchamianie modułu sieci
 Restart Network
@@ -94,6 +110,8 @@ Restart Networking Now?
 Zrestartować sieć teraz
 Restarted Wi-Fi  With SSID:
 Sieć skonfigurowana z SSID:
+Scan controller for new devices
+Kontroler skanowania nowych urządzeń
 Scan SSID
 Skanuj SSID
 Scanning networks
@@ -104,6 +122,8 @@ Select Time Zone for Your Location
 Wybierz Strefę Czasową dla twojej lokacji
 Select WiFi Network to connect
 Wybierz siec Wifi do podlaczenia
+Set controller discoverable
+Ustaw kontroler jako wykrywalny
 Space
 Spacja
 SSID:

@@ -1,4 +1,4 @@
- (Ask on our discord for a link) 
+(Ask on our discord for a link)
 
 .-= Code C++ and shell scripts =-.
 
@@ -14,6 +14,14 @@ Active
 
 Backspace
 
+Bluetooth Configuration
+
+Bluetooth information:
+
+BT Manager
+
+Buttons:
+
 Cancel
 
 Caps
@@ -23,6 +31,8 @@ Change
 Close
 
 Confirm
+
+Controller:
 
 Current Time:
 
@@ -48,9 +58,23 @@ Entry
 
 Ethernet information:
 
+Exit
+
 Found
 
+Game Controller information:
+
+Game Controllers number: 
+
+Gamepad configuration details
+
+Gamepad input configuration: 
+
+Gamepads
+
 Go back
+
+Interface details:
 
 IP Address:
 
@@ -58,15 +82,25 @@ IP configuration:
 
 Loading timezones...
 
+Mapping tester
+
 Move Cursor
 
-New GamePad found
+New devices:
+
+Next pad
+
+NO GAME CONTROLLERS OPENED
 
 No networks found
 
 Not active
 
 Not found
+
+Not Found
+
+Operations:
 
 Page
 
@@ -76,15 +110,7 @@ Playstation Classic Hardware Information
 
 Please confirm
 
-PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-
 POWERING OFF... PLEASE WAIT
-
-Press |@X| to save controller mapping, or |@O| to retry configuration
-
-Press a key for
-
-Press any DPAD button (to determine if it's digital or analogue)
 
 Reinitializing Network
 
@@ -93,6 +119,8 @@ Restart Network
 Restart Networking Now?
 
 Restarted Wi-Fi  With SSID:
+
+Scan controller for new devices
 
 Scan SSID
 
@@ -104,21 +132,25 @@ Select Time Zone for Your Location
 
 Select WiFi Network to connect
 
+Set controller discoverable
+
 Space
 
 SSID:
 
 Support via Discord:
 
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
+This project is freeware. It works AS IS and We take no responsibility for any issues or damage.
 
 Timezone:
+
+Update mapping
 
 Use Controller
 
 Waiting for IP Address...
 
-Wi-Fi Connection: 
+Wi-Fi Connection:
 
 WiFi information:
 
