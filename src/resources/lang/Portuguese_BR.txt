@@ -1,5 +1,5 @@
-About
-Sobre
+﻿About
+Sobre o AutoBleem
 Advanced
 Avançado
 Advanced:
@@ -11,9 +11,9 @@ Você tem certeza?
 AutoBleem
 AutoBleem
 AutoBleem Theme:
-Tema AutoBleem:
+Tema do AutoBleem:
 Automatic PlayStation Classic USB launcher
-Launcher Automático PlayStation Classic USB
+Inicializador USB Automático para PlayStation Clássico
 Background Music:
 Música de Fundo:
 Button Guide
@@ -23,7 +23,7 @@ Cancelar
 Caps
 Caps
 Card
-Card
+Cartão
 Change MC
 Mudar MC
 Clock:
@@ -43,35 +43,35 @@ Estilo da Capa:
 Custom
 Person.
 Custom Memory Cards
-Personalizar Memory Cards
+Cartões de Memória Personalizados
 Customize AutoBleem settings
-Personalizar Configurações AutoBleem
+Personalizar Configurações do AutoBleem
 Decompressing ecm:
 Descomprimindo ecm:
 Delete
 Deletar
 Delete card
-Deletar card
+Deletar cartão
 Download latest:
-Baixar Última Versão:
+Baixar a última versão:
 DPAD - Same as classic menu
 DPAD - Igual ao menu clássico
 Edit game parameters
 Editar parâmetros do jogo
 Edit Memory Card information
-Editar informação Memory Card
+Editar informações do Cartão de Memória
 Emulator config MENU
-MENU Configs. Emulador
+MENU de Configurações do Emulador
 Enter
 Confirmar
 Enter new card name
-Inserir nome do novo card
+Inserir nome do novo cartão
 Enter new game name
 Inserir nome do novo jogo
 Enter new name for card
-Inserir novo nome do card
+Inserir novo nome do cartão
 Enter new name for memory card
-Inserir novo nome do MemoryCard
+Inserir novo nome do cartão de memória
 Favorite:
 Favorito:
 Flush covers
@@ -96,8 +96,6 @@ games
 jogos
 Games changed. Press
 Jogos alterados. Pressione
-Games filter
-Filtrar jogos
 games scanned
 jogos escaneados
 GFX Filter:
@@ -105,17 +103,17 @@ Filtro GFX:
 Go back
 Voltar
 Graphics by:
-Graficos por:
+Gráficos por:
 High res:
 Alta resol.:
 Hold
-Segurar
+Aguarde
 IN BOOT MENU TO POWER OFF THE CONSOLE (SAFE POWER OFF !!!)
 DESLIGUE O CONSOLE PELO MENU PRINCIPAL (DESLIGAMENTO SEGURO !!!)
 In Game
 Em Jogo
 Internal
-Internos
+Interno
 Internal Games:
 Jogos Internos:
 Is your dpad analogue?
@@ -125,15 +123,15 @@ Linguagem:
 Loading ... Please Wait ...
 Carregando ... Aguarde ...
 Lock data:
-Travar dados:
+Trancar dados:
 MemCard Manager will be available soon
-Gerenciador de MemCard em breve
+Gerenciador de cartões de memória em breve
 MEMORY CARD
-MEMORY CARD
+CARTÃO DE MEMÓRIA
 Memory Card:
-Memory Card:
+Cartão de Memória:
 Memory Cards
-Memory Cards
+Cartões de Memória
 Menu
 Menu
 Menu Theme:
@@ -141,11 +139,13 @@ Tema do Menu:
 Music:
 Música:
 New Card
-Novo Card
+Novo Cartão
 New GamePad found
 Novo Controle Encontrado
+Next Game Platform
+Próximo Console
 OOPS! Game crashed. Resume point not available.
-OOPS! O jogo travou. Não é possível retomar.
+OPA! O jogo travou. Não é possível retomar.
 Options
 Opções
 Original
@@ -157,9 +157,9 @@ Jogador
 Players
 Jogadores
 Please confirm
-Confirmar
+Favor Confirmar
 PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-CONECTE O CONTROLE NO CONSOLE
+POR FAVOR CONECTE O CONTROLE NO PLAYSTATION CLÁSSICO
 Please wait ... deleting covers...
 Aguarde ... apagando capas...
 Plugin:
@@ -167,7 +167,7 @@ Plugin:
 Power Off
 Desligar
 POWERING OFF... PLEASE WAIT
-DESLIGANDO... AGUARDE
+DESLIGANDO... POR FAVOR AGUARDE
 Press a key for
 Pressione um botão para
 Published by:
@@ -175,11 +175,11 @@ Publicado por:
 Quick boot
 Boot rápido
 Quick scroll to next letter
-Descer para próxima letra
+Rolagem rápida para próxima letra
 QuickBoot Init:
-BootRapido Init:
+Inicialicação de Boot Rápido:
 QuickBoot:
-BootRapido:
+Boot Rápido:
 Quit emulation - back to AutoBleem
 Emulação rápida - voltar ao AutoBleem
 Re/Scan
@@ -197,7 +197,7 @@ Jogo salvo no slot
 RetroArch
 RetroArch
 RetroArch is not installed
-RetroArch não instalado
+RetroArch não está instalado
 Scanline Level:
 Nível Scanline:
 Scanlines:
@@ -207,13 +207,13 @@ Escaneando...
 Select
 Selecionar
 Select memory card
-Selecionar memory card
+Selecionar cartão de memória
 Select or cancel highlighted option
-Selecionar ou cancelar opção destacada
+Selecionar ou cancelar opção realçada
 SELECT RESUME SLOT TO LOAD
-SELECIONE O SAVE PARA CARREGAR
+SELECIONE O JOGO SALVO A CARREGAR
 SELECT SLOT TO SAVE STATE
-SELECIONE SLOT PARA SALVAR
+SELECIONE BLOCO ONDE SALVAR JOGO
 Serial:
 Serial:
 SETTINGS
@@ -223,7 +223,7 @@ Compartilhar MC
 Show RetroArch:
 Mostrar RetroArch:
 Showing Timeout (0 = no timeout):
-Tempo Limite (0 = sem limite):
+Tempo Visível Limite para Status (0 = for tempo indefinido):
 Showing: All games
 Mostrando: Todos os Jogos
 Showing: Favorite games
@@ -233,7 +233,7 @@ Mostrando: Jogos Internos
 Showing: USB games
 Mostrando: Jogos no USB
 Slot
-Slot
+Bloco
 Sorting :
 Organizando :
 Sorting...
@@ -255,7 +255,7 @@ para escanear
 Total:
 Total:
 UI:
-UI:
+Interface:
 Updating regional.db...
 Atualizando regional.db...
 WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
@@ -263,6 +263,6 @@ AVISO: DB DE CAPAS NÃO ENCONTRADA. PRESSIONE QUALQUER BOTÃO.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 AVISO: NENHUM JOGO ENCONTRADO. PRESSIONE QUALQUER BOTÃO.
 Widescreen:
-Widescreen:
+Tela Larga:
 Year:
 Ano:

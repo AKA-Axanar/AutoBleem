@@ -24,8 +24,6 @@ Are you sure you want to flush all covers?
 Sei sicuro di voler cancellare tutte le cover?
 Are you sure?
 Sei sicuro?
-Auto Init Network on Boot:
-Inizializza Rete all'Avvio:
 AutoBleem
 AutoBleem
 AutoBleem resume points not available in RetroArch.
@@ -38,8 +36,6 @@ Backspace
 Backspace
 Bin file failed to verify
 Verifica del file Bin fallita
-Bleemsync directory not on USB
-Cartella Bleemsync non presente su USB
 Button Guide
 Guida ai Pulsanti
 Cancel
@@ -98,14 +94,10 @@ Edit game parameters
 Modifica parametri del gioco
 Edit Memory Card information
 Modifica informazioni della Memory Card
-Edit Network SSID and Password (ssid.cfg)
-Modifica SSID e Password della Rete (ssid.cfg)
-Edit Password
-Modifica Password
-Edit SSID
-Modifica SSID
+EmulationStation
+EmulationStation
 Emulator config MENU
-MENU configurazione dell'emulatore
+MENU di configurazione Emulatore
 Enter
 Scegli
 Enter new card name
@@ -116,18 +108,12 @@ Enter new name for card
 Inserisci il nuovo nome della card
 Enter new name for memory card
 Inserisci il nuovo nome della memory card
-Enter Password
-Inserisci Password
-Enter SSID
-Inserisci SSID
 Entry
 Voce
 Exit to EvoUI
 Torna a EvoUI
 Failed to delete
 Impossibile cancellare
-Failed to Initialize Wi-Fi To Network SSID:
-Impossibile Inizializzare Wi-Fi per la Rete SSID:
 Favorite Games
 Giochi Preferiti
 Favorite:
@@ -142,10 +128,10 @@ Free
 Libero
 Free space
 Spazio libero
-GAME
-GIOCO
 Game
 Gioco
+GAME
+GIOCO
 Game failed to verify:
 Verifica fallita per questi giochi:
 Game file not found
@@ -166,14 +152,14 @@ games
 giochi
 Games changed. Press
 Giochi cambiati. Premi
-Games filter
-Filtra i giochi
 games scanned
 giochi trovati
 GFX Filter:
 Filtri Grafici:
 Go back
 Ritorna
+Hardware Information
+Informazioni Hardware
 High res:
 Alta risoluzione:
 In Boot Menu: Safe Power Off The Console
@@ -182,26 +168,16 @@ In Game
 Mentre Giochi
 In Retroarch Game
 Mentre Giochi - in RetroArch
-Initialize Network
-Inizializza Rete
-Initialize Wi-Fi Now?
-Inizializza Wi-Fi Adesso?
-Initialized Wi-Fi To Network SSID:
-Wi-Fi inizializzata per la Rete con SSID:
-Initializing Wi-Fi To Network SSID:
-Inizializzo Wi-Fi per la Rete con SSID:
 Internal
 Interno
 INTERNAL
 INTERNO
 Internal Games
 Giochi Interni
-IP Address:
-Indirizzo IP:
-IP:
-IP:
 Language:
 Lingua:
+Last Played:
+Ultima Partita:
 Link Block
 Blocco di Link
 Link end Block
@@ -224,12 +200,12 @@ Moving :
 Spostando :
 Music:
 Musica:
-Network SSID
-SSID della Rete
 New Card
 Nuova Card
 New GamePad found
 Trovato nuovo GamePad
+Next Game Platform
+Prossima Piattaforma di Gioco
 No disc name
 Nessun nome del disco
 No discs
@@ -246,8 +222,6 @@ Original
 Originale
 Page
 Pagina
-Password:
-Password:
 pcsx.cfg file not found
 File pcsx.cfg non trovato
 Player
@@ -353,7 +327,7 @@ Sto mostrando: Giochi Interni
 Showing: Retroarch
 Sto mostrando: Retroarch
 Showing: USB Games Directory:
-Sto mostrando: Cartella dei Giochi su USB
+Sto mostrando: Cartella dei Giochi su USB:
 Slot
 Slot
 Space
@@ -362,14 +336,12 @@ SpeedHack:
 SpeedHack:
 Spu Interpolation:
 Interpolazione Spu:
-SSID:
-SSID:
 Starting EvolutionUI
 Avvio di EvolutionUI
 Support via Discord:
 Supporto via Discord:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-Questo e' un programma gratuito e open source. Funziona COSI' COME E' e Noi non ci assumiamo alcuna responsabilita' per eventuali problemi o danni.
+This is free software. It works AS IS and We take no responsibility for any issues or damage.
+Questo e' un programma gratuito. Funziona COSI' COME E' e Noi non ci assumiamo alcuna responsabilita' per eventuali problemi o danni.
 to scan
 per cercare
 Total:
@@ -390,13 +362,7 @@ WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 ATTENZIONE: DB DELLE COVER NON TROVATO. PREMI UN TASTO QUALSIASI.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 ATTENZIONE: NESSUN GIOCO TROVATO. PREMI UN TASTO QUALSIASI.
-Wi-Fi Connection:
-Connessione Wi-Fi:
 Widescreen:
 Widescreen:
-Write connect info to ssid.cfg file
-Scrivi le info di connessione nel file ssid.cfg
-Write ssid.cfg file
-Scrivi file ssid.cfg
 Year:
 Anno:

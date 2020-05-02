@@ -24,8 +24,6 @@ Are you sure you want to flush all covers?
 Naozaj chcete zmazať všetky obaly?
 Are you sure?
 Ste si tým istý?
-Auto Init Network on Boot:
-Automatická inicializácia siete pri štarte:
 AutoBleem
 AutoBleem
 AutoBleem resume points not available in RetroArch.
@@ -38,8 +36,6 @@ Backspace
 Vrátiť
 Bin file failed to verify
 Nepodarilo sa overiť súbor bin.
-Bleemsync directory not on USB
-Adresár Bleemsync nie je na USB
 Button Guide
 Sprievodca tlačidlami
 Cancel
@@ -98,12 +94,8 @@ Edit game parameters
 Upraviť parametre hry
 Edit Memory Card information
 Upraviť informácie Pamäťovej karty
-Edit Network SSID and Password (ssid.cfg)
-Upraviť sieťové SSID a heslo (ssid.cfg)
-Edit Password
-Upraviť heslo
-Edit SSID
-Upraviť SSID
+EmulationStation
+EmulationStation
 Emulator config MENU
 Menu Emulátora
 Enter
@@ -116,18 +108,12 @@ Enter new name for card
 Zadajte nový názov karty
 Enter new name for memory card
 Zadajte nový názov pamäťovej karty
-Enter Password
-Zadajte heslo
-Enter SSID
-Zadajte SSID
 Entry
 Údaj
 Exit to EvoUI
 Odísť do EvoUI
 Failed to delete
 Nepodarilo sa odstrániť
-Failed to Initialize Wi-Fi To Network SSID:
-Nepodarilo sa inicializovať sieťové SSID pre Wi-Fi:
 Favorite Games
 Obľúbené hry
 Favorite:
@@ -166,14 +152,14 @@ games
 hry
 Games changed. Press
 Hry sa zmenili. Stlač
-Games filter
-Filter hier
 games scanned
 nájdených hier
 GFX Filter:
 Grafický filter:
 Go back
 Späť
+Hardware Information
+Informácie o hardvéri
 High res:
 Vysoké rozlíšenie:
 In Boot Menu: Safe Power Off The Console
@@ -182,26 +168,16 @@ In Game
 V hre
 In Retroarch Game
 V Retroarch hre
-Initialize Network
-Inicializácia siete
-Initialize Wi-Fi Now?
-Inicializovať Wi-Fi?
-Initialized Wi-Fi To Network SSID:
-Inicializované sieťové SSID pre Wi-Fi:
-Initializing Wi-Fi To Network SSID:
-Inicializujem sieťové SSID pre Wi-Fi:
 Internal
 Originálne
 INTERNAL
 ORIGINÁLNE
 Internal Games
 Originálne hry
-IP Address:
-IP adresa:
-IP:
-IP:
 Language:
 Jazyk:
+Last Played:
+Naposledy hrané:
 Link Block
 Spojiť blok
 Link end Block
@@ -224,12 +200,12 @@ Moving :
 Presúvam:
 Music:
 Hudba:
-Network SSID
-Sieť SSID
 New Card
 Nová karta
 New GamePad found
 Nájdený nový Gamepad
+Next Game Platform
+Nasledujúca hracia platforma
 No disc name
 Disk hry bez názvu
 No discs
@@ -246,8 +222,6 @@ Original
 Originálne hry
 Page
 Strana
-Password:
-Heslo:
 pcsx.cfg file not found
 Súbor pcsx.cfg sa nenašiel
 Player
@@ -362,8 +336,6 @@ SpeedHack:
 SpeedHack:
 Spu Interpolation:
 Interpolácia zvuku:
-SSID:
-SSID:
 Starting EvolutionUI
 Spúšťam EvolutionUI
 Support via Discord:
@@ -390,13 +362,7 @@ WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 POZOR: NENAŠLA SA DATABÁZA OBALOV NA HRY. STLAČTE ĽUBOVOĽNÚ KLÁVESU.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 POZOR: NEBOLA NÁJDENÁ ŽIADNA HRA. STLAČTE ĽUBOVOĽNÚ KLÁVESU.
-Wi-Fi Connection:
-Pripojenie Wi-Fi:
 Widescreen:
 Širokouhlý obraz:
-Write connect info to ssid.cfg file
-Zapísať informácie o pripojení do súboru ssid.cfg
-Write ssid.cfg file
-Zapísať súbor ssid.cfg
 Year:
 Rok:
