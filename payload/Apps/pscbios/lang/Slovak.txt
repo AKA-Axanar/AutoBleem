@@ -20,6 +20,8 @@ Bluetooth information:
 Informácie o Bluetooth:
 BT Manager
 BT Manažér
+Buttons:
+Tlačítka:
 Cancel
 Zrušiť
 Caps
@@ -56,8 +58,20 @@ Entry
 Údaj
 Ethernet information:
 Informácie o sieti Ethernet:
+Exit
+Skončiť
 Found
 Nájdené
+Game Controller information:
+Informácie o ovládači:
+Game Controllers number: 
+Počet ovládačov:
+Gamepad configuration details
+Podrobnosti o konfigurácii gamepadu
+Gamepad input configuration: 
+Nastavenie tlačidiel gamepadu:
+Gamepads
+Gamepady
 Go back
 Späť
 Interface details:
@@ -68,12 +82,16 @@ IP configuration:
 Konfigurácia IP:
 Loading timezones...
 Načítavam časové pásma...
+Mapping tester
+Otestovanie navolených tlačidiel
 Move Cursor
 Presunúť kurzor
 New devices:
 Nové zariadenia:
-New GamePad found
-Nájdený nový Gamepad
+Next pad
+Ďalší Gamepad
+NO GAME CONTROLLERS OPENED
+NIE JE OTVORENÝ ŽIADNY OVLÁDAČ
 No networks found
 Nenašli sa žiadne siete
 Not active
@@ -92,16 +110,8 @@ Playstation Classic Hardware Information
 nformácie o hardvéri Playstation Classic
 Please confirm
 Potvrďte prosím
-PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-PRIPOJTE PROSÍM GAMEPAD K PLAYSTATIONU CLASSIC
 POWERING OFF... PLEASE WAIT
 VYPÍNAM... ČAKAJTE PROSÍM
-Press a key for
-Stlačte hocijaké tlačidlo
-Press any DPAD button (to determine if it's digital or analogue)
-Stlačte ktorékoľvek tlačidlo DPAD (aby ste zistili, či je digitálne alebo analógové)
-Press |@X| to save controller mapping, or |@O| to retry configuration
-Stlačte |@X| na premapovanie ovládača, alebo |@O| na zopakovanie konfigurácie
 Reinitializing Network
 Reinicializujem sieť
 Restart Network
@@ -130,10 +140,12 @@ SSID:
 SSID:
 Support via Discord:
 Podpora na Discorde:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-AutoBleem je bezplatný a open source softvér. Funguje TAK, AKO JE, a NENESIEME žiadnu zodpovednosť za akékoľvek problémy alebo škody.
+This project is freeware. It works AS IS and We take no responsibility for any issues or damage.
+Toto je bezplatný softvér. Funguje TAK, AKO JE, a NENESIEME žiadnu zodpovednosť za akékoľvek problémy alebo škody.
 Timezone:
 Časové pásmo:
+Update mapping
+Aktualizujte mapovanie
 Use Controller
 Použite ovládač
 Waiting for IP Address...
