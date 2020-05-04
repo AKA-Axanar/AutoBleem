@@ -188,14 +188,6 @@ int main(int argc, char *argv[]) {
     Env::autobleemKernel = DirEntry::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
 
-    // copy game controler db for kernel enabled guys
-    if (Env::autobleemKernel)
-    {
-        if (DirEntry::exists("/etc/autobleem/gamecontrollerdb.txt"))
-        {
-            DirEntry::copy(Env::getWorkingPath()+"/gamecontrollerdb.txt","/etc/autobleem/gamecontrollerdb.txt");
-        }
-    }
 
     if (argc == 1 + 1) {
         // the single arg is the path to the usb drive
