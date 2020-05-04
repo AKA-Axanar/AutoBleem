@@ -340,8 +340,8 @@ Starting EvolutionUI
 Spúšťam EvolutionUI
 Support via Discord:
 Podpora na Discorde:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-AutoBleem je bezplatný a open source softvér. Funguje TAK, AKO JE, a NENESIEME žiadnu zodpovednosť za akékoľvek problémy alebo škody.
+This is free software. It works AS IS and We take no responsibility for any issues or damage.
+Toto je bezplatný softvér. Funguje TAK, AKO JE, a NENESIEME žiadnu zodpovednosť za akékoľvek problémy alebo škody.
 to scan
 nájsť
 Total:
