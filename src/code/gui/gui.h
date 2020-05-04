@@ -165,6 +165,14 @@ public:
 
     void exportDBToRetroarch();
 
+    void stopAudio();
+    void playMusic(bool customMusic, string musicPath);
+    void restartAudio(int freq);
+    void freeMusic();
+    bool customMusic=false;
+    int freq = 44100;
+    string musicPath;
+
     MenuOption menuOption = MENU_OPTION_SCAN;
 
     // these are saved in gui so the next time Start brings up the carousel it can restore to last state

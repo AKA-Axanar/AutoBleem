@@ -35,9 +35,9 @@ using ordered_json = basic_json<my_workaround_fifo_map>;
 
 #define RA_PLAYLIST "AutoBleem.lpl"
 
-                                    //*******************************
-                                    // GuiBase
-                                    //*******************************
+//*******************************
+// GuiBase
+//*******************************
 
 //********************
 // GuiBase::GuiBase
@@ -64,7 +64,7 @@ GuiBase::GuiBase() {
 // GuiBase::~GuiBase
 //********************
 GuiBase::~GuiBase() {
-   SDL_Quit();
+    SDL_Quit();
 }
 
 //*******************************
@@ -146,9 +146,6 @@ string GuiBase::getCurrentThemeFontPath() {
     return path;
 #endif
 }
-
-
-
 
 
 //*******************************
@@ -264,6 +261,70 @@ Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string themePath, strin
     return tex;
 }
 
+void Gui::stopAudio() {
+    int numtimesopened, frequency, channels;
+    Uint16 format;
+    numtimesopened=Mix_QuerySpec(&frequency, &format, &channels);
+    for (int i=0;i<numtimesopened;i++)
+    {
+        Mix_CloseAudio();
+    }
+    while(Mix_QuerySpec(&frequency, &format, &channels))
+    {
+        Mix_CloseAudio();
+    }
+}
+
+void Gui::restartAudio(int freq) {
+    int numtimesopened, frequency, channels;
+    Uint16 format;
+    numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
+    for (int i = 0; i < numtimesopened; i++) {
+        Mix_CloseAudio();
+    }
+    while (Mix_QuerySpec(&frequency, &format, &channels));
+
+
+    if (Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
+        printf("Unable to open audio: %s\n", Mix_GetError());
+    }
+
+    const char *driver_name = SDL_GetCurrentAudioDriver();
+
+    if (driver_name) {
+        printf("Audio subsystem initialized; driver = %s.\n", driver_name);
+    } else {
+        printf("Audio subsystem not initialized.\n");
+    }
+}
+
+void Gui::playMusic(bool customMusic, string musicPath) {
+    if (cfg.inifile.values["nomusic"] != "true")
+        if (themeData.values["loop"] != "-1") {
+            if (!customMusic) {
+                music = Mix_LoadMUS((themePath + themeData.values["music"]).c_str());
+                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                if (Mix_PlayMusic(music, themeData.values["loop"] == "1" ? -1 : 0) == -1) {
+                    printf("Unable to play music file: %s\n", Mix_GetError());
+                }
+            } else {
+                music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
+                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                if (Mix_PlayMusic(music, -1) == -1) {
+                    printf("Unable to play music file: %s\n", Mix_GetError());
+                }
+            }
+
+        }
+}
+
+void Gui::freeMusic() {
+    if (music != nullptr) {
+        Mix_FreeMusic(music);
+        music = nullptr;
+    }
+}
+
 //*******************************
 // Gui::loadAssets
 //*******************************
@@ -274,9 +335,8 @@ void Gui::loadAssets(bool reloadMusic) {
     themePath = getCurrentThemePath() + sep;
 
     cout << "Loading UI theme:" << themePath << endl;
-    if (!DirEntry::exists(themePath + "theme.ini"))
-    {
-        themePath=defaultPath;
+    if (!DirEntry::exists(themePath + "theme.ini")) {
+        themePath = defaultPath;
         cfg.inifile.values["theme"] = "default";
         cfg.save();
     }
@@ -338,15 +398,11 @@ void Gui::loadAssets(bool reloadMusic) {
     themeFont = Fonts::openNewSharedFont(fontPath, fontSize);
 
     if (reloadMusic) {
-        if (music != nullptr) {
-
-            Mix_FreeMusic(music);
-            music = nullptr;
-        }
+        freeMusic();
     }
-    bool customMusic = false;
-    int freq = 32000;
-    string musicPath = themeData.values["music"];
+    customMusic = false;
+    freq = 32000;
+    musicPath = themeData.values["music"];
     if (cfg.inifile.values["music"] != "--") {
         customMusic = true;
         musicPath = cfg.inifile.values["music"];
@@ -357,53 +413,14 @@ void Gui::loadAssets(bool reloadMusic) {
     }
 
     if (reloadMusic) {
-        int numtimesopened, frequency, channels;
-        Uint16 format;
-        numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
-        for (int i = 0; i < numtimesopened; i++) {
-            Mix_CloseAudio();
-        }
-        numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
-
-        if (Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
-            printf("Unable to open audio: %s\n", Mix_GetError());
-        }
-
-        const char* driver_name = SDL_GetCurrentAudioDriver();
-
-        if (driver_name) {
-            printf("Audio subsystem initialized; driver = %s.\n", driver_name);
-        } else {
-            printf("Audio subsystem not initialized.\n");
-        }
-
+        this->restartAudio(freq);
+        this->playMusic(customMusic, musicPath);
     }
     cursor = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cursor.wav").c_str());
     cancel = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cancel.wav").c_str());
     home_up = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "home_up.wav").c_str());
     home_down = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "home_down.wav").c_str());
     resume = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "resume_new.wav").c_str());
-
-    if (reloadMusic)
-    if (cfg.inifile.values["nomusic"] != "true")
-        if (themeData.values["loop"] != "-1") {
-
-
-            if (!customMusic) {
-                music = Mix_LoadMUS((themePath + themeData.values["music"]).c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, themeData.values["loop"] == "1" ? -1 : 0) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
-                }
-            } else {
-                music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, -1) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
-                }
-            }
-
-        }
 }
 
 //*******************************
@@ -497,7 +514,6 @@ bool otherMenuShift = false;
 bool powerOffShift = false;
 
 
-
 //*******************************
 // Gui::menuSelection
 //*******************************
@@ -529,23 +545,22 @@ void Gui::menuSelection() {
 
     string forceScanMenu = _("Games changed. Press") + "  |@X|  " + _("to scan") + "|";
     string otherMenu;
-    if (Env::autobleemKernel)
-        otherMenu += "|@S|  " + _("Hardware Information") + "  ";
+
+    otherMenu += "|@S|  " + _("Hardware Information") + "  ";
     otherMenu += "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
 
 
-
-    string gamepadNotice="";
-    if (SDL_NumJoysticks()>mapper.getActivePadNum())
-    {
-        gamepadNotice=_("NOTICE: ")+to_string(SDL_NumJoysticks()-mapper.getActivePadNum())+" connected gamepads were not recognized.";
+    string gamepadNotice = "";
+    if (SDL_NumJoysticks() > mapper.getActivePadNum()) {
+        gamepadNotice = _(
+                "NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup.");
     }
 
     if (!forceScan) {
-        drawText(mainMenu,gamepadNotice);
+        drawText(mainMenu, gamepadNotice);
 
     } else {
-        drawText(forceScanMenu,gamepadNotice);
+        drawText(forceScanMenu, gamepadNotice);
     }
 
 
@@ -620,7 +635,7 @@ void Gui::menuSelection() {
 
                     if (!otherMenuShift) {
                         if (!forceScan)
-                            if (e.cbutton.button == SDL_BTN_START ) {
+                            if (e.cbutton.button == SDL_BTN_START) {
                                 if (cfg.inifile.values["ui"] == "classic") {
                                     Mix_PlayChannel(-1, cursor, 0);
                                     this->menuOption = MENU_OPTION_RUN;
@@ -628,7 +643,7 @@ void Gui::menuSelection() {
                                 } else {
                                     if (lastSet < 0) {
                                         lastSet = SET_PS1;
-                                        lastSelIndex=0;
+                                        lastSelIndex = 0;
                                         resumingGui = false;
                                     }
                                     Mix_PlayChannel(-1, cursor, 0);
@@ -701,14 +716,22 @@ void Gui::menuSelection() {
                     } else {
                         if (e.cbutton.button == SDL_BTN_SQUARE) {
                             Mix_PlayChannel(-1, cursor, 0);
-                            if (Env::autobleemKernel) {
-                                mapper.flushPads();
-                                string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
-                                vector<const char *> argvNew { cmd.c_str(), nullptr };
-                                Util::execFork(cmd.c_str(), argvNew);
-                                SDL_FlushEvents(SDL_FIRSTEVENT,SDL_LASTEVENT);
-                                mapper.probePads();
-                            }
+                            stopAudio();
+                            mapper.flushPads();
+#if defined(__x86_64__) || defined(_M_X64)
+                            drawText("Small delay to test");
+                            SDL_Delay(2000);
+#endif
+                            string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
+                            vector<const char *> argvNew{cmd.c_str(), nullptr};
+                            Util::execFork(cmd.c_str(), argvNew);
+                            SDL_PumpEvents();
+                            SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
+                            mapper.probePads();
+                            restartAudio(freq);
+                            playMusic(customMusic,musicPath);
+                            menuSelection();
+                            menuVisible = false;
                         };
 
                         if (e.cbutton.button == SDL_BTN_CROSS) {
@@ -913,9 +936,8 @@ void Gui::renderStatus(const string &text, int posy) {
     int screencenter = 1280 / 2;
     textRec.x = screencenter - (textRec.w / 2);
     textRec.y = atoi(themeData.values["ttop"].c_str());
-    if (posy!=-1)
-    {
-        textRec.y=posy;
+    if (posy != -1) {
+        textRec.y = posy;
     }
     if (textRec.w > atoi(themeData.values["textw"].c_str()))
         textRec.w = atoi(themeData.values["textw"].c_str());
@@ -929,7 +951,7 @@ void Gui::drawText(const string &text, const string &topLine) {
     renderBackground();
     renderLogo(false);
     renderStatus(text);
-    renderStatus(topLine,5);
+    renderStatus(topLine, 5);
     SDL_RenderPresent(renderer);
 }
 
@@ -1039,10 +1061,10 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
     if (textRec.w >= (1280 - rect2.x * 4)) {
         textRec.w = (1280 - rect2.x * 4);
     }
-    if (position==POS_CENTER) {
+    if (position == POS_CENTER) {
         textRec.x = (1280 / 2) - textRec.w / 2;
     }
-    if (position==POS_RIGHT) {
+    if (position == POS_RIGHT) {
         textRec.x = 1280 - textRec.x - textRec.w;
     }
 
@@ -1053,7 +1075,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
 //*******************************
 // Gui::renderTextLine
 //*******************************
-int Gui::renderTextLine(const string &text, int line, int offset,  int position, int xoffset, TTF_Font_Shared font) {
+int Gui::renderTextLine(const string &text, int line, int offset, int position, int xoffset, TTF_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
@@ -1072,19 +1094,18 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
     textRec.x = rect2.x + 10 + xoffset;
     textRec.y = (lineh * line) + offset;
 
-    if (line<0)
-    {
-        line=-line;
-        textRec.y=line;
+    if (line < 0) {
+        line = -line;
+        textRec.y = line;
     }
 
     if (textRec.w >= (1280 - rect2.x * 4)) {
         textRec.w = (1280 - rect2.x * 4);
     }
-    if (position==POS_CENTER) {
+    if (position == POS_CENTER) {
         textRec.x = (1280 / 2) - textRec.w / 2;
     }
-    if (position==POS_RIGHT) {
+    if (position == POS_RIGHT) {
         textRec.x = 1280 - textRec.x - textRec.w;
     }
 
@@ -1097,7 +1118,8 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
 // Gui::getTextRectangleOnScreen
 //*******************************
 // returns the SDL_Rect of the screen positions if your rendered this text with these args
-SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,  int position, int xoffset, TTF_Font_Shared font) {
+SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset, int position, int xoffset,
+                                       TTF_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
@@ -1116,19 +1138,18 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
     textRec.x = rect2.x + 10 + xoffset;
     textRec.y = (lineh * line) + offset;
 
-    if (line<0)
-    {
-        line=-line;
-        textRec.y=line;
+    if (line < 0) {
+        line = -line;
+        textRec.y = line;
     }
 
     if (textRec.w >= (1280 - rect2.x * 4)) {
         textRec.w = (1280 - rect2.x * 4);
     }
-    if (position==POS_CENTER) {
+    if (position == POS_CENTER) {
         textRec.x = (1280 / 2) - textRec.w / 2;
     }
-    if (position==POS_RIGHT) {
+    if (position == POS_RIGHT) {
         textRec.x = 1280 - textRec.x - textRec.w;
     }
 
@@ -1144,7 +1165,7 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
                                  int xLeft, int xRight,
                                  int line, int offset, TTF_Font_Shared font) {
 
-            renderTextLine(textLeft,  line, offset, POS_LEFT, xLeft, font);
+    renderTextLine(textLeft, line, offset, POS_LEFT, xLeft, font);
     int h = renderTextLine(textRight, line, offset, POS_LEFT, xRight, font);
 
     return h;   // rectangle height
@@ -1208,10 +1229,9 @@ void Gui::renderFreeSpace() {
 }
 
 
-
 void Gui::exportDBToRetroarch() {
     ordered_json j;
-    j["version"]="1.0";
+    j["version"] = "1.0";
 
     PsGames gamesList;
     db->getGames(&gamesList);
@@ -1219,8 +1239,7 @@ void Gui::exportDBToRetroarch() {
 
     ordered_json items = ordered_json::array();
     // copy the gamesList into json object
-    for_each(begin(gamesList), end(gamesList), [&](PsGamePtr &game)
-    {
+    for_each(begin(gamesList), end(gamesList), [&](PsGamePtr &game) {
         ordered_json item = ordered_json::object();
 
         string gameFile = (game->folder + sep + game->base);
@@ -1240,12 +1259,12 @@ void Gui::exportDBToRetroarch() {
         }
 
 
-        item["path"]=gameFile;
-        item["label"]=game->title;
-        item["core_path"]=Env::getPathToRetroarchCoreFile();
-        item["core_name"]="DETECT";
-        item["crc32"]="00000000|crc";
-        item["db_name"]=RA_PLAYLIST;
+        item["path"] = gameFile;
+        item["label"] = game->title;
+        item["core_path"] = Env::getPathToRetroarchCoreFile();
+        item["core_name"] = "DETECT";
+        item["crc32"] = "00000000|crc";
+        item["db_name"] = RA_PLAYLIST;
 
         items.push_back(item);
     });

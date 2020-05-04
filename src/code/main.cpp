@@ -188,6 +188,15 @@ int main(int argc, char *argv[]) {
     Env::autobleemKernel = DirEntry::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
 
+    // copy game controler db for kernel enabled guys
+    if (Env::autobleemKernel)
+    {
+        if (DirEntry::exists("/etc/autobleem/gamecontrollerdb.txt"))
+        {
+            DirEntry::copy(Env::getWorkingPath()+"/gamecontrollerdb.txt","/etc/autobleem/gamecontrollerdb.txt");
+        }
+    }
+
     if (argc == 1 + 1) {
         // the single arg is the path to the usb drive
         private_singleArgPassed = true;
@@ -348,9 +357,15 @@ int main(int argc, char *argv[]) {
             }
 
             usleep(300*1000);
+
+
             gui->mapper.probePads();
             gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;
+            // remove all events if something left
+            SDL_PumpEvents();
+            SDL_FlushEvents(SDL_FIRSTEVENT,SDL_LASTEVENT);
+
             gui->display(false, pathToGamesDir, db, true);
         }
     }
