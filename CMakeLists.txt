@@ -126,6 +126,8 @@ add_executable(
         src/code/gui/gui_selectmemcard.h
         src/code/gui/gui_splash.cpp
         src/code/gui/gui_splash.h
+		src/code/gui/SDL_FontCache.h
+		src/code/gui/SDL_FontCache.c
         src/code/gui/menus/gui_gameDirMenu.h
         src/code/gui/menus/gui_gameEditorMenu.cpp
         src/code/gui/menus/gui_gameEditorMenu.h
