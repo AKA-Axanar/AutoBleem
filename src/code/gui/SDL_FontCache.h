@@ -37,7 +37,7 @@ THE SOFTWARE.
 #include "SDL2/SDL_ttf.h"
 
 #ifdef FC_USE_SDL_GPU
-    #include "SDL_gpu.h"
+    #include "SDL2/SDL_gpu.h"
 #endif
 
 
@@ -128,6 +128,8 @@ FC_GlyphData FC_MakeGlyphData(int cache_level, Sint16 x, Sint16 y, Uint16 w, Uin
 // Font object
 
 FC_Font* FC_CreateFont(void);
+
+TTF_Font* get_ttf_source(FC_Font* font);
 
 #ifdef FC_USE_SDL_GPU
 Uint8 FC_LoadFont(FC_Font* font, const char* filename_ttf, Uint32 pointSize, SDL_Color color, int style);

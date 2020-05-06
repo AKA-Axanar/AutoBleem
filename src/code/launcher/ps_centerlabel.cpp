@@ -62,7 +62,7 @@ void PsCenterLabel::render()
 //*******************************
 // PsCenterLabel::createTextTex
 //*******************************
-SDL_Shared<SDL_Texture> PsCenterLabel::createTextTex(const string & text, Uint8 r, Uint8 g, Uint8 b, TTF_Font_Shared font) {
+SDL_Shared<SDL_Texture> PsCenterLabel::createTextTex(const string & text, Uint8 r, Uint8 g, Uint8 b, FC_Font_Shared font) {
 
     SDL_Shared<SDL_Surface> surface;
     SDL_Shared<SDL_Texture> texture;
@@ -72,7 +72,7 @@ SDL_Shared<SDL_Texture> PsCenterLabel::createTextTex(const string & text, Uint8 
         texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 0, 0);
 
     } else {
-        surface = TTF_RenderUTF8_Blended(font, text.c_str(), textColor);
+        surface = TTF_RenderUTF8_Blended(get_ttf_source(font), text.c_str(), textColor);
         texture = SDL_CreateTextureFromSurface(renderer, surface);
     }
 

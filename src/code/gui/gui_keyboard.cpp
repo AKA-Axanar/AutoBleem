@@ -87,9 +87,9 @@ void GuiKeyboard::render() {
         // compute the bounding box around the cursor (#)
         SDL_Point textBeforeCursorSize { 0, 0 };
         if (cursorIndex > 0)    // get the size of the text before the cursor
-            TTF_SizeText(gui->themeFont, displayResult.substr(0, cursorIndex).c_str(), &textBeforeCursorSize.x, &textBeforeCursorSize.y);
+            TTF_SizeText(get_ttf_source(gui->themeFont), displayResult.substr(0, cursorIndex).c_str(), &textBeforeCursorSize.x, &textBeforeCursorSize.y);
         SDL_Point cursorSize;
-        TTF_SizeText(gui->themeFont, "#", &cursorSize.x, &cursorSize.y);    // get the cursor size
+        TTF_SizeText(get_ttf_source(gui->themeFont), "#", &cursorSize.x, &cursorSize.y);    // get the cursor size
         // bounding box rectangle around the # cursor
         SDL_Rect cursorRect { rectEditbox.x + textBeforeCursorSize.x, rectEditbox.y,    // x, y position
                               cursorSize.x, cursorSize.y };                             //w, h

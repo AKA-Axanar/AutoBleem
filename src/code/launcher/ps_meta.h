@@ -73,5 +73,5 @@ public:
 
     using PsObj::PsObj;
 private:
-    SDL_Shared<SDL_Texture> createTextTex(const std::string & text, Uint8 r, Uint8 g, Uint8 b, TTF_Font_Shared font);
+    SDL_Shared<SDL_Texture> createTextTex(const std::string & text, Uint8 r, Uint8 g, Uint8 b, FC_Font_Shared font);
 };

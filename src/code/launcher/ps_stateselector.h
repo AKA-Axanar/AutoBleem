@@ -30,8 +30,8 @@ public:
     SDL_Shared<SDL_Texture> slotImg[4];
     bool slotActive[4];
 
-    TTF_Font_Shared font30;
-    TTF_Font_Shared font24;
+    FC_Font_Shared font30;
+    FC_Font_Shared font24;
 
     int selSlot = 0;
 

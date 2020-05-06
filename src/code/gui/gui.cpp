@@ -63,8 +63,8 @@ GuiBase::GuiBase() {
 
 
     TTF_Init();
-    sonyFonts.openAllFonts(Env::getSonyFontPath());
-    themeFonts.openAllFonts(getCurrentThemeFontPath());
+    sonyFonts.openAllFonts(Env::getSonyFontPath(), renderer);
+    themeFonts.openAllFonts(getCurrentThemeFontPath(), renderer);
 }
 
 //********************
@@ -202,7 +202,7 @@ Uint8 Gui::getB(const string &val) {
 //*******************************
 // Gui::getTextAndRect
 //*******************************
-void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text, TTF_Font_Shared font,
+void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text, FC_Font_Shared font,
                          SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect) {
     int text_width;
     int text_height;
@@ -219,7 +219,7 @@ void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const 
         return;
     }
 
-    surface = TTF_RenderUTF8_Blended(font, text, textColor);
+    surface = TTF_RenderUTF8_Blended(get_ttf_source(font), text, textColor);
     *texture = SDL_CreateTextureFromSurface(renderer, surface);
     text_width = surface->w;
     text_height = surface->h;
@@ -341,7 +341,7 @@ void Gui::loadAssets(bool reloadMusic) {
     string fontSizeString = themeData.values["fsize"];
     if (fontSizeString != "")
         fontSize = atoi(fontSizeString.c_str());
-    themeFont = Fonts::openNewSharedFont(fontPath, fontSize);
+    themeFont = Fonts::openNewSharedCachedFont(fontPath, fontSize, renderer);
 
     if (reloadMusic) {
         if (music != nullptr) {
@@ -830,7 +830,7 @@ void Gui::finish() {
 //*******************************
 // Gui::getEmojiTextTexture
 //*******************************
-void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, TTF_Font_Shared font,
+void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, FC_Font_Shared font,
                               SDL_Shared<SDL_Texture> *texture,
                               SDL_Rect *rect) {
     if (text.empty()) text = " ";
@@ -1031,7 +1031,7 @@ void Gui::renderLabelBox(int line, int offset) {
 //*******************************
 // Gui::renderSelectionBox
 //*******************************
-void Gui::renderSelectionBox(int line, int offset, int xoffset, TTF_Font_Shared font) {
+void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared font) {
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
 
@@ -1119,7 +1119,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
 //*******************************
 // Gui::renderTextLine
 //*******************************
-int Gui::renderTextLine(const string &text, int line, int offset,  int position, int xoffset, TTF_Font_Shared font) {
+int Gui::renderTextLine(const string &text, int line, int offset,  int position, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
@@ -1163,7 +1163,7 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
 // Gui::getTextRectangleOnScreen
 //*******************************
 // returns the SDL_Rect of the screen positions if your rendered this text with these args
-SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,  int position, int xoffset, TTF_Font_Shared font) {
+SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,  int position, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
@@ -1208,7 +1208,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
 //*******************************
 int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight,
                                  int xLeft, int xRight,
-                                 int line, int offset, TTF_Font_Shared font) {
+                                 int line, int offset, FC_Font_Shared font) {
 
             renderTextLine(textLeft,  line, offset, POS_LEFT, xLeft, font);
     int h = renderTextLine(textRight, line, offset, POS_LEFT, xRight, font);

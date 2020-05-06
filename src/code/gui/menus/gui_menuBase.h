@@ -50,7 +50,7 @@ public:
     virtual void doHome();
     virtual void doEnd();
 
-    TTF_Font_Shared font;
+    FC_Font_Shared font;
     bool useSmallerFont = false;    // useful for 2 column menu with long strings
 
     // plain menu

@@ -11,7 +11,7 @@
 
 class GuiAppStart : public GuiScreen {
 private:
-    TTF_Font_Shared font;
+    FC_Font_Shared font;
     PsGamePtr game;
     int firstLine = 0;
     int maxLines = 25;

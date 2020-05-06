@@ -33,7 +33,7 @@ public:
 private:
     int counter = 0;
     int animFrame=0;
-    TTF_Font_Shared fontJIS;
+    FC_Font_Shared fontJIS;
     void renderStatic();
     void renderPencil(int memcard, int row, int column);
     void renderMemCardIcons(int memcard);

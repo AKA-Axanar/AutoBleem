@@ -17,6 +17,6 @@ public:
     void render();
     void loop();
     SDL_Shared<SDL_Texture> logo;
-    TTF_Font_Shared font;
+    FC_Font_Shared font;
     using GuiScreen::GuiScreen;
 };

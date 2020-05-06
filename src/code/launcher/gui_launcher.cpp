@@ -307,7 +307,7 @@ void GuiLauncher::showSetName() {
 //*******************************
 // GuiLauncher::renderText
 //*******************************
-void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Color &textColor, TTF_Font_Shared font,
+void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Color &textColor, FC_Font_Shared font,
                              int position, bool background) {
     int text_width = 0;
     int text_height = 0;
@@ -324,7 +324,7 @@ void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Co
         rect.h = 0;
         rect.w = 0;
     } else {
-        surface = TTF_RenderUTF8_Blended(font, text.c_str(), textColor);
+        surface = TTF_RenderUTF8_Blended(get_ttf_source(font), text.c_str(), textColor);
         texture = SDL_CreateTextureFromSurface(renderer, surface);
         text_width = surface->w;
         text_height = surface->h;
@@ -403,7 +403,7 @@ void GuiLauncher::loadAssets() {
         secB = gui->getB(colorsFile.values["sec"]);
     }
 
-    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath());
+    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath(), renderer);
 
     // count, x_start, y_start, fontEnum, fontHeight, separationBetweenLines
     notificationLines.createAndSetDefaults(2, 10, 10, FONT_22_MED, 24, 8);

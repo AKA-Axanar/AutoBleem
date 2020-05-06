@@ -110,7 +110,7 @@ public:
     void drawText(const std::string & text);
 
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
-                             TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
+                             FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
 
     static void splash(const std::string & message);
 
@@ -129,20 +129,20 @@ public:
     // returns rectangle height
     int renderTextLine(const std::string & text, int line,
                        int offset = 0, int position = POS_LEFT, int xoffset = 0,
-                       TTF_Font_Shared font = TTF_Font_Shared());   // font will default to themeFont in the cpp
+                       FC_Font_Shared font = FC_Font_Shared());   // font will default to themeFont in the cpp
 
     // returns the SDL_Rect of the screen positions if your rendered this text with these args
     // this is basically renderTextLine but doesn't render the texct and instead returns the bounding rectangle
     SDL_Rect getTextRectangleOnScreen(const std::string & text, int line,
                        int offset = 0, int position = POS_LEFT, int xoffset = 0,
-                       TTF_Font_Shared font = TTF_Font_Shared());    // font will default to themeFont in the cpp
+                                      FC_Font_Shared font = FC_Font_Shared());    // font will default to themeFont in the cpp
 
     int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
-                                int offset = 0, TTF_Font_Shared font = TTF_Font_Shared());
+                                int offset = 0, FC_Font_Shared font = FC_Font_Shared());
 
     int renderTextLineOptions(const std::string & text, int line, int offset = 0,  int position = POS_LEFT, int xoffset = 0);
 
-    void renderSelectionBox(int line, int offset, int xoffset = 0, TTF_Font_Shared font = TTF_Font_Shared());
+    void renderSelectionBox(int line, int offset, int xoffset = 0, FC_Font_Shared font = FC_Font_Shared());
 
     void renderLabelBox(int line, int offset);
 
@@ -151,7 +151,7 @@ public:
     void renderFreeSpace();
 
     void getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text,
-                        TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
+                        FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
 
     Uint8 getR(const std::string & val);
 
@@ -203,7 +203,7 @@ public:
     std::string pathToGamesDir; // path to /Games.  "/media/Games" or "/debugSystemPath/Games".
 
     Mix_Music *music = nullptr;
-    TTF_Font_Shared themeFont;
+    FC_Font_Shared themeFont;
     bool forceScan = false;
 
     Mix_Chunk *cancel = nullptr;
