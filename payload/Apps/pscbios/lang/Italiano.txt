@@ -1,0 +1,150 @@
+(Ask on our discord for a link)
+(Chiedi sul nostro discord per un link)
+.-= Code C++ and shell scripts =-.
+.-= Codice C++ e shell scripts =-.
+.-= Linux Kernel Patching =-.
+.-= Patching Kernel Linux =-.
+.-= Localization support =-.
+.-= Supporto alla localizzazione =-.
+.-= Testing =-.
+.-= Testing =-.
+About
+Informazioni sul
+Active
+Attivo
+Backspace
+Backspace
+Bluetooth Configuration
+Configurazione Bluetooth
+Bluetooth information:
+Informazioni Bluetooth:
+BT Manager
+Gestore BT
+Cancel
+Annulla
+Caps
+Maiuscolo
+Change
+Cambia
+Close
+Chiudi
+Confirm
+Conferma
+Controller:
+Controller:
+Current Time:
+Ora Corrente:
+Custom Firmware Kernel Not Found !
+Kernel del Custom Firmware Non Trovato !
+Dongle status:
+Stato del dongle:
+Download latest:
+Scarica la versione piu' recente:
+Driver mode:
+Modalita' driver:
+Edit Network WPA WiFi Credentials
+Modifica le Credenziali della Rete WiFi
+Edit Password
+Modifica Password
+Edit SSID
+Modifica SSID
+Enter Password
+Inserisci Password
+Enter SSID
+Inserisci SSID
+Entry
+Voce
+Ethernet information:
+Informazioni ethernet:
+Found
+Trovato
+Go back
+Indietro
+Interface details:
+Dettagli interfaccia:
+IP Address:
+Indirizzo IP:
+IP configuration:
+Configurazione IP:
+Loading timezones...
+Carico i fusi orari...
+Move Cursor
+Muovi Cursore
+New devices:
+Nuovi dispositivi:
+New GamePad found
+Trovato nuovo GamePad
+No networks found
+Nessuna rete trovata
+Not active
+Non attivo
+Not found
+Non trovato
+Not Found
+Non Trovato
+Operations:
+Operazioni:
+Page
+Pagina
+Password:
+Password:
+Playstation Classic Hardware Information
+Informazioni Hardware Playstation Classic
+Please confirm
+Prego confermare
+PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
+PREGO CONNETTI IL GAMEPAD ALLA PLAYSTATION CLASSIC
+POWERING OFF... PLEASE WAIT
+STO SPEGNENDO... ATTENDERE PREGO
+Press a key for
+Premi un tasto per
+Press any DPAD button (to determine if it's digital or analogue)
+Premi un tasto qualsiasi sul DPAD (per determinare se e' digitale o analogico)
+Press |@X| to save controller mapping, or |@O| to retry configuration
+Premi |@X| per salvare la mappatura del controller, o |@O| per ripetere la configurazione
+Reinitializing Network
+Reinizializza Rete
+Restart Network
+Riavvia Rete
+Restart Networking Now?
+Riavviare la Rete Adesso?
+Restarted Wi-Fi  With SSID:
+WiFi Riavviata Con SSID:
+Scan controller for new devices
+Cerco controller per nuovi dispositivi
+Scan SSID
+Cerca SSID
+Scanning networks
+Cercando le reti
+Select
+Seleziona
+Select Time Zone for Your Location
+Seleziona il Fuso Orario per la Tua Posizione
+Select WiFi Network to connect
+Seleziona una Rete WiFi 
+Set controller discoverable
+Imposta controller rilevabile
+Space
+Spazio
+SSID:
+SSID:
+Support via Discord:
+Supporto via Discord:
+This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
+Questo e' un software gratuito e open source. Funziona COSI' COM'E' e non ci assumiamo alcuna responsabilita' per eventuali problemi o danni.
+Timezone:
+Fuso Orario:
+Use Controller
+Usa il Controller
+Waiting for IP Address...
+In attesa dell'Indirizzo IP...
+Wi-Fi Connection:
+Connessione Wi-Fi:
+WiFi information:
+Informazioni WiFi:
+WiFi Settings
+Impostazioni WiFi
+Write Config/Restart Network
+Scrivi Configurazione/Riavvia Rete
+Write Configuration/Restart Network
+Scrivi Configurazione/Riavvia Rete

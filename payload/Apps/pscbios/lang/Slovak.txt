@@ -1,0 +1,162 @@
+﻿(Ask on our discord for a link)
+(Požiadajte na našom discorde o odkaz)
+.-= Code C++ and shell scripts =-.
+.-= Kód C++ a skripty shellu =-.
+.-= Linux Kernel Patching =-.
+.-= Oprava linuxového jadra =-.
+.-= Localization support =-.
+.-= Podpora lokalizácie =-.
+.-= Testing =-.
+.-= Testovanie =-.
+About
+O programe
+Active
+Aktívny
+Backspace
+Vrátiť
+Bluetooth Configuration
+Konfigurácia Bluetooth
+Bluetooth information:
+Informácie o Bluetooth:
+BT Manager
+BT Manažér
+Buttons:
+Tlačítka:
+Cancel
+Zrušiť
+Caps
+Veľké písmená
+Change
+Zmeniť
+Close
+Zatvoriť
+Confirm
+Potvrdiť
+Controller:
+Ovládač:
+Current Time:
+Aktuálny čas:
+Custom Firmware Kernel Not Found !
+Jadro užívateľského firmvéru sa nenašlo!
+Dongle status:
+Stav Dongle:
+Download latest:
+Najnovšia verzia:
+Driver mode:
+Režim ovládača:
+Edit Network WPA WiFi Credentials
+Upraviť sieťové poverenia WPA WiFi
+Edit Password
+Upraviť heslo
+Edit SSID
+Upraviť SSID
+Enter Password
+Zadajte heslo
+Enter SSID
+Zadajte SSID
+Entry
+Údaj
+Ethernet information:
+Informácie o sieti Ethernet:
+Exit
+Skončiť
+Found
+Nájdené
+Game Controller information:
+Informácie o ovládači:
+Game Controllers number: 
+Počet ovládačov:
+Gamepad configuration details
+Podrobnosti o konfigurácii gamepadu
+Gamepad input configuration: 
+Nastavenie tlačidiel gamepadu:
+Gamepads
+Gamepady
+Go back
+Späť
+Interface details:
+Podrobnosti o rozhraní:
+IP Address:
+IP adresa:
+IP configuration:
+Konfigurácia IP:
+Loading timezones...
+Načítavam časové pásma...
+Mapping tester
+Otestovanie navolených tlačidiel
+Move Cursor
+Presunúť kurzor
+New devices:
+Nové zariadenia:
+Next pad
+Ďalší Gamepad
+NO GAME CONTROLLERS OPENED
+NIE JE OTVORENÝ ŽIADNY OVLÁDAČ
+No networks found
+Nenašli sa žiadne siete
+Not active
+Neaktívne
+Not found
+Nenájdené
+Not Found
+Nenájdené
+Operations:
+Procesy:
+Page
+Strana
+Password:
+Heslo:
+Playstation Classic Hardware Information
+nformácie o hardvéri Playstation Classic
+Please confirm
+Potvrďte prosím
+POWERING OFF... PLEASE WAIT
+VYPÍNAM... ČAKAJTE PROSÍM
+Reinitializing Network
+Reinicializujem sieť
+Restart Network
+Reštartujte sieť
+Restart Networking Now?
+Chcete reštartovať sieť teraz?
+Restarted Wi-Fi  With SSID:
+Reštartované Wi-Fi s SSID:
+Scan controller for new devices
+Hľadanie ovládačov pre nové zariadenia
+Scan SSID
+Hľadanie SSID
+Scanning networks
+Hľadanie sietí
+Select
+Vybrať
+Select Time Zone for Your Location
+Vyberte časové pásmo pre vašu oblasť
+Select WiFi Network to connect
+Vyberte si, na ktorú sieť WiFi sa chcete pripojiť
+Set controller discoverable
+Nastavte zistiteľný ovládač
+Space
+Medzera
+SSID:
+SSID:
+Support via Discord:
+Podpora na Discorde:
+This project is freeware. It works AS IS and We take no responsibility for any issues or damage.
+Toto je bezplatný softvér. Funguje TAK, AKO JE, a NENESIEME žiadnu zodpovednosť za akékoľvek problémy alebo škody.
+Timezone:
+Časové pásmo:
+Update mapping
+Aktualizujte mapovanie
+Use Controller
+Použite ovládač
+Waiting for IP Address...
+Čaká sa na IP adresu...
+Wi-Fi Connection:
+Pripojenie Wi-Fi:
+WiFi information:
+Informácie o WiFi:
+WiFi Settings
+WiFi Nastavenia
+Write Config/Restart Network
+Zapísať konfiguračný súbor / Reštartovať sieť
+Write Configuration/Restart Network
+Zapísať konfiguráciu / Reštartovať sieť

@@ -24,8 +24,6 @@ Are you sure you want to flush all covers?
 ¿Estas seguro que quieres eliminar todas las caratulas?
 Are you sure?
 ¿Estas seguro?
-Auto Init Network on Boot:
-Auto Iniciar Red al Arrancar:
 AutoBleem
 AutoBleem
 AutoBleem resume points not available in RetroArch.
@@ -35,11 +33,9 @@ Tema AutoBleem:
 Background Music:
 Musica de Fondo:
 Backspace
-Restroceso
+Retroceso
 Bin file failed to verify
 El archivo .bin no se pudo verificar
-Bleemsync directory not on USB
-El directorio de Bleemsync no esta en el USB
 Button Guide
 Guia de Botones
 Cancel
@@ -98,12 +94,8 @@ Edit game parameters
 Editar parametros de juego
 Edit Memory Card information
 Editar informacion de Memory Card
-Edit Network SSID and Password (ssid.cfg)
-Editar SSID de Red y Password (ssid.cfg)
-Edit Password
-Editar Password
-Edit SSID
-Editar SSID
+EmulationStation
+EmulationStation
 Emulator config MENU
 MENU de configuracion del Emulador
 Enter
@@ -116,18 +108,12 @@ Enter new name for card
 Entra nuevo monbre para tarjeta
 Enter new name for memory card
 Entra nuevo nombre para memory card
-Enter Password
-Introducir Password
-Enter SSID
-Introducir SSID
 Entry
 Entrada
 Exit to EvoUI
 Salir a EvoUI
 Failed to delete
 Fallo al borrar
-Failed to Initialize Wi-Fi To Network SSID:
-Fallo al Iniciar Wi-Fi a la Red SSID:
 Favorite Games
 Juegos Favoritos
 Favorite:
@@ -166,14 +152,14 @@ games
 juegos
 Games changed. Press
 Juegos cambiados. Pulsa
-Games filter
-Filtro de juegos
 games scanned
 juegos escaneados
 GFX Filter:
 Filtro GFX:
 Go back
 Ir atras
+Hardware Information
+Informacion de Hardware
 High res:
 High res:
 In Boot Menu: Safe Power Off The Console
@@ -182,26 +168,16 @@ In Game
 En Juego
 In Retroarch Game
 En Juego de Retoarch
-Initialize Network
-Iniciar Red
-Initialize Wi-Fi Now?
-¿Iniciar Wi-Fi Ahora?
-Initialized Wi-Fi To Network SSID:
-Wi-Fi Iniciado a Red SSID:
-Initializing Wi-Fi To Network SSID:
-Iniciando Wi-Fi a la Red SSID:
 Internal
 Interno
 INTERNAL
 INTERNO
 Internal Games
 Juegos Internos
-IP Address:
-Direccion IP:
-IP:
-IP:
 Language:
 Idioma:
+Last Played:
+Ultima Partida:
 Link Block
 Link Block
 Link end Block
@@ -224,12 +200,12 @@ Moving :
 Moviendo :
 Music:
 Musica:
-Network SSID
-Red SSID
 New Card
 Nueva Tarjeta
 New GamePad found
 Nuevo GamePad encontrado
+Next Game Platform
+Siguiente Plataforma de Juego
 No disc name
 Sin nombre de disco
 No discs
@@ -246,8 +222,6 @@ Original
 Original
 Page
 Pagina
-Password:
-Password:
 pcsx.cfg file not found
 Archivo pcsx.cfg no encontrado
 Player
@@ -273,7 +247,7 @@ APAGANDO... POR FAVOR ESPERA
 Press a key for
 Pulsa un boton para
 Press any DPAD button (to determine if it's digital or analogue)
-Presiona cualquier direccion del DPAD (para determinar si es digital o analogico)
+Pulsa cualquier direccion del DPAD (para determinar si es digital o analogico)
 Press |@X| to save controller mapping, or |@O| to retry configuration
 Pulsa |@X| para guardar el mapeo de botones, o |@O| para reiniciar la configuracion
 Published by:
@@ -362,14 +336,12 @@ SpeedHack:
 SpeedHack:
 Spu Interpolation:
 Spu Interpolation:
-SSID:
-SSID:
 Starting EvolutionUI
 Iniciando EvolutionUI
 Support via Discord:
 Soporte via Discord:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-Este es un software gratuito y de codigo abierto. Funciona COMO ESTA y no nos hacemos responsables de ningun problema o daño.
+This is free software. It works AS IS and We take no responsibility for any issues or damage.
+Este es un software gratuito. Funciona COMO ESTA y no nos hacemos responsables de ningun problema o daño.
 to scan
 para escanear
 Total:
@@ -390,13 +362,7 @@ WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
 ADVERTENCIA: COVER BD NO ENCONTRADO. PULSE CUALQUIER BOTON.
 WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 ADVERTENCIA: JUEGOS NO ENCONTRADOS. PULSE CUALQUIER BOTON.
-Wi-Fi Connection:
-Conexion Wi-Fi:
 Widescreen:
 Widescreen:
-Write connect info to ssid.cfg file
-Escribir informacion de conexion en el archivo ssid.cfg
-Write ssid.cfg file
-Escribir archivo ssid.cfg
 Year:
 Año:
