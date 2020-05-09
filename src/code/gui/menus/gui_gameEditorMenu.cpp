@@ -469,14 +469,14 @@ void GuiEditor::loop() {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             processOptionChange(true);
                             render();
-                        } while (fastForwardUntilAnotherEvent(120));
+                        } while (fastForwardUntilAnotherEvent(80));
                     }
                     if (gui->mapper.isLeft(&e)) {
                         do {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             processOptionChange(false);
                             render();
-                        } while (fastForwardUntilAnotherEvent(120));
+                        } while (fastForwardUntilAnotherEvent(80));
                     }
                     break;
 
