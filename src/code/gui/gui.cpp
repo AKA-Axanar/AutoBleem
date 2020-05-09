@@ -200,10 +200,23 @@ Uint8 Gui::getB(const string &val) {
 }
 
 //*******************************
+// Gui::getOpscreenRectOfTheme
+//*******************************
+SDL_Rect Gui::getOpscreenRectOfTheme() {
+    SDL_Rect rect;
+    rect.x = atoi(themeData.values["opscreenx"].c_str());
+    rect.y = atoi(themeData.values["opscreeny"].c_str());
+    rect.w = atoi(themeData.values["opscreenw"].c_str());
+    rect.h = atoi(themeData.values["opscreenh"].c_str());
+
+    return rect;
+}
+
+//*******************************
 // Gui::getTextAndRect
 //*******************************
 void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text, FC_Font_Shared font,
-                         SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect) {
+                         SDL_Shared<SDL_Texture> *texture, FC_Rect *rect) {
     int text_width;
     int text_height;
     SDL_Shared<SDL_Surface> surface;
@@ -1010,12 +1023,7 @@ void Gui::renderLabelBox(int line, int offset) {
 
     getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
 
-    SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
-
+    SDL_Rect rect2 = getOpscreenRectOfTheme();
     SDL_Rect rectSelection;
     rectSelection.x = rect2.x + 5;
     rectSelection.y = offset + textRec.h * (line);
@@ -1042,12 +1050,7 @@ void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared f
 
     getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
 
-    SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
-
+    SDL_Rect rect2 = getOpscreenRectOfTheme();
     SDL_Rect rectSelection;
     rectSelection.x = rect2.x + 5 + xoffset;
     rectSelection.y = offset + textRec.h * (line);
@@ -1085,12 +1088,8 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
     }
 
     SDL_Rect textRec;
-    SDL_Rect rect2;
 
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    SDL_Rect rect2 = getOpscreenRectOfTheme();
     getTextAndRect(renderer, 0, 0, "*", themeFont, &buttonTex, &textRec);
     int lineh = textRec.h;
     if (button == 1) {
@@ -1123,12 +1122,7 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
     if (!font)
         font = themeFont;   // default to themeFont
 
-    SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
-
+    SDL_Rect rect2 = getOpscreenRectOfTheme();
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
 
@@ -1167,12 +1161,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
     if (!font)
         font = themeFont;   // default to themeFont
 
-    SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
-
+    SDL_Rect rect2 = getOpscreenRectOfTheme();
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
 
@@ -1220,14 +1209,6 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
 // Gui::renderTextChar
 //*******************************
 void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
-#if 0
-    SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
-#endif
-
     SDL_Shared<SDL_Texture> textTex;
     SDL_Rect textRec;
 
@@ -1246,11 +1227,7 @@ void Gui::renderTextBar() {
     SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["mainalpha"].c_str()));
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    SDL_Rect rect2;
-    rect2.x = atoi(themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(themeData.values["opscreenh"].c_str());
+    SDL_Rect rect2 = getOpscreenRectOfTheme();
 
     SDL_RenderFillRect(renderer, &rect2);
 }

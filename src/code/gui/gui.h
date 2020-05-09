@@ -107,6 +107,8 @@ public:
 
     void finish();
 
+    SDL_Rect getOpscreenRectOfTheme();
+
     void drawText(const std::string & text);
 
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,

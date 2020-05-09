@@ -341,6 +341,21 @@ void Util::dumpMemory(const  char *p, int count) {
 }
 
 //*******************************
+// Util::getTokens
+//*******************************
+vector<string> Util::getTokens(string str, char delim) {
+    istringstream ss(str);
+    string token;
+    vector<string> ret;
+    while (getline(ss, token, delim)) {
+        if (token != "")
+            ret.push_back(token);
+    }
+
+    return ret;
+}
+
+//*******************************
 // Util::getRandomNumber
 //*******************************
 unsigned int Util::getRandomNumber() {
