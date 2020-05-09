@@ -915,7 +915,7 @@ void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, FC
             }
         } else {
             SDL_Shared<SDL_Texture> textTex = nullptr;
-            SDL_Rect textRec;
+            FC_Rect textRec;
             getTextAndRect(renderer, 0, atoi(themeData.values["ttop"].c_str()), str.c_str(), font, &textTex,
                            &textRec);
             textTexures.push_back(textTex);
@@ -1017,7 +1017,7 @@ void Gui::drawText(const string &text) {
 //*******************************
 void Gui::renderLabelBox(int line, int offset) {
     SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
+    FC_Rect textRec;
 
     string bg = themeData.values["label_bg"];
 
@@ -1041,7 +1041,7 @@ void Gui::renderLabelBox(int line, int offset) {
 //*******************************
 void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared font) {
     SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
+    FC_Rect textRec;
 
     if (!font)
         font = themeFont;
@@ -1087,8 +1087,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
         return h;
     }
 
-    SDL_Rect textRec;
-
+    FC_Rect textRec;
     SDL_Rect rect2 = getOpscreenRectOfTheme();
     getTextAndRect(renderer, 0, 0, "*", themeFont, &buttonTex, &textRec);
     int lineh = textRec.h;
@@ -1124,7 +1123,7 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
 
     SDL_Rect rect2 = getOpscreenRectOfTheme();
     SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
+    FC_Rect textRec;
 
     getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
     int lineh = textRec.h;
@@ -1163,7 +1162,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
 
     SDL_Rect rect2 = getOpscreenRectOfTheme();
     SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
+    FC_Rect textRec;
 
     getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
     int lineh = textRec.h;
@@ -1210,7 +1209,7 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
 //*******************************
 void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
     SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
+    FC_Rect textRec;
 
     getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
     getTextAndRect(renderer, posx, (textRec.h * line) + offset,
@@ -1237,7 +1236,7 @@ void Gui::renderTextBar() {
 //*******************************
 void Gui::renderFreeSpace() {
     SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
+    FC_Rect textRec;
     SDL_Rect rect;
 
     rect.x = atoi(themeData.values["fsposx"].c_str());

@@ -153,7 +153,7 @@ public:
     void renderFreeSpace();
 
     void getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text,
-                        FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
+                        FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, FC_Rect *rect);
 
     Uint8 getR(const std::string & val);
 

@@ -78,7 +78,7 @@ void GuiKeyboard::render() {
     rect2.h = atoi(gui->themeData.values["opscreenh"].c_str());
 
     SDL_Shared<SDL_Texture> tex;
-    SDL_Rect rect;
+    FC_Rect rect;
     gui->getTextAndRect(renderer, 0, 0, "*", gui->themeFont, &tex, &rect);
 
     if (L2_cursor_shift || usingUsbKeyboard) {
