@@ -213,6 +213,38 @@ SDL_Rect Gui::getOpscreenRectOfTheme() {
 }
 
 //*******************************
+// Gui::FC_getFontRect
+// set rect.h to font height, init rest to 0
+//*******************************
+FC_Rect Gui::FC_getFontRect(FC_Font_Shared font) {
+    FC_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = 0;
+    rect.h = FC_GetLineHeight(font);
+
+    return rect;
+}
+
+//*******************************
+// Gui::FC_getFontTextRect
+// get Rect of font text
+//*******************************
+FC_Rect Gui::FC_getFontTextRect(FC_Font_Shared font, const char *text) {
+    FC_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    if (text != nullptr)
+        rect.w = FC_GetWidth(font, text);
+    else
+        rect.w = 0;
+    rect.h = FC_GetLineHeight(font);
+
+    return rect;
+
+}
+
+//*******************************
 // Gui::getTextAndRect
 //*******************************
 void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text, FC_Font_Shared font,
@@ -224,7 +256,8 @@ void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const 
     SDL_Color textColor = {getR(fg), getG(fg), getB(fg), 0};
 
     if (strlen(text) == 0) {
-        *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 0, 0);
+        Uint32 pixelFormat = SDL_GetWindowPixelFormat(window);
+        *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, 0, 0);
         rect->x = 0;
         rect->y = 0;
         rect->h = 0;
@@ -1016,20 +1049,14 @@ void Gui::drawText(const string &text) {
 // Gui::renderLabelBox
 //*******************************
 void Gui::renderLabelBox(int line, int offset) {
-    SDL_Shared<SDL_Texture> textTex;
-    FC_Rect textRec;
-
     string bg = themeData.values["label_bg"];
-
-    getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
-
-    SDL_Rect rect2 = getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
     SDL_Rect rectSelection;
-    rectSelection.x = rect2.x + 5;
-    rectSelection.y = offset + textRec.h * (line);
-    rectSelection.w = rect2.w - 10;
-    rectSelection.h = textRec.h;
-
+    rectSelection.x = opscreen.x + 5;
+    rectSelection.y = offset + fontHeight * (line);
+    rectSelection.w = opscreen.w - 10;
+    rectSelection.h = fontHeight;
 
     SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["keyalpha"].c_str()));
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -1041,21 +1068,17 @@ void Gui::renderLabelBox(int line, int offset) {
 //*******************************
 void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared font) {
     SDL_Shared<SDL_Texture> textTex;
-    FC_Rect textRec;
-
     if (!font)
         font = themeFont;
 
     string fg = themeData.values["text_fg"];
-
-    getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
-
-    SDL_Rect rect2 = getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(font);
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
     SDL_Rect rectSelection;
-    rectSelection.x = rect2.x + 5 + xoffset;
-    rectSelection.y = offset + textRec.h * (line);
-    rectSelection.w = rect2.w - 10 - xoffset;
-    rectSelection.h = textRec.h;
+    rectSelection.x = opscreen.x + 5 + xoffset;
+    rectSelection.y = offset + fontHeight * (line);
+    rectSelection.w = opscreen.w - 10 - xoffset;
+    rectSelection.h = fontHeight;
 
     SDL_SetRenderDrawColor(renderer, getR(fg), getG(fg), getB(fg), 255);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -1081,27 +1104,25 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
     int h = renderTextLine(text, line, offset, position, xoffset);
 
     SDL_Shared<SDL_Texture> buttonTex;
-//    SDL_Rect rect;
 
     if (button == -1) {
         return h;
     }
 
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
     FC_Rect textRec;
-    SDL_Rect rect2 = getOpscreenRectOfTheme();
-    getTextAndRect(renderer, 0, 0, "*", themeFont, &buttonTex, &textRec);
-    int lineh = textRec.h;
     if (button == 1) {
         getEmojiTextTexture(renderer, "|@Check|", themeFont, &buttonTex, &textRec);
     } else if (button == 0) {
         getEmojiTextTexture(renderer, "|@Uncheck|", themeFont, &buttonTex, &textRec);
     }
 
-    textRec.x = rect2.x + rect2.w - 10 - textRec.w;
-    textRec.y = (lineh * line) + offset;
+    textRec.x = opscreen.x + opscreen.w - 10 - textRec.w;
+    textRec.y = (fontHeight * line) + offset;
 
-    if (textRec.w >= (1280 - rect2.x * 4)) {
-        textRec.w = (1280 - rect2.x * 4);
+    if (textRec.w >= (1280 - opscreen.x * 4)) {
+        textRec.w = (1280 - opscreen.x * 4);
     }
     if (position==POS_CENTER) {
         textRec.x = (1280 / 2) - textRec.w / 2;
@@ -1121,15 +1142,13 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
     if (!font)
         font = themeFont;   // default to themeFont
 
-    SDL_Rect rect2 = getOpscreenRectOfTheme();
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
     SDL_Shared<SDL_Texture> textTex;
     FC_Rect textRec;
-
-    getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
-    int lineh = textRec.h;
     getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
-    textRec.x = rect2.x + 10 + xoffset;
-    textRec.y = (lineh * line) + offset;
+    textRec.x = opscreen.x + 10 + xoffset;
+    textRec.y = (fontHeight * line) + offset;
 
     if (line<0)
     {
@@ -1137,8 +1156,8 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
         textRec.y=line;
     }
 
-    if (textRec.w >= (1280 - rect2.x * 4)) {
-        textRec.w = (1280 - rect2.x * 4);
+    if (textRec.w >= (1280 - opscreen.x * 4)) {
+        textRec.w = (1280 - opscreen.x * 4);
     }
     if (position==POS_CENTER) {
         textRec.x = (1280 / 2) - textRec.w / 2;
@@ -1160,15 +1179,13 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
     if (!font)
         font = themeFont;   // default to themeFont
 
-    SDL_Rect rect2 = getOpscreenRectOfTheme();
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
     SDL_Shared<SDL_Texture> textTex;
     FC_Rect textRec;
-
-    getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
-    int lineh = textRec.h;
     getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
-    textRec.x = rect2.x + 10 + xoffset;
-    textRec.y = (lineh * line) + offset;
+    textRec.x = opscreen.x + 10 + xoffset;
+    textRec.y = (fontHeight * line) + offset;
 
     if (line<0)
     {
@@ -1176,8 +1193,8 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
         textRec.y=line;
     }
 
-    if (textRec.w >= (1280 - rect2.x * 4)) {
-        textRec.w = (1280 - rect2.x * 4);
+    if (textRec.w >= (1280 - opscreen.x * 4)) {
+        textRec.w = (1280 - opscreen.x * 4);
     }
     if (position==POS_CENTER) {
         textRec.x = (1280 / 2) - textRec.w / 2;
@@ -1208,11 +1225,10 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
 // Gui::renderTextChar
 //*******************************
 void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
     SDL_Shared<SDL_Texture> textTex;
     FC_Rect textRec;
-
-    getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
-    getTextAndRect(renderer, posx, (textRec.h * line) + offset,
+    getTextAndRect(renderer, posx, (fontHeight * line) + offset,
                    text.c_str(), themeFont, &textTex, &textRec);
 
     SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
@@ -1236,15 +1252,15 @@ void Gui::renderTextBar() {
 //*******************************
 void Gui::renderFreeSpace() {
     SDL_Shared<SDL_Texture> textTex;
-    FC_Rect textRec;
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
     SDL_Rect rect;
 
     rect.x = atoi(themeData.values["fsposx"].c_str());
     rect.y = atoi(themeData.values["fsposy"].c_str());
-    getTextAndRect(renderer, 0, 0, "*", themeFont, &textTex, &textRec);
+    FC_Rect textRec;
     getEmojiTextTexture(renderer, _("Free space") + " : " + Util::getAvailableSpace(), themeFont, &textTex, &textRec);
     rect.w = textRec.w;
-    rect.h = textRec.h;
+    rect.h = fontHeight;
     SDL_RenderFillRect(renderer, &rect);
     SDL_RenderCopy(renderer, textTex, nullptr, &rect);
 }

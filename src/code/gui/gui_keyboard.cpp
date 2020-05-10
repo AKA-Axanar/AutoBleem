@@ -71,15 +71,9 @@ void GuiKeyboard::render() {
     displayResult.insert(cursorIndex, "#");
     gui->renderTextLine(displayResult, 1, offset, POS_CENTER);
 
-    SDL_Rect rect2;
-    rect2.x = atoi(gui->themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(gui->themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(gui->themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(gui->themeData.values["opscreenh"].c_str());
-
+    SDL_Rect rect2 = gui->getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(gui->themeFont);
     SDL_Shared<SDL_Texture> tex;
-    FC_Rect rect;
-    gui->getTextAndRect(renderer, 0, 0, "*", gui->themeFont, &tex, &rect);
 
     if (L2_cursor_shift || usingUsbKeyboard) {
         SDL_Rect rectEditbox = gui->getTextRectangleOnScreen(displayResult, 1, offset, POS_CENTER, 0, gui->themeFont);
@@ -107,9 +101,9 @@ void GuiKeyboard::render() {
             for (int y = 0; y < numRows; y++) {
                 SDL_Rect rectSelection;
                 rectSelection.x = rect2.x + indentOffset;
-                rectSelection.y = offset + rect.h * (y + 3);
+                rectSelection.y = offset + fontHeight * (y + 3);
                 rectSelection.w = rect2.w - (indentOffset + indentOffset);
-                rectSelection.h = rect.h;
+                rectSelection.h = fontHeight;
 
                 int buttonWidth = (rectSelection.w / 10) - (indentOffset + indentOffset);
                 int buttonHeight = rectSelection.h - 2;

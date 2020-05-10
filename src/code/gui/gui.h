@@ -152,6 +152,9 @@ public:
 
     void renderFreeSpace();
 
+    FC_Rect FC_getFontRect(FC_Font_Shared font);                           // set rect.h to font height, init rest to 0
+    FC_Rect FC_getFontTextRect(FC_Font_Shared font, const char *text);     // get Rect w and h of font text
+
     void getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text,
                         FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, FC_Rect *rect);
 

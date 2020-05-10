@@ -287,8 +287,8 @@ FC_Rect FC_DrawColumnEffect(FC_Font* font, FC_Target* dest, float x, float y, Ui
 // Getters
 
 FC_FilterEnum FC_GetFilterMode(FC_Font* font);
-Uint16 FC_GetLineHeight(FC_Font* font);
-Uint16 FC_GetHeight(FC_Font* font, const char* formatted_text, ...);
+Uint16 FC_GetLineHeight(FC_Font* font);                                 // returns font height
+Uint16 FC_GetHeight(FC_Font* font, const char* formatted_text, ...);    // returns the height of multiple lines
 Uint16 FC_GetWidth(FC_Font* font, const char* formatted_text, ...);
 
 // Returns a 1-pixel wide box in front of the character in the given position (index)

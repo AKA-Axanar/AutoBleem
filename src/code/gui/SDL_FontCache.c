@@ -2789,7 +2789,7 @@ Uint16 FC_GetPositionFromOffset(FC_Font* font, float x, float y, int column_widt
 {
     FC_StringList *ls, *iter;
     Uint8 done = 0;
-    int height = FC_GetLineHeight(font);
+    Uint16 fontHeight = FC_GetLineHeight(font);
     Uint16 position = 0;
     int current_x = 0;
     int current_y = 0;
@@ -2823,7 +2823,7 @@ Uint16 FC_GetPositionFromOffset(FC_Font* font, float x, float y, int column_widt
             break;
 
         current_x = 0;
-        current_y += height;
+        current_y += fontHeight;
         if(y < current_y)
             break;
     }
