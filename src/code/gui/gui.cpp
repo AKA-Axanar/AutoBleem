@@ -306,7 +306,7 @@ int Gui::renderLogo(bool small) {
 // Gui::loadThemeTexture
 //*******************************
 SDL_Shared<SDL_Texture>
-Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, string themePath, string defaultPath, string texname) {
+Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, const string& themePath, const string& defaultPath, const string& texname) {
     SDL_Shared<SDL_Texture> tex = nullptr;
     if (DirEntry::exists(themePath + themeData.values[texname])) {
         tex = IMG_LoadTexture(renderer, (themePath + themeData.values[texname]).c_str());
@@ -355,22 +355,6 @@ void Gui::loadAssets(bool reloadMusic) {
 
     backgroundImg = loadThemeTexture(renderer, themePath, defaultPath, "background");
     logo = loadThemeTexture(renderer, themePath, defaultPath, "logo");
-
-    buttonO = loadThemeTexture(renderer, themePath, defaultPath, "circle");
-    buttonX = loadThemeTexture(renderer, themePath, defaultPath, "cross");
-    buttonT = loadThemeTexture(renderer, themePath, defaultPath, "triangle");
-    buttonS = loadThemeTexture(renderer, themePath, defaultPath, "square");
-    buttonSelect = loadThemeTexture(renderer, themePath, defaultPath, "select");
-    buttonStart = loadThemeTexture(renderer, themePath, defaultPath, "start");
-    buttonL1 = loadThemeTexture(renderer, themePath, defaultPath, "l1");
-    buttonR1 = loadThemeTexture(renderer, themePath, defaultPath, "r1");
-    buttonL2 = loadThemeTexture(renderer, themePath, defaultPath, "l2");
-    buttonR2 = loadThemeTexture(renderer, themePath, defaultPath, "r2");
-    buttonCheck = loadThemeTexture(renderer, themePath, defaultPath, "check");
-    buttonUncheck = loadThemeTexture(renderer, themePath, defaultPath, "uncheck");
-    buttonEsc = loadThemeTexture(renderer, themePath, defaultPath, "esc");
-    buttonEnter = loadThemeTexture(renderer, themePath, defaultPath, "enter");
-    buttonTab = loadThemeTexture(renderer, themePath, defaultPath, "tab");
     if (cfg.inifile.values["jewel"] != "none") {
         if (cfg.inifile.values["jewel"] == "default") {
             cdJewel = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/nofilter.png").c_str());
@@ -382,6 +366,23 @@ void Gui::loadAssets(bool reloadMusic) {
     } else {
         cdJewel = nullptr;
     }
+
+    buttonTextureMap["O"] = loadThemeTexture(renderer, themePath, defaultPath, "circle");
+    buttonTextureMap["X"] = loadThemeTexture(renderer, themePath, defaultPath, "cross");
+    buttonTextureMap["T"] = loadThemeTexture(renderer, themePath, defaultPath, "triangle");
+    buttonTextureMap["S"] = loadThemeTexture(renderer, themePath, defaultPath, "square");
+    buttonTextureMap["Select"] = loadThemeTexture(renderer, themePath, defaultPath, "select");
+    buttonTextureMap["Start"] = loadThemeTexture(renderer, themePath, defaultPath, "start");
+    buttonTextureMap["L1"] = loadThemeTexture(renderer, themePath, defaultPath, "l1");
+    buttonTextureMap["R1"] = loadThemeTexture(renderer, themePath, defaultPath, "r1");
+    buttonTextureMap["L2"] = loadThemeTexture(renderer, themePath, defaultPath, "l2");
+    buttonTextureMap["R2"] = loadThemeTexture(renderer, themePath, defaultPath, "r2");
+    buttonTextureMap["Check"] = loadThemeTexture(renderer, themePath, defaultPath, "check");
+    buttonTextureMap["Uncheck"] = loadThemeTexture(renderer, themePath, defaultPath, "uncheck");
+    buttonTextureMap["Esc"] = loadThemeTexture(renderer, themePath, defaultPath, "esc");
+    buttonTextureMap["Enter"] = loadThemeTexture(renderer, themePath, defaultPath, "enter");
+    buttonTextureMap["Tab"] = loadThemeTexture(renderer, themePath, defaultPath, "tab");
+
     string fontPath = (themePath + themeData.values["font"]);
     int fontSize = 0;
     string fontSizeString = themeData.values["fsize"];
@@ -901,51 +902,11 @@ void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, FC
         if (str.empty()) continue;
         if (str[0] == '@') {
             string icon = str.substr(1);
-            if (icon == "Start") {
-                textTexures.push_back(buttonStart);
-            }
-            if (icon == "S") {
-                textTexures.push_back(buttonS);
-            }
-            if (icon == "O") {
-                textTexures.push_back(buttonO);
-            }
-            if (icon == "Select") {
-                textTexures.push_back(buttonSelect);
-            }
-            if (icon == "L1") {
-                textTexures.push_back(buttonL1);
-            }
-            if (icon == "R1") {
-                textTexures.push_back(buttonR1);
-            }
-            if (icon == "L2") {
-                textTexures.push_back(buttonL2);
-            }
-            if (icon == "R2") {
-                textTexures.push_back(buttonR2);
-            }
-            if (icon == "T") {
-                textTexures.push_back(buttonT);
-            }
-            if (icon == "X") {
-                textTexures.push_back(buttonX);
-            }
-            if (icon == "Check") {
-                textTexures.push_back(buttonCheck);
-            }
-            if (icon == "Uncheck") {
-                textTexures.push_back(buttonUncheck);
-            }
-            if (icon == "Esc") {
-                textTexures.push_back(buttonEsc);
-            }
-            if (icon == "Enter") {
-                textTexures.push_back(buttonEnter);
-            }
-            if (icon == "Tab") {
-                textTexures.push_back(buttonTab);
-            }
+            auto it = buttonTextureMap.find(icon);
+            if (it != buttonTextureMap.end())
+                textTexures.push_back(it->second);
+            else
+                cout << "icon '" << icon << "' not found in buttonTextureMap" << endl;
         } else {
             SDL_Shared<SDL_Texture> textTex = nullptr;
             FC_Rect textRec;

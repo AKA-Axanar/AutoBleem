@@ -167,7 +167,7 @@ public:
     void criticalException(const std::string & text);
 
     SDL_Shared<SDL_Texture>
-    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, std::string themePath, std::string defaultPath, std::string texname);
+    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, const std::string& themePath, const std::string& defaultPath, const std::string& texname);
 
     void exportDBToRetroarch();
 
@@ -187,23 +187,8 @@ public:
 
     SDL_Shared<SDL_Texture> backgroundImg;
     SDL_Shared<SDL_Texture> logo;
-    SDL_Shared<SDL_Texture> buttonX;
-    SDL_Shared<SDL_Texture> buttonO;
-    SDL_Shared<SDL_Texture> buttonT;
-    SDL_Shared<SDL_Texture> buttonS;
-    SDL_Shared<SDL_Texture> buttonStart;
-    SDL_Shared<SDL_Texture> buttonSelect;
-    SDL_Shared<SDL_Texture> buttonL1;
-    SDL_Shared<SDL_Texture> buttonR1;
-    SDL_Shared<SDL_Texture> buttonL2;
-    SDL_Shared<SDL_Texture> buttonR2;
-    SDL_Shared<SDL_Texture> buttonCheck;
-    SDL_Shared<SDL_Texture> buttonUncheck;
-    SDL_Shared<SDL_Texture> buttonEsc;
-    SDL_Shared<SDL_Texture> buttonEnter;
-    SDL_Shared<SDL_Texture> buttonBackspace;
-    SDL_Shared<SDL_Texture> buttonTab;
     SDL_Shared<SDL_Texture> cdJewel;
+    std::map<std::string, SDL_Shared<SDL_Texture>> buttonTextureMap;
 
     std::string pathToGamesDir; // path to /Games.  "/media/Games" or "/debugSystemPath/Games".
 
