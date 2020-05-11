@@ -875,6 +875,20 @@ void Gui::finish() {
 }
 
 //*******************************
+// Gui::adjustEmojiPositionX
+//*******************************
+void Gui::adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, int position) {
+    if (textRec.w >= (1280 - opscreen.x * 4)) {
+        textRec.w = (1280 - opscreen.x * 4);
+    }
+    if (position==POS_CENTER) {
+        textRec.x = (1280 / 2) - textRec.w / 2;
+    } else if (position==POS_RIGHT) {
+        textRec.x = 1280 - textRec.x - textRec.w;
+    }
+}
+
+//*******************************
 // Gui::getEmojiTextTexture
 //*******************************
 void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, FC_Font_Shared font,
@@ -1081,16 +1095,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
 
     textRec.x = opscreen.x + opscreen.w - 10 - textRec.w;
     textRec.y = (fontHeight * line) + offset;
-
-    if (textRec.w >= (1280 - opscreen.x * 4)) {
-        textRec.w = (1280 - opscreen.x * 4);
-    }
-    if (position==POS_CENTER) {
-        textRec.x = (1280 / 2) - textRec.w / 2;
-    }
-    if (position==POS_RIGHT) {
-        textRec.x = 1280 - textRec.x - textRec.w;
-    }
+    adjustEmojiPositionX(textRec, opscreen, position);
 
     SDL_RenderCopy(renderer, buttonTex, nullptr, &textRec);
     return h;
@@ -1116,16 +1121,7 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
         line=-line;
         textRec.y=line;
     }
-
-    if (textRec.w >= (1280 - opscreen.x * 4)) {
-        textRec.w = (1280 - opscreen.x * 4);
-    }
-    if (position==POS_CENTER) {
-        textRec.x = (1280 / 2) - textRec.w / 2;
-    }
-    if (position==POS_RIGHT) {
-        textRec.x = 1280 - textRec.x - textRec.w;
-    }
+    adjustEmojiPositionX(textRec, opscreen, position);
 
     SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 
@@ -1154,15 +1150,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
         textRec.y=line;
     }
 
-    if (textRec.w >= (1280 - opscreen.x * 4)) {
-        textRec.w = (1280 - opscreen.x * 4);
-    }
-    if (position==POS_CENTER) {
-        textRec.x = (1280 / 2) - textRec.w / 2;
-    }
-    if (position==POS_RIGHT) {
-        textRec.x = 1280 - textRec.x - textRec.w;
-    }
+    adjustEmojiPositionX(textRec, opscreen, position);
 
     //SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 

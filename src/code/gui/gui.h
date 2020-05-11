@@ -111,6 +111,7 @@ public:
 
     void drawText(const std::string & text);
 
+    void adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, int position);
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
 
