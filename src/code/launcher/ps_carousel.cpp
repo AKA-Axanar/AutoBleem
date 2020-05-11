@@ -183,7 +183,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
             SDL_Shared<SDL_Texture> titleName;
             FC_Rect titleRect;
-            gui->getTextAndRect(renderer,0,0,(*this)->title.c_str(),gui->themeFont,&titleName,&titleRect);
+            gui->getTextureAndRect(renderer,0,0,(*this)->title.c_str(),gui->themeFont,&titleName,&titleRect);
 
             outputRect.x = 0;
             outputRect.y = 0;

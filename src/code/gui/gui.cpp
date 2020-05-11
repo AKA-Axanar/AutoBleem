@@ -245,10 +245,10 @@ FC_Rect Gui::FC_getFontTextRect(FC_Font_Shared font, const char *text) {
 }
 
 //*******************************
-// Gui::getTextAndRect
+// Gui::getTextureAndRect
 //*******************************
-void Gui::getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text, FC_Font_Shared font,
-                         SDL_Shared<SDL_Texture> *texture, FC_Rect *rect) {
+void Gui::getTextureAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text, FC_Font_Shared font,
+                            SDL_Shared<SDL_Texture> *texture, FC_Rect *rect) {
     int text_width;
     int text_height;
     SDL_Shared<SDL_Surface> surface;
@@ -924,8 +924,8 @@ void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, FC
         } else {
             SDL_Shared<SDL_Texture> textTex = nullptr;
             FC_Rect textRec;
-            getTextAndRect(renderer, 0, atoi(themeData.values["ttop"].c_str()), str.c_str(), font, &textTex,
-                           &textRec);
+            getTextureAndRect(renderer, 0, atoi(themeData.values["ttop"].c_str()), str.c_str(), font, &textTex,
+                              &textRec);
             textTexures.push_back(textTex);
         }
     }
@@ -1177,8 +1177,8 @@ void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
     SDL_Shared<SDL_Texture> textTex;
     FC_Rect textRec;
-    getTextAndRect(renderer, posx, (fontHeight * line) + offset,
-                   text.c_str(), themeFont, &textTex, &textRec);
+    getTextureAndRect(renderer, posx, (fontHeight * line) + offset,
+                      text.c_str(), themeFont, &textTex, &textRec);
 
     SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 }
