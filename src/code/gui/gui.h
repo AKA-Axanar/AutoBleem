@@ -108,6 +108,7 @@ public:
     void finish();
 
     SDL_Rect getOpscreenRectOfTheme();
+    SDL_Rect getTextRectOfTheme();
 
     void drawText(const std::string & text);
 

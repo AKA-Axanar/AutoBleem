@@ -213,6 +213,19 @@ SDL_Rect Gui::getOpscreenRectOfTheme() {
 }
 
 //*******************************
+// Gui::getTextRectOfTheme
+//*******************************
+SDL_Rect Gui::getTextRectOfTheme() {
+    SDL_Rect rect;
+    rect.x = atoi(themeData.values["textx"].c_str());
+    rect.y = atoi(themeData.values["texty"].c_str());
+    rect.w = atoi(themeData.values["textw"].c_str());
+    rect.h = atoi(themeData.values["texth"].c_str());
+
+    return rect;
+}
+
+//*******************************
 // Gui::FC_getFontRect
 // set rect.h to font height, init rest to 0
 //*******************************
@@ -990,11 +1003,7 @@ void Gui::renderStatus(const string &text, int posy) {
     SDL_Rect textRec;
     SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["textalpha"].c_str()));
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_Rect rect;
-    rect.x = atoi(themeData.values["textx"].c_str());
-    rect.y = atoi(themeData.values["texty"].c_str());
-    rect.w = atoi(themeData.values["textw"].c_str());
-    rect.h = atoi(themeData.values["texth"].c_str());
+    SDL_Rect rect = getTextRectOfTheme();
     SDL_RenderFillRect(renderer, &rect);
 
     getEmojiTextTexture(renderer, text, themeFont, &textTex, &textRec);

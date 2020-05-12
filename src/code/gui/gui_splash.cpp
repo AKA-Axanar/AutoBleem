@@ -47,11 +47,7 @@ void GuiSplash::render() {
 
     SDL_SetRenderDrawColor(renderer, gui->getR(bg), gui->getG(bg), gui->getB(bg), bg_alpha);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_Rect rect;
-    rect.x = atoi(gui->themeData.values["textx"].c_str());
-    rect.y = atoi(gui->themeData.values["texty"].c_str());
-    rect.w = atoi(gui->themeData.values["textw"].c_str());
-    rect.h = atoi(gui->themeData.values["texth"].c_str());
+    SDL_Rect rect = gui->getTextRectOfTheme();
     SDL_RenderFillRect(renderer, &rect);
 
     SDL_RenderCopy(renderer, textTex, NULL, &textRec);
