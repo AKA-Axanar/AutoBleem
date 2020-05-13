@@ -308,7 +308,7 @@ void GuiLauncher::showSetName() {
 // GuiLauncher::renderText
 //*******************************
 void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Color &textColor, FC_Font_Shared font,
-                             int position, bool background) {
+                             Alignment position, bool background) {
     int text_width = 0;
     int text_height = 0;
     SDL_Shared<SDL_Surface> surface;

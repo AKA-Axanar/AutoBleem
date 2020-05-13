@@ -27,8 +27,8 @@ void GuiPadConfig::render() {
     int offset = gui->renderLogo(true);
     SDL_Joystick *joy = SDL_JoystickFromInstanceID(joyid);
 
-    gui->renderTextLine("-=" + _("New GamePad found") + "=-", 0, offset, true);
-    gui->renderTextLine(SDL_JoystickName(joy), 1, offset, true);
+    gui->renderTextLine("-=" + _("New GamePad found") + "=-", 0, offset, POS_CENTER);
+    gui->renderTextLine(SDL_JoystickName(joy), 1, offset, POS_CENTER);
     newConfig.section = SDL_JoystickName(joy);
 
     /*
@@ -38,25 +38,25 @@ void GuiPadConfig::render() {
     defaultConfig->values["dpaddeadzone"]    ="32000";
     */
 
-    gui->renderTextLine(_("Press a key for") + "  |@X| " + newConfig.values["cross"], 3, offset, true);
+    gui->renderTextLine(_("Press a key for") + "  |@X| " + newConfig.values["cross"], 3, offset, POS_CENTER);
     if (step > 0)
-        gui->renderTextLine(_("Press a key for") + "  |@O| " + newConfig.values["circle"], 4, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@O| " + newConfig.values["circle"], 4, offset, POS_CENTER);
     if (step > 1)
-        gui->renderTextLine(_("Press a key for") + "  |@S| " + newConfig.values["square"], 5, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@S| " + newConfig.values["square"], 5, offset, POS_CENTER);
     if (step > 2)
-        gui->renderTextLine(_("Press a key for") + "  |@T| " + newConfig.values["triangle"], 6, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@T| " + newConfig.values["triangle"], 6, offset, POS_CENTER);
     if (step > 3)
-        gui->renderTextLine(_("Press a key for") + "  |@Start| " + newConfig.values["start"], 7, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@Start| " + newConfig.values["start"], 7, offset, POS_CENTER);
     if (step > 4)
-        gui->renderTextLine(_("Press a key for") + "  |@Select| " + newConfig.values["select"], 8, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@Select| " + newConfig.values["select"], 8, offset, POS_CENTER);
     if (step > 5)
-        gui->renderTextLine(_("Press a key for") + "  |@L1| " + newConfig.values["l1"], 9, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@L1| " + newConfig.values["l1"], 9, offset, POS_CENTER);
     if (step > 6)
-        gui->renderTextLine(_("Press a key for") + "  |@L2| " + newConfig.values["l2"], 10, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@L2| " + newConfig.values["l2"], 10, offset, POS_CENTER);
     if (step > 7)
-        gui->renderTextLine(_("Press a key for") + "  |@R1| " + newConfig.values["r1"], 11, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@R1| " + newConfig.values["r1"], 11, offset, POS_CENTER);
     if (step > 8)
-        gui->renderTextLine(_("Press a key for") + "  |@R2| " + newConfig.values["r2"], 12, offset, true);
+        gui->renderTextLine(_("Press a key for") + "  |@R2| " + newConfig.values["r2"], 12, offset, POS_CENTER);
     if (step > 9) {
         if (step == 10) {
             // eat any extraneous events coming in for 1/20 second
@@ -69,10 +69,10 @@ void GuiPadConfig::render() {
         }
         gui->renderTextLine(
                 _("Press any DPAD button (to determine if it's digital or analogue)") + ": " + newConfig.values["dpad"],
-                13, offset, true);
+                13, offset, POS_CENTER);
     }
     if (step > 10)
-        gui->renderTextLine(_("Press |@X| to save controller mapping, or |@O| to retry configuration"), 14, offset, true);
+        gui->renderTextLine(_("Press |@X| to save controller mapping, or |@O| to retry configuration"), 14, offset, POS_CENTER);
 
     SDL_RenderPresent(renderer);
 }
