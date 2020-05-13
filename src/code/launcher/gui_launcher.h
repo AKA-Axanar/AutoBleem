@@ -118,8 +118,8 @@ public:
     NotificationLines notificationLines; // top two lines of the screen
     int numberOfNonDuplicatedGamesInCarousel = 0;
 
-    static void renderText(int x, int y, const std::string & text, const SDL_Color & textColor,
-                           FC_Font_Shared font, XAlignment xAlign, bool background);
+    static void renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::string & text, const SDL_Color & textColor,
+                                                          FC_Font_Shared font, XAlignment xAlign, bool background);
 
     bool powerOffShift=false;
 

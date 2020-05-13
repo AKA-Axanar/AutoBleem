@@ -305,42 +305,35 @@ void GuiLauncher::showSetName() {
 }
 
 //*******************************
-// GuiLauncher::renderText
+// GuiLauncher::renderTextOnly_WithColorAndBackgroundRect
 //*******************************
-void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Color &textColor, FC_Font_Shared font,
-                             XAlignment xAlign, bool background) {
-    int text_width = 0;
-    int text_height = 0;
-    SDL_Shared<SDL_Surface> surface;
-    SDL_Shared<SDL_Texture> texture;
+void GuiLauncher::renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::string &text,
+                                                            const SDL_Color &textColor, FC_Font_Shared font,
+                                                            XAlignment xAlign, bool background) {
+    auto gui = Gui::getInstance();
+    int text_width = FC_GetWidth(font, text.c_str());
+    int text_height = FC_GetLineHeight(font);
+
+    if (xAlign == XALIGN_CENTER) {
+        x = (SCREEN_WIDTH / 2) - (text_width / 2);
+    } else if (xAlign == XALIGN_RIGHT) {
+        x = SCREEN_WIDTH - x - text_width;
+    }
+
     SDL_Rect rect{0, 0, 0, 0};
 
     auto renderer = Gui::getInstance()->renderer;
 
     if (text.size() == 0) {
-        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 0, 0);
         rect.x = 0;
         rect.y = 0;
         rect.h = 0;
         rect.w = 0;
     } else {
-        surface = TTF_RenderUTF8_Blended(get_ttf_source(font), text.c_str(), textColor);
-        texture = SDL_CreateTextureFromSurface(renderer, surface);
-        text_width = surface->w;
-        text_height = surface->h;
         rect.x = x;
         rect.y = y;
         rect.w = text_width;
         rect.h = text_height;
-    }
-    SDL_Rect inputRect;
-    inputRect.x = 0;
-    inputRect.y = 0;
-    inputRect.w = rect.w;
-    inputRect.h = rect.h;
-
-    if (xAlign == XALIGN_CENTER) {
-        rect.x = 640 - (rect.w / 2);
     }
 
     if (background) {
@@ -354,7 +347,7 @@ void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Co
         SDL_RenderFillRect(renderer, &backRect);
     }
 
-    SDL_RenderCopy(renderer, texture, &inputRect, &rect);
+    FC_DrawColor(font, renderer, x, y, textColor, text.c_str());
 };
 
 //*******************************
@@ -762,9 +755,9 @@ void GuiLauncher::render() {
     menu->render();
 
     auto font24 = gui->themeFonts[FONT_22_MED];
-    renderText(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
-    renderText(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
-    renderText(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    renderTextOnly_WithColorAndBackgroundRect(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    renderTextOnly_WithColorAndBackgroundRect(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    renderTextOnly_WithColorAndBackgroundRect(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
 
     notificationLines.tickTock();
 
