@@ -40,7 +40,7 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 #define SCREEN_WIDTH  1280
 #define SCREEN_HEIGHT 720
 
-enum XAlignment { XALIGN_LEFT= 0, XALIGN_CENTER, XALIGN_RIGHT };
+enum XAlignment { XALIGN_LEFT, XALIGN_CENTER, XALIGN_RIGHT };
 
 // if you add a new set also update setNames in gui_launcher.cpp
 #define SET_PS1      0
@@ -123,14 +123,19 @@ public:
         FC_Size totalSize;      // the total width and height of all the tokens
     };
 
+    // break up the text into tokens of pure text or an emoji icon marker
+    // return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
     AllTextOrEmojiTokenInfo getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & text);
+
+    // renders/draws the text and emoji icons at the chosen position on the screen
     void renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
-                            AllTextOrEmojiTokenInfo& allTokenInfo, int x, int emoji_y, int text_y,
-                            XAlignment xAlign = XALIGN_LEFT);
+                            AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
     void adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, XAlignment xAlign);
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
+    // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
+    int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
     static void splash(const std::string & message);
 

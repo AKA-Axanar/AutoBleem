@@ -889,6 +889,8 @@ void Gui::finish() {
 
 //*******************************
 // Gui::getAllTokenInfoForLineOfTextAndEmojis
+// break up the text into tokens of pure text or an emoji icon marker
+// return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
 //*******************************
 Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & _text) {
     //
@@ -944,10 +946,13 @@ Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_
 
 //*******************************
 // Gui::renderAllTokenInfo
+// renders/draws the text and emoji icons at the chosen position on the screen
 //*******************************
 void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
-                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int emoji_y, int text_y,
-                             XAlignment xAlign) {
+                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign) {
+
+    if (!font)
+        font = themeFont;   // default to themeFont
 
     if (xAlign == XALIGN_CENTER) {
         x = (SCREEN_WIDTH / 2) - allTokenInfo.totalSize.w / 2;
@@ -955,12 +960,16 @@ void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared f
         x = SCREEN_WIDTH - x - allTokenInfo.totalSize.w;
     }
 
+    // adjust the text y position so the text is centered on the emoji centers
+    int fontHeight = FC_GetLineHeight(font);
+    int text_y = y + (allTokenInfo.totalSize.h - fontHeight)/2;
+
     for (auto& tokenInfo : allTokenInfo.info) {
         if (tokenInfo.emoji) {
             // the token is an emoji texture
             FC_Rect rect;
             rect.x = x;
-            rect.y = emoji_y;
+            rect.y = y + (allTokenInfo.totalSize.h - tokenInfo.size.h); // center the emoji in y
             rect.w = tokenInfo.size.w;
             rect.h = tokenInfo.size.h;
             SDL_RenderCopy(renderer, tokenInfo.emoji, nullptr, &rect);
@@ -971,6 +980,19 @@ void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared f
             x += tokenInfo.size.w;
         }
     }
+}
+
+//*******************************
+// Gui::renderText
+// renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
+//*******************************
+int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAlignment xAlign) {
+    if (!font)
+        font = themeFont;   // default to themeFont
+    AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(font, text);
+    renderAllTokenInfo(renderer, themeFont, allTokenInfo, x, y, xAlign);
+
+    return allTokenInfo.totalSize.h;    // return the height
 }
 
 //*******************************
@@ -1090,17 +1112,11 @@ void Gui::renderStatus(const string &text, int posy) {
     SDL_Rect rect = getTextRectOfTheme();
     SDL_RenderFillRect(renderer, &rect);
 
-    AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(themeFont, text);
-
     int y = atoi(themeData.values["ttop"].c_str());
     if (posy!=-1)
-    {
-        y=posy;
-    }
+        y=posy; // override the bottom status y position.  so far this has never been used.
 
-    int fontHeight = FC_GetLineHeight(themeFont);
-    int text_y = y + (allTokenInfo.totalSize.h - fontHeight)/2;
-    renderAllTokenInfo(renderer, themeFont, allTokenInfo, 0, y, text_y, XALIGN_CENTER);
+    renderText(themeFont, text, 0, y, XALIGN_CENTER);
 }
 
 //*******************************
