@@ -50,7 +50,7 @@ GuiBase::GuiBase() {
 
 
 
-    window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, 0);
+    window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 #if defined(__x86_64__) || defined(_M_X64)
@@ -950,9 +950,9 @@ void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared f
                              XAlignment xAlign) {
 
     if (xAlign == XALIGN_CENTER) {
-        x = (1280 / 2) - allTokenInfo.totalSize.w / 2;
+        x = (SCREEN_WIDTH / 2) - allTokenInfo.totalSize.w / 2;
     } else if (xAlign == XALIGN_RIGHT) {
-        x = 1280 - x - allTokenInfo.totalSize.w;
+        x = SCREEN_WIDTH - x - allTokenInfo.totalSize.w;
     }
 
     for (auto& tokenInfo : allTokenInfo.info) {
@@ -977,13 +977,13 @@ void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared f
 // Gui::adjustEmojiPositionX
 //*******************************
 void Gui::adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, XAlignment xAlign) {
-    if (textRec.w >= (1280 - opscreen.x * 4)) {
-        textRec.w = (1280 - opscreen.x * 4);
+    if (textRec.w >= (SCREEN_WIDTH - opscreen.x * 4)) {
+        textRec.w = (SCREEN_WIDTH - opscreen.x * 4);
     }
     if (xAlign == XALIGN_CENTER) {
-        textRec.x = (1280 / 2) - textRec.w / 2;
+        textRec.x = (SCREEN_WIDTH / 2) - textRec.w / 2;
     } else if (xAlign == XALIGN_RIGHT) {
-        textRec.x = 1280 - textRec.x - textRec.w;
+        textRec.x = SCREEN_WIDTH - textRec.x - textRec.w;
     }
 }
 
@@ -1092,8 +1092,6 @@ void Gui::renderStatus(const string &text, int posy) {
 
     AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(themeFont, text);
 
-    //int screencenter = 1280 / 2;
-    //int x = screencenter - (allTokenInfo.totalSize.w / 2);
     int y = atoi(themeData.values["ttop"].c_str());
     if (posy!=-1)
     {

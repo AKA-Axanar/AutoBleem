@@ -447,7 +447,7 @@ void GuiLauncher::loadAssets() {
         footerFile = "GR/Footer.png";
     }
     auto footer = new PsObj(renderer, "footer", gui->getCurrentThemeImagePath() + sep + footerFile);
-    footer->y = 720 - footer->h;
+    footer->y = SCREEN_HEIGHT - footer->h;
     footer->visible = true;
     staticElements.push_back(footer);
 

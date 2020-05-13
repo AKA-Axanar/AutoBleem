@@ -53,8 +53,8 @@ void GuiAbout::render() {
     SDL_Rect rect2;
     rect2.x = 0;
     rect2.y = 0;
-    rect2.w = 1280;
-    rect2.h = 720;
+    rect2.w = SCREEN_WIDTH;
+    rect2.h = SCREEN_HEIGHT;
 
     SDL_RenderFillRect(renderer, &rect2);
 
@@ -62,7 +62,7 @@ void GuiAbout::render() {
 
     int offset = 150;
     SDL_Rect rect;
-    rect.x = 1280/2-100;
+    rect.x = SCREEN_WIDTH/2-100;
     rect.y = 5;
     rect.w = 200;
     rect.h = 141;

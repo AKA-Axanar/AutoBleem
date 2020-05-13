@@ -3,6 +3,7 @@
 //
 
 #include "ps_settings_back.h"
+#include "../gui/gui.h"
 
 //*******************************
 // PsSettingsBack::setCurLen
@@ -11,7 +12,7 @@ void PsSettingsBack::setCurLen(int len) {
     y = 632 - len;
     h = len;
     x = 0;
-    w = 1280;
+    w = SCREEN_WIDTH;
     nextLen = len;
     prevLen = len;
     animEndTime = 0;
@@ -37,7 +38,7 @@ void PsSettingsBack::update(long time) {
             y = 632 - newSize;
             h = newSize;
             x = 0;
-            w = 1280;
+            w = SCREEN_WIDTH;
 
 
         }
@@ -48,7 +49,7 @@ void PsSettingsBack::update(long time) {
             y = 632 - nextLen;
             h = nextLen;
             x = 0;
-            w = 1280;
+            w = SCREEN_WIDTH;
         }
 
     }

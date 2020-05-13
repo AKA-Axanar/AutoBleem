@@ -66,8 +66,8 @@ void PsStateSelector::render()
         SDL_Rect rect;
         rect.x=0;
         rect.y=100;
-        rect.w=1280;
-        rect.h=720-200;
+        rect.w=SCREEN_WIDTH;
+        rect.h=SCREEN_HEIGHT-200;
         SDL_RenderFillRect(renderer,&rect);
 
         int w = 118 * scale;

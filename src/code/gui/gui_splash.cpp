@@ -28,7 +28,7 @@ void GuiSplash::render() {
     string splashText = _("AutoBleem")+" " + gui->cfg.inifile.values["version"];
 
     gui->getEmojiTextTexture(renderer, splashText.c_str(), gui->themeFont, &textTex, &textRec);
-    int screencenter = 1280 / 2;
+    int screencenter = SCREEN_WIDTH / 2;
     textRec.x = screencenter - (textRec.w / 2);
     textRec.y = atoi(gui->themeData.values["ttop"].c_str());
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);

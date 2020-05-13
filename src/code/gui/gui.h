@@ -37,6 +37,9 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 #define EMU_RETROARCH     1
 #define EMU_LAUNCHER      2
 
+#define SCREEN_WIDTH  1280
+#define SCREEN_HEIGHT 720
+
 enum XAlignment { XALIGN_LEFT= 0, XALIGN_CENTER, XALIGN_RIGHT };
 
 // if you add a new set also update setNames in gui_launcher.cpp
