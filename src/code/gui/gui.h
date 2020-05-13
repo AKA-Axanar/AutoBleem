@@ -134,6 +134,9 @@ public:
     // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
     int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
+    static void renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::string & text, SDL_Color textColor,
+                                                          FC_Font_Shared font, XAlignment xAlign, bool background);
+
     int getCheckIconWidth();    // returns the width of the check/uncheck icon textures
 
     static void splash(const std::string & message);

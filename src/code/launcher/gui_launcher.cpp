@@ -14,7 +14,7 @@
 
 using namespace std;
 
-const SDL_Color brightWhite = {255, 255, 255, 0};
+const SDL_Color brightWhite = {255, 255, 255, SDL_ALPHA_OPAQUE};
 
 
 //*******************************
@@ -303,52 +303,6 @@ void GuiLauncher::showSetName() {
         notificationLines[0].setText(setNames[currentSet] + numGames, timeout);
     }
 }
-
-//*******************************
-// GuiLauncher::renderTextOnly_WithColorAndBackgroundRect
-//*******************************
-void GuiLauncher::renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::string &text,
-                                                            const SDL_Color &textColor, FC_Font_Shared font,
-                                                            XAlignment xAlign, bool background) {
-    auto gui = Gui::getInstance();
-    int text_width = FC_GetWidth(font, text.c_str());
-    int text_height = FC_GetLineHeight(font);
-
-    if (xAlign == XALIGN_CENTER) {
-        x = (SCREEN_WIDTH / 2) - (text_width / 2);
-    } else if (xAlign == XALIGN_RIGHT) {
-        x = SCREEN_WIDTH - x - text_width;
-    }
-
-    SDL_Rect rect{0, 0, 0, 0};
-
-    auto renderer = Gui::getInstance()->renderer;
-
-    if (text.size() == 0) {
-        rect.x = 0;
-        rect.y = 0;
-        rect.h = 0;
-        rect.w = 0;
-    } else {
-        rect.x = x;
-        rect.y = y;
-        rect.w = text_width;
-        rect.h = text_height;
-    }
-
-    if (background) {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 70);
-        SDL_Rect backRect;
-        backRect.x = rect.x - 10;
-        backRect.y = rect.y - 2;
-        backRect.w = rect.w + 20;
-        backRect.h = rect.h + 4;
-
-        SDL_RenderFillRect(renderer, &backRect);
-    }
-
-    FC_DrawColor(font, renderer, x, y, textColor, text.c_str());
-};
 
 //*******************************
 // GuiLauncher::loadAssets
@@ -755,9 +709,9 @@ void GuiLauncher::render() {
     menu->render();
 
     auto font24 = gui->themeFonts[FONT_22_MED];
-    renderTextOnly_WithColorAndBackgroundRect(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
-    renderTextOnly_WithColorAndBackgroundRect(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
-    renderTextOnly_WithColorAndBackgroundRect(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    Gui::renderTextOnly_WithColorAndBackgroundRect(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    Gui::renderTextOnly_WithColorAndBackgroundRect(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    Gui::renderTextOnly_WithColorAndBackgroundRect(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
 
     notificationLines.tickTock();
 

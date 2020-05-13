@@ -996,6 +996,57 @@ int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAli
 }
 
 //*******************************
+// Gui::renderTextOnly_WithColorAndBackgroundRect
+//*******************************
+void Gui::renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::string &text,
+                                                    SDL_Color textColor, FC_Font_Shared font,
+                                                    XAlignment xAlign, bool background) {
+    auto gui = Gui::getInstance();
+    int text_width = FC_GetWidth(font, text.c_str());
+    int text_height = FC_GetLineHeight(font);
+
+    if (xAlign == XALIGN_CENTER) {
+        x = (SCREEN_WIDTH / 2) - (text_width / 2);
+    } else if (xAlign == XALIGN_RIGHT) {
+        x = SCREEN_WIDTH - x - text_width;
+    }
+
+    SDL_Rect rect{0, 0, 0, 0};
+
+    auto renderer = Gui::getInstance()->renderer;
+
+    if (text.size() == 0) {
+        rect.x = 0;
+        rect.y = 0;
+        rect.h = 0;
+        rect.w = 0;
+    } else {
+        rect.x = x;
+        rect.y = y;
+        rect.w = text_width;
+        rect.h = text_height;
+    }
+
+    if (background) {
+        // render a grey box behind the text
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 70);
+        SDL_Rect backRect;
+        backRect.x = rect.x - 10;
+        backRect.y = rect.y - 2;
+        backRect.w = rect.w + 20;
+        backRect.h = rect.h + 4;
+
+        SDL_RenderFillRect(renderer, &backRect);
+    }
+
+#if SDL_VERSION_ATLEAST(2,0,0)
+    assert(textColor.a > 0);    // rendering the text will do no good if it's transparent
+#endif
+
+    FC_DrawColor(font, renderer, x, y, textColor, text.c_str());
+};
+
+//*******************************
 // Gui::getCheckIconWidth
 // returns the width of the check/uncheck icon textures
 //*******************************
