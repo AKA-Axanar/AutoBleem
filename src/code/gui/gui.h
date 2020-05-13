@@ -131,11 +131,13 @@ public:
     void renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
+    // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
+    int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
+    int getCheckIconWidth();    // returns the width of the check/uncheck icon textures
+
     void adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, XAlignment xAlign);
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
-    // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
-    int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
     static void splash(const std::string & message);
 

@@ -996,6 +996,24 @@ int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAli
 }
 
 //*******************************
+// Gui::getCheckIconWidth
+// returns the width of the check/uncheck icon textures
+//*******************************
+int Gui::getCheckIconWidth() {
+    int checkIconWidth=0;
+    int checkIconHeight=0;
+    auto it = buttonTextureMap.find("Check");
+    if (it != buttonTextureMap.end()) {
+        SDL_QueryTexture(it->second, nullptr, nullptr, &checkIconWidth, &checkIconHeight);
+    } else {
+        cout << "missing check icon" << endl;
+        assert(false);
+    }
+
+    return checkIconWidth;
+}
+
+//*******************************
 // Gui::adjustEmojiPositionX
 //*******************************
 void Gui::adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, XAlignment xAlign) {
@@ -1174,6 +1192,8 @@ void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared f
 //*******************************
 int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlignment xAlign, int xoffset) {
     string text = _text;
+
+    // if there is a check or uncheck icon, flag which one and remove the emoji toekn from the string
     int button = -1;
     if (text.find("|@Check|") != std::string::npos) {
         button = 1;
@@ -1185,28 +1205,26 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlign
         text = text.substr(0, text.find("|"));
     }
 
+    // render the text string without the check/uncheck icon
     int h = renderTextLine(text, line, offset, xAlign, xoffset);
 
-    SDL_Shared<SDL_Texture> buttonTex;
-
     if (button == -1) {
-        return h;
+        return h;   // there is no check/uncheck emoji on this line
     }
 
+    // render the check/uncheck icon on the right side of opscreen
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
-    FC_Rect textRec;
+
+    FC_Point posit;
+    posit.x = opscreen.x + opscreen.w - 10 - getCheckIconWidth();
+    posit.y = (fontHeight * line) + offset;
     if (button == 1) {
-        getEmojiTextTexture(renderer, "|@Check|", themeFont, &buttonTex, &textRec);
+        renderText(themeFont, "|@Check|", posit.x, posit.y);
     } else if (button == 0) {
-        getEmojiTextTexture(renderer, "|@Uncheck|", themeFont, &buttonTex, &textRec);
+        renderText(themeFont, "|@Uncheck|", posit.x, posit.y);
     }
 
-    textRec.x = opscreen.x + opscreen.w - 10 - textRec.w;
-    textRec.y = (fontHeight * line) + offset;
-    adjustEmojiPositionX(textRec, opscreen, xAlign);
-
-    SDL_RenderCopy(renderer, buttonTex, nullptr, &textRec);
     return h;
 }
 
@@ -1218,10 +1236,8 @@ int Gui::renderTextLine(const string &text, int line, int offset,  XAlignment xA
         font = themeFont;   // default to themeFont
 
     SDL_Rect opscreen = getOpscreenRectOfTheme();
-    Uint16 fontHeight = FC_GetLineHeight(themeFont);
-//    SDL_Shared<SDL_Texture> textTex;
+    Uint16 fontHeight = FC_GetLineHeight(font);
     FC_Point posit;
-//    getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
     posit.x = opscreen.x + 10 + xoffset;
     posit.y = (fontHeight * line) + offset;
 
@@ -1230,9 +1246,6 @@ int Gui::renderTextLine(const string &text, int line, int offset,  XAlignment xA
         line=-line;
         posit.y=line;
     }
-//    adjustEmojiPositionX(textRec, opscreen, xAlign);
-//
-//    SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 
     return renderText(font, text, posit.x, posit.y, xAlign);
 }
