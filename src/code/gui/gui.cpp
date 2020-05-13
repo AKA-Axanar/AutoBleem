@@ -888,6 +888,85 @@ void Gui::finish() {
 }
 
 //*******************************
+// Gui::getAllTokenInfoForLineOfTextAndEmojis
+//*******************************
+Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & _text) {
+    //
+    // break up the text into tokens of text and emoji markers
+    //
+    string text = _text;
+    if (text.empty()) text = " ";
+    if (text.back() != '|') {
+        text = text + "|";  // in case a terminating | is needed
+    }
+    auto tokenStrings =  Util::getTokens(text, '|');
+
+    //
+    // fill the info structures
+    //
+    AllTextOrEmojiTokenInfo allInfo;
+
+    for (const auto& tokenString : tokenStrings) {      // for each token string
+        if (tokenString == "") continue;
+        TextOrEmojiTokenInfo tokenInfo;
+        tokenInfo.tokenString = tokenString;
+        if (tokenString[0] == '@') {    // if emoji marker
+            int w, h;
+            auto it = buttonTextureMap.find(tokenString.c_str()+1);
+            if (it != buttonTextureMap.end()) {
+                tokenInfo.emoji = it->second;   // save the texture pointer
+                SDL_QueryTexture(it->second, nullptr, nullptr, &w, &h);
+                tokenInfo.size.w = w;
+                tokenInfo.size.h = h;
+                // update overall size
+                allInfo.totalSize.w += w;
+                if (h > allInfo.totalSize.h)
+                    allInfo.totalSize.h = h;
+                // add the token info
+                allInfo.info.emplace_back(tokenInfo);
+            } else {
+                cout << "emoji not found for " << tokenString << endl;
+            }
+        } else {
+            tokenInfo.size.w += FC_GetWidth(font, tokenString.c_str());
+            tokenInfo.size.h = FC_GetLineHeight(font);
+            // update overall size
+            allInfo.totalSize.w += tokenInfo.size.w;
+            if (tokenInfo.size.h > allInfo.totalSize.h)
+                allInfo.totalSize.h = tokenInfo.size.h;
+            // add the token info
+            allInfo.info.emplace_back(tokenInfo);
+        }
+    }
+
+    return allInfo;
+}
+
+//*******************************
+// Gui::renderAllTokenInfo
+//*******************************
+void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
+                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int emoji_y, int text_y) {
+
+    for (auto& tokenInfo : allTokenInfo.info) {
+        if (tokenInfo.emoji) {
+            // the token is an emoji texture
+            FC_Rect rect;
+            rect.x = x;
+            rect.y = emoji_y;
+            rect.w = tokenInfo.size.w;
+            rect.h = tokenInfo.size.h;
+            SDL_RenderCopy(renderer, tokenInfo.emoji, nullptr, &rect);
+            x += tokenInfo.size.w;
+        } else {
+            // the token is text
+            FC_DrawAlign(font, renderer, x, text_y, FC_ALIGN_LEFT, tokenInfo.tokenString.c_str());
+            x += tokenInfo.size.w;
+        }
+    }
+}
+
+//*******************************
 // Gui::adjustEmojiPositionX
 //*******************************
 void Gui::adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, int position) {

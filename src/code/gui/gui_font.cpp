@@ -91,7 +91,7 @@ Fonts::Fonts() { }
 //********************
 FC_Font_Shared Fonts::openNewSharedCachedFont(const string &filename, int fontSize, SDL_Shared<SDL_Renderer> renderer) {
     FC_Font* fc_font = FC_CreateFont();
-    FC_LoadFont(fc_font, renderer, filename.c_str(), fontSize, FC_MakeColor(0,0,0,255), TTF_STYLE_NORMAL);
+    FC_LoadFont(fc_font, renderer, filename.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
     FC_Font_Shared font = FC_Font_Shared(fc_font);
     if (font) {
         cout << "Success opening font " << filename << " of size " << fontSize << endl;

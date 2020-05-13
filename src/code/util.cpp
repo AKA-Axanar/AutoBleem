@@ -343,7 +343,7 @@ void Util::dumpMemory(const  char *p, int count) {
 //*******************************
 // Util::getTokens
 //*******************************
-vector<string> Util::getTokens(string str, char delim) {
+vector<string> Util::getTokens(const string& str, char delim) {
     istringstream ss(str);
     string token;
     vector<string> ret;

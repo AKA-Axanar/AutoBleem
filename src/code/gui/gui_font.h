@@ -76,3 +76,6 @@ public:
     // in gui_launcher.cpp this call is used to change all the fonts to use the fonts in the current theme
     void openAllFonts(const std::string &_rootPath, SDL_Shared<SDL_Renderer> renderer);
 };
+
+using FC_Point = SDL_Point;
+struct FC_Size { int w=0, h=0; };

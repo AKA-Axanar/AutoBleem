@@ -112,6 +112,20 @@ public:
 
     void drawText(const std::string & text);
 
+    struct TextOrEmojiTokenInfo {
+        std::string tokenString;
+        SDL_Shared<SDL_Texture> emoji;  // not null only if tokenString is an emoji marker such as "|@X|"
+        FC_Size size;                   // width and height of rendered text or emoji texture
+    };
+    struct AllTextOrEmojiTokenInfo {
+        std::vector<TextOrEmojiTokenInfo> info;
+        FC_Size totalSize;      // the total width and height of all the tokens
+    };
+
+    AllTextOrEmojiTokenInfo getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & text);
+    void renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
+                            AllTextOrEmojiTokenInfo& allTokenInfo, int x, int emoji_y, int text_y);
+
     void adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, int position);
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
