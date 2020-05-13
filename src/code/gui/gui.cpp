@@ -1110,13 +1110,12 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlign
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
 
-    FC_Point posit;
-    posit.x = opscreen.x + opscreen.w - 10 - getCheckIconWidth();
-    posit.y = (fontHeight * line) + offset;
+    int x = opscreen.x + opscreen.w - 10 - getCheckIconWidth();
+    int y = (fontHeight * line) + offset;
     if (button == 1) {
-        renderText(themeFont, "|@Check|", posit.x, posit.y);
+        renderText(themeFont, "|@Check|", x, y);
     } else if (button == 0) {
-        renderText(themeFont, "|@Uncheck|", posit.x, posit.y);
+        renderText(themeFont, "|@Uncheck|", x, y);
     }
 
     return h;
@@ -1131,17 +1130,16 @@ int Gui::renderTextLine(const string &text, int line, int offset,  XAlignment xA
 
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(font);
-    FC_Point posit;
-    posit.x = opscreen.x + 10 + xoffset;
-    posit.y = (fontHeight * line) + offset;
+    int x = opscreen.x + 10 + xoffset;
+    int y = (fontHeight * line) + offset;
 
     if (line<0)
     {
         line=-line;
-        posit.y=line;
+        y=line;
     }
 
-    return renderText(font, text, posit.x, posit.y, xAlign);
+    return renderText(font, text, x, y, xAlign);
 }
 
 //*******************************
