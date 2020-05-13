@@ -1219,22 +1219,22 @@ int Gui::renderTextLine(const string &text, int line, int offset,  XAlignment xA
 
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
-    SDL_Shared<SDL_Texture> textTex;
-    FC_Rect textRec;
-    getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
-    textRec.x = opscreen.x + 10 + xoffset;
-    textRec.y = (fontHeight * line) + offset;
+//    SDL_Shared<SDL_Texture> textTex;
+    FC_Point posit;
+//    getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
+    posit.x = opscreen.x + 10 + xoffset;
+    posit.y = (fontHeight * line) + offset;
 
     if (line<0)
     {
         line=-line;
-        textRec.y=line;
+        posit.y=line;
     }
-    adjustEmojiPositionX(textRec, opscreen, xAlign);
+//    adjustEmojiPositionX(textRec, opscreen, xAlign);
+//
+//    SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 
-    SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
-
-    return textRec.h;
+    return renderText(font, text, posit.x, posit.y, xAlign);
 }
 
 //*******************************
