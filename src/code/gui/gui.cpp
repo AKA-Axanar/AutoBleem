@@ -1260,9 +1260,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
 
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
-    SDL_Shared<SDL_Texture> textTex;
     FC_Rect textRec;
-    getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
     textRec.x = opscreen.x + 10 + xoffset;
     textRec.y = (fontHeight * line) + offset;
 
@@ -1272,9 +1270,10 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
         textRec.y=line;
     }
 
-    adjustEmojiPositionX(textRec, opscreen, xAlign);
-
-    //SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
+    AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(font, text);
+    textRec.w = allTokenInfo.totalSize.w;
+    textRec.h = allTokenInfo.totalSize.h;
+    textRec.x = (SCREEN_WIDTH / 2) - allTokenInfo.totalSize.w / 2;
 
     return textRec;
 }
