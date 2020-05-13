@@ -23,8 +23,8 @@ void GuiConfirm::render()
     gui->renderBackground();
     gui->renderTextBar();
     int offset = gui->renderLogo(true);
-    gui->renderTextLine("-=" + _("Please confirm") + "=-",0,offset, POS_CENTER);
-    gui->renderTextLine(label,2,offset, POS_CENTER);
+    gui->renderTextLine("-=" + _("Please confirm") + "=-",0,offset, XALIGN_CENTER);
+    gui->renderTextLine(label,2,offset, XALIGN_CENTER);
 
 
     gui->renderStatus("|@X| "+_("Confirm")+"  |@O| "+_("Cancel")+" |");

@@ -71,7 +71,7 @@ void GuiAbout::render() {
 
     int line = 1;
     for (const string &s:credits) {
-        gui->renderTextLine(s, line, offset, POS_CENTER, 0, font);
+        gui->renderTextLine(s, line, offset, XALIGN_CENTER, 0, font);
         line++;
     }
 

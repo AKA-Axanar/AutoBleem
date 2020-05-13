@@ -24,7 +24,7 @@ void GuiScrollWin::render() {
     int offset = gui->renderLogo(true);
 
     for (int i=0; i < lines.size(); ++ i) {
-        gui->renderTextLine(lines[i], i, 0, POS_LEFT);
+        gui->renderTextLine(lines[i], i, 0, XALIGN_LEFT);
     }
     SDL_RenderPresent(renderer);
 }

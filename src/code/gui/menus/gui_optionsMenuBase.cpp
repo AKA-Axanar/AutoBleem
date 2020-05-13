@@ -53,7 +53,7 @@ std::string GuiOptionsMenuBase::getLineText(const OptionsInfo& info) {
 //*******************************
 void GuiOptionsMenuBase::renderLineIndexOnRow(int index, int row) {
     string line = getLineText(lines[index]);
-    int height = gui->renderTextLineOptions(line, row, offset, POS_LEFT);
+    int height = gui->renderTextLineOptions(line, row, offset, XALIGN_LEFT);
 }
 
 //*******************************

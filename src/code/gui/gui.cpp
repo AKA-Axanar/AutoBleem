@@ -946,7 +946,14 @@ Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_
 // Gui::renderAllTokenInfo
 //*******************************
 void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
-                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int emoji_y, int text_y) {
+                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int emoji_y, int text_y,
+                             XAlignment xAlign) {
+
+    if (xAlign == XALIGN_CENTER) {
+        x = (1280 / 2) - allTokenInfo.totalSize.w / 2;
+    } else if (xAlign == XALIGN_RIGHT) {
+        x = 1280 - x - allTokenInfo.totalSize.w;
+    }
 
     for (auto& tokenInfo : allTokenInfo.info) {
         if (tokenInfo.emoji) {
@@ -969,13 +976,13 @@ void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared f
 //*******************************
 // Gui::adjustEmojiPositionX
 //*******************************
-void Gui::adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, int position) {
+void Gui::adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, XAlignment xAlign) {
     if (textRec.w >= (1280 - opscreen.x * 4)) {
         textRec.w = (1280 - opscreen.x * 4);
     }
-    if (position==POS_CENTER) {
+    if (xAlign == XALIGN_CENTER) {
         textRec.x = (1280 / 2) - textRec.w / 2;
-    } else if (position==POS_RIGHT) {
+    } else if (xAlign == XALIGN_RIGHT) {
         textRec.x = 1280 - textRec.x - textRec.w;
     }
 }
@@ -1078,24 +1085,24 @@ void Gui::getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, string text, FC
 void Gui::renderStatus(const string &text, int posy) {
     string bg = themeData.values["text_bg"];
 
-    SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
     SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["textalpha"].c_str()));
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_Rect rect = getTextRectOfTheme();
     SDL_RenderFillRect(renderer, &rect);
 
-    getEmojiTextTexture(renderer, text, themeFont, &textTex, &textRec);
-    int screencenter = 1280 / 2;
-    textRec.x = screencenter - (textRec.w / 2);
-    textRec.y = atoi(themeData.values["ttop"].c_str());
+    AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(themeFont, text);
+
+    //int screencenter = 1280 / 2;
+    //int x = screencenter - (allTokenInfo.totalSize.w / 2);
+    int y = atoi(themeData.values["ttop"].c_str());
     if (posy!=-1)
     {
-        textRec.y=posy;
+        y=posy;
     }
-    if (textRec.w > atoi(themeData.values["textw"].c_str()))
-        textRec.w = atoi(themeData.values["textw"].c_str());
-    SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
+
+    int fontHeight = FC_GetLineHeight(themeFont);
+    int text_y = y + (allTokenInfo.totalSize.h - fontHeight)/2;
+    renderAllTokenInfo(renderer, themeFont, allTokenInfo, 0, y, text_y, XALIGN_CENTER);
 }
 
 //*******************************
@@ -1151,7 +1158,7 @@ void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared f
 //*******************************
 // Gui::renderTextLineOptions
 //*******************************
-int Gui::renderTextLineOptions(const string &_text, int line, int offset, int position, int xoffset) {
+int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlignment xAlign, int xoffset) {
     string text = _text;
     int button = -1;
     if (text.find("|@Check|") != std::string::npos) {
@@ -1164,7 +1171,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
         text = text.substr(0, text.find("|"));
     }
 
-    int h = renderTextLine(text, line, offset, position, xoffset);
+    int h = renderTextLine(text, line, offset, xAlign, xoffset);
 
     SDL_Shared<SDL_Texture> buttonTex;
 
@@ -1183,7 +1190,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
 
     textRec.x = opscreen.x + opscreen.w - 10 - textRec.w;
     textRec.y = (fontHeight * line) + offset;
-    adjustEmojiPositionX(textRec, opscreen, position);
+    adjustEmojiPositionX(textRec, opscreen, xAlign);
 
     SDL_RenderCopy(renderer, buttonTex, nullptr, &textRec);
     return h;
@@ -1192,7 +1199,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, int po
 //*******************************
 // Gui::renderTextLine
 //*******************************
-int Gui::renderTextLine(const string &text, int line, int offset,  int position, int xoffset, FC_Font_Shared font) {
+int Gui::renderTextLine(const string &text, int line, int offset,  XAlignment xAlign, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
@@ -1209,7 +1216,7 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
         line=-line;
         textRec.y=line;
     }
-    adjustEmojiPositionX(textRec, opscreen, position);
+    adjustEmojiPositionX(textRec, opscreen, xAlign);
 
     SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 
@@ -1220,7 +1227,7 @@ int Gui::renderTextLine(const string &text, int line, int offset,  int position,
 // Gui::getTextRectangleOnScreen
 //*******************************
 // returns the SDL_Rect of the screen positions if your rendered this text with these args
-SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,  int position, int xoffset, FC_Font_Shared font) {
+SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,  XAlignment xAlign, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
@@ -1238,7 +1245,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
         textRec.y=line;
     }
 
-    adjustEmojiPositionX(textRec, opscreen, position);
+    adjustEmojiPositionX(textRec, opscreen, xAlign);
 
     //SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
 
@@ -1252,8 +1259,8 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
                                  int xLeft, int xRight,
                                  int line, int offset, FC_Font_Shared font) {
 
-            renderTextLine(textLeft,  line, offset, POS_LEFT, xLeft, font);
-    int h = renderTextLine(textRight, line, offset, POS_LEFT, xRight, font);
+            renderTextLine(textLeft,  line, offset, XALIGN_LEFT, xLeft, font);
+    int h = renderTextLine(textRight, line, offset, XALIGN_LEFT, xRight, font);
 
     return h;   // rectangle height
 }

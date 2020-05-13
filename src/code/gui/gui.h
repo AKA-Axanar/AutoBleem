@@ -37,7 +37,7 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 #define EMU_RETROARCH     1
 #define EMU_LAUNCHER      2
 
-enum Alignment { POS_LEFT= 0, POS_CENTER, POS_RIGHT };
+enum XAlignment { XALIGN_LEFT= 0, XALIGN_CENTER, XALIGN_RIGHT };
 
 // if you add a new set also update setNames in gui_launcher.cpp
 #define SET_PS1      0
@@ -123,9 +123,9 @@ public:
     AllTextOrEmojiTokenInfo getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & text);
     void renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int emoji_y, int text_y,
-                            Alignment position = POS_LEFT);
+                            XAlignment xAlign = XALIGN_LEFT);
 
-    void adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, Alignment position);
+    void adjustEmojiPositionX(FC_Rect& textRec, SDL_Rect& opscreen, XAlignment xAlign);
     void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
                              FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
 
@@ -145,19 +145,19 @@ public:
 
     // returns rectangle height
     int renderTextLine(const std::string & text, int line,
-                       int offset = 0, Alignment position = POS_LEFT, int xoffset = 0,
+                       int offset = 0, XAlignment xAlign = XALIGN_LEFT, int xoffset = 0,
                        FC_Font_Shared font = FC_Font_Shared());   // font will default to themeFont in the cpp
 
     // returns the SDL_Rect of the screen positions if your rendered this text with these args
     // this is basically renderTextLine but doesn't render the texct and instead returns the bounding rectangle
     SDL_Rect getTextRectangleOnScreen(const std::string & text, int line,
-                       int offset = 0, Alignment position = POS_LEFT, int xoffset = 0,
+                       int offset = 0, XAlignment xAlign = XALIGN_LEFT, int xoffset = 0,
                                       FC_Font_Shared font = FC_Font_Shared());    // font will default to themeFont in the cpp
 
     int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
                                 int offset = 0, FC_Font_Shared font = FC_Font_Shared());
 
-    int renderTextLineOptions(const std::string & text, int line, int offset = 0,  Alignment position = POS_LEFT, int xoffset = 0);
+    int renderTextLineOptions(const std::string & text, int line, int offset = 0,  XAlignment xAlign = XALIGN_LEFT, int xoffset = 0);
 
     void renderSelectionBox(int line, int offset, int xoffset = 0, FC_Font_Shared font = FC_Font_Shared());
 

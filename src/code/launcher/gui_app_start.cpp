@@ -95,7 +95,7 @@ void GuiAppStart::render() {
 
     }
     int offset = 15;
-    gui->renderTextLine(appName, 0, offset, POS_LEFT, 10, font);
+    gui->renderTextLine(appName, 0, offset, XALIGN_LEFT, 10, font);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawLine(renderer, rect2.x, 35,rect2.w,35);
 
@@ -125,13 +125,13 @@ void GuiAppStart::render() {
     int currentLine =2;
     if (!readmeLoaded)
     {
-        gui->renderTextLine(_("ReadMe file not found"), 2, offset, POS_LEFT, 10, font);
+        gui->renderTextLine(_("ReadMe file not found"), 2, offset, XALIGN_LEFT, 10, font);
     } else
     {
         for (int i=firstLine;i<firstLine+maxLines;i++)
         {
             std::string lineInFile = getStringLine(buffer,i);
-            gui->renderTextLine(getStringLine(buffer,i), currentLine, offset, POS_LEFT, 10, font);
+            gui->renderTextLine(getStringLine(buffer,i), currentLine, offset, XALIGN_LEFT, 10, font);
             currentLine++;
         }
     }

@@ -172,7 +172,7 @@ void GuiMenuBase<LineDataType>::render()
     gui->renderBackground();
     gui->renderTextBar();
     offset = gui->renderLogo(true);
-    gui->renderTextLine(getTitle(), 0, offset, POS_CENTER);
+    gui->renderTextLine(getTitle(), 0, offset, XALIGN_CENTER);
 
     if (firstRender) {
         computePagePosition();

@@ -45,7 +45,7 @@ void GuiKeyboard::render() {
     gui->renderTextBar();
     int offset = gui->renderLogo(true);
     gui->renderLabelBox(1, offset);
-    gui->renderTextLine("-= " + label + " =-", 0, offset, POS_CENTER);
+    gui->renderTextLine("-= " + label + " =-", 0, offset, XALIGN_CENTER);
 
     //*******************************
     // drawRectangle lambda
@@ -69,14 +69,14 @@ void GuiKeyboard::render() {
     else
         displayResult = result;
     displayResult.insert(cursorIndex, "#");
-    gui->renderTextLine(displayResult, 1, offset, POS_CENTER);
+    gui->renderTextLine(displayResult, 1, offset, XALIGN_CENTER);
 
     SDL_Rect rect2 = gui->getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(gui->themeFont);
     SDL_Shared<SDL_Texture> tex;
 
     if (L2_cursor_shift || usingUsbKeyboard) {
-        SDL_Rect rectEditbox = gui->getTextRectangleOnScreen(displayResult, 1, offset, POS_CENTER, 0, gui->themeFont);
+        SDL_Rect rectEditbox = gui->getTextRectangleOnScreen(displayResult, 1, offset, XALIGN_CENTER, 0, gui->themeFont);
 
         // compute the bounding box around the cursor (#)
         SDL_Point textBeforeCursorSize { 0, 0 };

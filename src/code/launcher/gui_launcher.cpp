@@ -308,7 +308,7 @@ void GuiLauncher::showSetName() {
 // GuiLauncher::renderText
 //*******************************
 void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Color &textColor, FC_Font_Shared font,
-                             Alignment position, bool background) {
+                             XAlignment xAlign, bool background) {
     int text_width = 0;
     int text_height = 0;
     SDL_Shared<SDL_Surface> surface;
@@ -339,7 +339,7 @@ void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Co
     inputRect.w = rect.w;
     inputRect.h = rect.h;
 
-    if (position == POS_CENTER) {
+    if (xAlign == XALIGN_CENTER) {
         rect.x = 640 - (rect.w / 2);
     }
 
@@ -762,9 +762,9 @@ void GuiLauncher::render() {
     menu->render();
 
     auto font24 = gui->themeFonts[FONT_22_MED];
-    renderText(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
-    renderText(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
-    renderText(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
+    renderText(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    renderText(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
+    renderText(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, XALIGN_LEFT, false);
 
     notificationLines.tickTock();
 
