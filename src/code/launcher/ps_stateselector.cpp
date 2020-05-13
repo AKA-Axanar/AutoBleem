@@ -94,21 +94,13 @@ void PsStateSelector::render()
         SDL_Rect infoRect, infoDest;
 
         if (operation==OP_LOAD) {
-            gui->getEmojiTextTexture(renderer,
-                                     "|@T| " + _("Delete") + "     |@X| " + _("Select") + "     |@O| " + _("Cancel") +
-                                     "|", font24, &infoText, &infoRect);
+            gui->renderText(font24, "|@T| " + _("Delete") + "     |@X| " + _("Select") + "     |@O| " + _("Cancel") +
+                                    "|", 0, 150, XALIGN_CENTER);
         } else
         {
-            gui->getEmojiTextTexture(renderer,
-                                     "|@X| " + _("Select") + "     |@O| " + _("Cancel") +
-                                     "|", font24, &infoText, &infoRect);
+            gui->renderText(font24, "|@X| " + _("Select") + "     |@O| " + _("Cancel") +
+                                    "|", 0, 150, XALIGN_CENTER);
         }
-        infoDest.x=640-infoRect.w/2;
-        infoDest.y=150;
-        infoDest.w=infoRect.w;
-        infoDest.h=infoRect.h;
-
-        SDL_RenderCopy(renderer,infoText,&infoRect, &infoDest);
 
         for (int i=0;i<4;i++)
         {
