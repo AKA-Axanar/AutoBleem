@@ -1041,8 +1041,11 @@ void Gui::renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::str
 
 #if SDL_VERSION_ATLEAST(2,0,0)
     assert(textColor.a > 0);    // rendering the text will do no good if it's transparent
+    cout << "alpha in SDL_Color is 0 for text: " << text << endl;
+#else
+    assert(textColor.unused > 0);
+    cout << "alpha in SDL_Color is 0 for text: " << text << endl;
 #endif
-
     FC_DrawColor(font, renderer, x, y, textColor, text.c_str());
 };
 
@@ -1237,14 +1240,10 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
 //*******************************
 // Gui::renderTextChar
 //*******************************
-void Gui::renderTextChar(const string &text, int line, int offset, int posx) {
+void Gui::renderTextChar(const string &text, int line, int offset, int x) {
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
-    SDL_Shared<SDL_Texture> textTex;
-    FC_Rect textRec;
-    getTextureAndRect(renderer, posx, (fontHeight * line) + offset,
-                      text.c_str(), themeFont, &textTex, &textRec);
-
-    SDL_RenderCopy(renderer, textTex, nullptr, &textRec);
+    int y = (fontHeight * line) + offset;
+    FC_DrawAlign(themeFont, renderer, x, y, FC_ALIGN_LEFT, text.c_str());
 }
 
 //*******************************
