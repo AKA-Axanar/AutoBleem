@@ -237,7 +237,7 @@ void PsMeta::render() {
             fullRect.h = h;
             SDL_RenderCopy(renderer, tex, &fullRect, &rect);
 
-            int offset = 190, spread = 40;
+            int xoffset = 190, spread = 40;
             // render internal icon
             rect.x = x + 135;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
@@ -254,7 +254,7 @@ void PsMeta::render() {
             fullRect.h = h;
             SDL_RenderCopy(renderer, discsTex, &fullRect, &rect);
 
-            rect.x = x + offset;
+            rect.x = x + xoffset;
             rect.y = y + yOffset - 2;
             rect.w = 30;
             rect.h = 30;
@@ -270,19 +270,19 @@ void PsMeta::render() {
             } else {
                 SDL_RenderCopy(renderer, internalOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread;
+            rect.x = x + xoffset + spread;
             if (hd) {
                 SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
             } else {
                 SDL_RenderCopy(renderer, hdOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread * 2;
+            rect.x = x + xoffset + spread * 2;
             if (locked) {
                 SDL_RenderCopy(renderer, lockOnTex, &fullRect, &rect);
             } else {
                 SDL_RenderCopy(renderer, lockOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread * 3;
+            rect.x = x + xoffset + spread * 3;
             if (favorite) {
                 SDL_RenderCopy(renderer, favoriteTex, &fullRect, &rect);
             }

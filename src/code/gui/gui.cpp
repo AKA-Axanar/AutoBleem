@@ -1090,13 +1090,13 @@ void Gui::drawText(const string &text) {
 //*******************************
 // Gui::renderLabelBox
 //*******************************
-void Gui::renderLabelBox(int line, int offset) {
+void Gui::renderLabelBox(int line, int yoffset) {
     string bg = themeData.values["label_bg"];
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     SDL_Rect rectSelection;
     rectSelection.x = opscreen.x + 5;
-    rectSelection.y = offset + fontHeight * (line);
+    rectSelection.y = yoffset + fontHeight * (line);
     rectSelection.w = opscreen.w - 10;
     rectSelection.h = fontHeight;
 
@@ -1108,7 +1108,7 @@ void Gui::renderLabelBox(int line, int offset) {
 //*******************************
 // Gui::renderSelectionBox
 //*******************************
-void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared font) {
+void Gui::renderSelectionBox(int line, int yoffset, int xoffset, FC_Font_Shared font) {
     SDL_Shared<SDL_Texture> textTex;
     if (!font)
         font = themeFont;
@@ -1118,7 +1118,7 @@ void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared f
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     SDL_Rect rectSelection;
     rectSelection.x = opscreen.x + 5 + xoffset;
-    rectSelection.y = offset + fontHeight * (line);
+    rectSelection.y = yoffset + fontHeight * (line);
     rectSelection.w = opscreen.w - 10 - xoffset;
     rectSelection.h = fontHeight;
 
@@ -1130,7 +1130,7 @@ void Gui::renderSelectionBox(int line, int offset, int xoffset, FC_Font_Shared f
 //*******************************
 // Gui::renderTextLineOptions
 //*******************************
-int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlignment xAlign, int xoffset) {
+int Gui::renderTextLineOptions(const string &_text, int line, int yoffset, XAlignment xAlign, int xoffset) {
     string text = _text;
 
     // if there is a check or uncheck icon, flag which one and remove the emoji toekn from the string
@@ -1146,7 +1146,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlign
     }
 
     // render the text string without the check/uncheck icon
-    int h = renderTextLine(text, line, offset, xAlign, xoffset);
+    int h = renderTextLine(text, line, yoffset, xAlign, xoffset);
 
     if (button == -1) {
         return h;   // there is no check/uncheck emoji on this line
@@ -1157,7 +1157,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlign
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
 
     int x = opscreen.x + opscreen.w - 10 - getCheckIconWidth();
-    int y = (fontHeight * line) + offset;
+    int y = (fontHeight * line) + yoffset;
     if (button == 1) {
         renderText(themeFont, "|@Check|", x, y);
     } else if (button == 0) {
@@ -1170,14 +1170,14 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlign
 //*******************************
 // Gui::renderTextLine
 //*******************************
-int Gui::renderTextLine(const string &text, int line, int offset, XAlignment xAlign, int xoffset, FC_Font_Shared font) {
+int Gui::renderTextLine(const string &text, int line, int yoffset, XAlignment xAlign, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(font);
     int x = opscreen.x + 10 + xoffset;
-    int y = (fontHeight * line) + offset;
+    int y = (fontHeight * line) + yoffset;
 
     if (line<0)
     {
@@ -1192,7 +1192,7 @@ int Gui::renderTextLine(const string &text, int line, int offset, XAlignment xAl
 // Gui::getTextRectangleOnScreen
 //*******************************
 // returns the SDL_Rect of the screen positions if your rendered this text with these args
-SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,  XAlignment xAlign, int xoffset, FC_Font_Shared font) {
+SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int yoffset,  XAlignment xAlign, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 
@@ -1200,7 +1200,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
     FC_Rect textRec;
     textRec.x = opscreen.x + 10 + xoffset;
-    textRec.y = (fontHeight * line) + offset;
+    textRec.y = (fontHeight * line) + yoffset;
 
     if (line<0)
     {
@@ -1221,10 +1221,10 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int offset,
 //*******************************
 int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight,
                                  int xLeft, int xRight,
-                                 int line, int offset, FC_Font_Shared font) {
+                                 int line, int yoffset, FC_Font_Shared font) {
 
-            renderTextLine(textLeft,  line, offset, XALIGN_LEFT, xLeft, font);
-    int h = renderTextLine(textRight, line, offset, XALIGN_LEFT, xRight, font);
+            renderTextLine(textLeft,  line, yoffset, XALIGN_LEFT, xLeft, font);
+    int h = renderTextLine(textRight, line, yoffset, XALIGN_LEFT, xRight, font);
 
     return h;   // rectangle height
 }
@@ -1232,9 +1232,9 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
 //*******************************
 // Gui::renderTextChar
 //*******************************
-void Gui::renderTextChar(const string &text, int line, int offset, int x) {
+void Gui::renderTextChar(const string &text, int line, int yoffset, int x) {
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
-    int y = (fontHeight * line) + offset;
+    int y = (fontHeight * line) + yoffset;
     FC_DrawAlign(themeFont, renderer, x, y, FC_ALIGN_LEFT, text.c_str());
 }
 

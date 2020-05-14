@@ -66,8 +66,8 @@ void GuiSelectMemcard::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
-    int offset = gui->renderLogo(true);
-    gui->renderTextLine("-=" + _("Select memory card") + "=-", 0, offset, XALIGN_CENTER);
+    int yoffset = gui->renderLogo(true);
+    gui->renderTextLine("-=" + _("Select memory card") + "=-", 0, yoffset, XALIGN_CENTER);
 
     if (selected >= cards.size()) {
         selected = cards.size() - 1;
@@ -87,12 +87,12 @@ void GuiSelectMemcard::render() {
         if (i >= cards.size()) {
             break;
         }
-        gui->renderTextLine(cards[i], pos, offset);
+        gui->renderTextLine(cards[i], pos, yoffset);
         pos++;
     }
 
     if (!cards.size() == 0) {
-        gui->renderSelectionBox(selected - firstVisible + 1, offset);
+        gui->renderSelectionBox(selected - firstVisible + 1, yoffset);
     }
 
     gui->renderStatus(_("Card") + " " + to_string(selected + 1) + "/" + to_string(cards.size()) +

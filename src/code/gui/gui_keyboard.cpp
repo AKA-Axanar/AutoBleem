@@ -43,9 +43,9 @@ void GuiKeyboard::init() {
 void GuiKeyboard::render() {
     gui->renderBackground();
     gui->renderTextBar();
-    int offset = gui->renderLogo(true);
-    gui->renderLabelBox(1, offset);
-    gui->renderTextLine("-= " + label + " =-", 0, offset, XALIGN_CENTER);
+    int yoffset = gui->renderLogo(true);
+    gui->renderLabelBox(1, yoffset);
+    gui->renderTextLine("-= " + label + " =-", 0, yoffset, XALIGN_CENTER);
 
     //*******************************
     // drawRectangle lambda
@@ -69,14 +69,14 @@ void GuiKeyboard::render() {
     else
         displayResult = result;
     displayResult.insert(cursorIndex, "#");
-    gui->renderTextLine(displayResult, 1, offset, XALIGN_CENTER);
+    gui->renderTextLine(displayResult, 1, yoffset, XALIGN_CENTER);
 
     SDL_Rect rect2 = gui->getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(gui->themeFont);
     SDL_Shared<SDL_Texture> tex;
 
     if (L2_cursor_shift || usingUsbKeyboard) {
-        SDL_Rect rectEditbox = gui->getTextRectangleOnScreen(displayResult, 1, offset, XALIGN_CENTER, 0, gui->themeFont);
+        SDL_Rect rectEditbox = gui->getTextRectangleOnScreen(displayResult, 1, yoffset, XALIGN_CENTER, 0, gui->themeFont);
 
         // compute the bounding box around the cursor (#)
         SDL_Point textBeforeCursorSize { 0, 0 };
@@ -101,7 +101,7 @@ void GuiKeyboard::render() {
             for (int y = 0; y < numRows; y++) {
                 SDL_Rect rectSelection;
                 rectSelection.x = rect2.x + indentOffset;
-                rectSelection.y = offset + fontHeight * (y + 3);
+                rectSelection.y = yoffset + fontHeight * (y + 3);
                 rectSelection.w = rect2.w - (indentOffset + indentOffset);
                 rectSelection.h = fontHeight;
 
@@ -124,7 +124,7 @@ void GuiKeyboard::render() {
                     text = ucase(text);
                 }
 
-                gui->renderTextChar(text, 3 + y, offset, rectSelection.x + 10);
+                gui->renderTextChar(text, 3 + y, yoffset, rectSelection.x + 10);
 
                 // display rectangle around current character
                 if (!L2_cursor_shift) { // don't draw rectangle if in move cursor mode

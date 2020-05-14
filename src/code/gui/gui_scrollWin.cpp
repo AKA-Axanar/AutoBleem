@@ -21,7 +21,7 @@ void GuiScrollWin::init() {
 void GuiScrollWin::render() {
     gui->renderBackground();
     gui->renderTextBar();
-    int offset = gui->renderLogo(true);
+    int yoffset = gui->renderLogo(true);
 
     for (int i=0; i < lines.size(); ++ i) {
         gui->renderTextLine(lines[i], i, 0, XALIGN_LEFT);

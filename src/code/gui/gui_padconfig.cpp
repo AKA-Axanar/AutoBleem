@@ -24,11 +24,11 @@ void GuiPadConfig::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
-    int offset = gui->renderLogo(true);
+    int yoffset = gui->renderLogo(true);
     SDL_Joystick *joy = SDL_JoystickFromInstanceID(joyid);
 
-    gui->renderTextLine("-=" + _("New GamePad found") + "=-", 0, offset, XALIGN_CENTER);
-    gui->renderTextLine(SDL_JoystickName(joy), 1, offset, XALIGN_CENTER);
+    gui->renderTextLine("-=" + _("New GamePad found") + "=-", 0, yoffset, XALIGN_CENTER);
+    gui->renderTextLine(SDL_JoystickName(joy), 1, yoffset, XALIGN_CENTER);
     newConfig.section = SDL_JoystickName(joy);
 
     /*
@@ -38,25 +38,25 @@ void GuiPadConfig::render() {
     defaultConfig->values["dpaddeadzone"]    ="32000";
     */
 
-    gui->renderTextLine(_("Press a key for") + "  |@X| " + newConfig.values["cross"], 3, offset, XALIGN_CENTER);
+    gui->renderTextLine(_("Press a key for") + "  |@X| " + newConfig.values["cross"], 3, yoffset, XALIGN_CENTER);
     if (step > 0)
-        gui->renderTextLine(_("Press a key for") + "  |@O| " + newConfig.values["circle"], 4, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@O| " + newConfig.values["circle"], 4, yoffset, XALIGN_CENTER);
     if (step > 1)
-        gui->renderTextLine(_("Press a key for") + "  |@S| " + newConfig.values["square"], 5, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@S| " + newConfig.values["square"], 5, yoffset, XALIGN_CENTER);
     if (step > 2)
-        gui->renderTextLine(_("Press a key for") + "  |@T| " + newConfig.values["triangle"], 6, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@T| " + newConfig.values["triangle"], 6, yoffset, XALIGN_CENTER);
     if (step > 3)
-        gui->renderTextLine(_("Press a key for") + "  |@Start| " + newConfig.values["start"], 7, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@Start| " + newConfig.values["start"], 7, yoffset, XALIGN_CENTER);
     if (step > 4)
-        gui->renderTextLine(_("Press a key for") + "  |@Select| " + newConfig.values["select"], 8, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@Select| " + newConfig.values["select"], 8, yoffset, XALIGN_CENTER);
     if (step > 5)
-        gui->renderTextLine(_("Press a key for") + "  |@L1| " + newConfig.values["l1"], 9, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@L1| " + newConfig.values["l1"], 9, yoffset, XALIGN_CENTER);
     if (step > 6)
-        gui->renderTextLine(_("Press a key for") + "  |@L2| " + newConfig.values["l2"], 10, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@L2| " + newConfig.values["l2"], 10, yoffset, XALIGN_CENTER);
     if (step > 7)
-        gui->renderTextLine(_("Press a key for") + "  |@R1| " + newConfig.values["r1"], 11, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@R1| " + newConfig.values["r1"], 11, yoffset, XALIGN_CENTER);
     if (step > 8)
-        gui->renderTextLine(_("Press a key for") + "  |@R2| " + newConfig.values["r2"], 12, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press a key for") + "  |@R2| " + newConfig.values["r2"], 12, yoffset, XALIGN_CENTER);
     if (step > 9) {
         if (step == 10) {
             // eat any extraneous events coming in for 1/20 second
@@ -69,10 +69,10 @@ void GuiPadConfig::render() {
         }
         gui->renderTextLine(
                 _("Press any DPAD button (to determine if it's digital or analogue)") + ": " + newConfig.values["dpad"],
-                13, offset, XALIGN_CENTER);
+                13, yoffset, XALIGN_CENTER);
     }
     if (step > 10)
-        gui->renderTextLine(_("Press |@X| to save controller mapping, or |@O| to retry configuration"), 14, offset, XALIGN_CENTER);
+        gui->renderTextLine(_("Press |@X| to save controller mapping, or |@O| to retry configuration"), 14, yoffset, XALIGN_CENTER);
 
     SDL_RenderPresent(renderer);
 }

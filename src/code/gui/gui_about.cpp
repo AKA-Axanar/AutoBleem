@@ -60,7 +60,7 @@ void GuiAbout::render() {
 
     fx.render();
 
-    int offset = 150;
+    int yoffset = 150;
     SDL_Rect rect;
     rect.x = SCREEN_WIDTH/2-100;
     rect.y = 5;
@@ -71,7 +71,7 @@ void GuiAbout::render() {
 
     int line = 1;
     for (const string &s:credits) {
-        gui->renderTextLine(s, line, offset, XALIGN_CENTER, 0, font);
+        gui->renderTextLine(s, line, yoffset, XALIGN_CENTER, 0, font);
         line++;
     }
 
