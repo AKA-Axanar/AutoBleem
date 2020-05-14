@@ -16,7 +16,6 @@
 #include "../engine/scanner.h"
 #include "../engine/padmapper.h"
 #include "gui_sdl_wrapper.h"
-//#include "gui_font_wrapper.h"
 #include "gui_font.h"
 
 #define PCS_DEADZONE     32000
@@ -134,10 +133,12 @@ public:
     // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
     int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
-    static void renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::string & text, SDL_Color textColor,
-                                                          FC_Font_Shared font, XAlignment xAlign, bool background);
+    // if background == true it draws a solid grey box around/behind the text
+    // this routine does not support emoji icons.  text only.
+    static void renderTextOnly_WithColor(int x, int y, const std::string & text, SDL_Color textColor,
+                                         FC_Font_Shared font, XAlignment xAlign, bool background);
 
-    int getCheckIconWidth();    // returns the width of the check/uncheck icon textures
+    int getCheckIconWidth();    // returns the width of the check icon texture  used to compute the x position.
 
     static void splash(const std::string & message);
 

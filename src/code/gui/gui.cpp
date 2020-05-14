@@ -11,19 +11,14 @@
 #include "gui_confirm.h"
 #include <SDL2/SDL_image.h>
 #include "../ver_migration.h"
-#include "../lang.h"
 #include "../launcher/gui_launcher.h"
 #include "gui_padconfig.h"
 #include "gui_padTest.h"
-#include <fstream>
 #include <unistd.h>
-#include "../util.h"
 #include <iostream>
 #include <iomanip>
-#include "../engine/scanner.h"
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
-#include "../environment.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -32,7 +27,6 @@ using namespace nlohmann;
 template<class K, class V, class dummy_compare, class A>
 using my_workaround_fifo_map = fifo_map<K, V, fifo_map_compare<K>, A>;
 using ordered_json = basic_json<my_workaround_fifo_map>;
-
 
 #define RA_PLAYLIST "AutoBleem.lpl"
 
@@ -48,8 +42,6 @@ GuiBase::GuiBase() {
     SDL_InitSubSystem(SDL_INIT_JOYSTICK);
     SDL_InitSubSystem(SDL_INIT_AUDIO);
 
-
-
     window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -60,7 +52,6 @@ GuiBase::GuiBase() {
     SDL_SetWindowGrab(window, SDL_TRUE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
-
 
     TTF_Init();
     sonyFonts.openAllFonts(Env::getSonyFontPath(), renderer);
@@ -165,7 +156,6 @@ void Gui::splash(const string &message) {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->drawText(message);
 }
-
 
 extern "C"
 {
@@ -996,11 +986,13 @@ int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAli
 }
 
 //*******************************
-// Gui::renderTextOnly_WithColorAndBackgroundRect
+// Gui::renderTextOnly_WithColor
+// if background == true it draws a solid grey box around/behind the text
+// this routine does not support emoji icons.  text only.
 //*******************************
-void Gui::renderTextOnly_WithColorAndBackgroundRect(int x, int y, const std::string &text,
-                                                    SDL_Color textColor, FC_Font_Shared font,
-                                                    XAlignment xAlign, bool background) {
+void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
+                                   SDL_Color textColor, FC_Font_Shared font,
+                                   XAlignment xAlign, bool background) {
     auto gui = Gui::getInstance();
     int text_width = FC_GetWidth(font, text.c_str());
     int text_height = FC_GetLineHeight(font);
@@ -1178,7 +1170,7 @@ int Gui::renderTextLineOptions(const string &_text, int line, int offset, XAlign
 //*******************************
 // Gui::renderTextLine
 //*******************************
-int Gui::renderTextLine(const string &text, int line, int offset,  XAlignment xAlign, int xoffset, FC_Font_Shared font) {
+int Gui::renderTextLine(const string &text, int line, int offset, XAlignment xAlign, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;   // default to themeFont
 

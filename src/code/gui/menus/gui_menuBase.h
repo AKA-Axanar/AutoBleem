@@ -62,7 +62,7 @@ public:
     int firstVisibleIndex = 0;      // current visible range on page
     int lastVisibleIndex = 7;       // current visible range on page
     int firstRow = 2;               // row 0 is the title.  this is the first row of the menu item lines
-    int offset = 0;                 // y offset for the line I believe.  set by renderLogo()
+    int offset = 0;                 // y offset for the line (y=fontHeight*line + yoffset).  set by renderLogo()
 
     // this is useful in menus that have blank lines like gui_networkMenu.cpp
     virtual bool skipSelectingThisLineWhenMovingByOne(int index) { return false; }
