@@ -127,7 +127,7 @@ public:
     AllTextOrEmojiTokenInfo getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & text);
 
     // renders/draws the text and emoji icons at the chosen position on the screen
-    void renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
+    void renderAllTokenInfo(FC_Font_Shared font,
                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
     // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
@@ -181,7 +181,7 @@ public:
     FC_Rect FC_getFontRect(FC_Font_Shared font);                           // set rect.h to font height, init rest to 0
     FC_Rect FC_getFontTextRect(FC_Font_Shared font, const char *text);     // get Rect w and h of font text
 
-    void getTextureAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text,
+    void getTextureAndRect(int x, int y, const char *text,
                            FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, FC_Rect *rect);
 
     Uint8 getR(const std::string & val);
@@ -193,7 +193,7 @@ public:
     void criticalException(const std::string & text);
 
     SDL_Shared<SDL_Texture>
-    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, const std::string& themePath, const std::string& defaultPath, const std::string& texname);
+    loadThemeTexture(const std::string& themePath, const std::string& defaultPath, const std::string& texname);
 
     void exportDBToRetroarch();
 

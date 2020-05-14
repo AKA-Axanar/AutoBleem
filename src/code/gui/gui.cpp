@@ -250,7 +250,7 @@ FC_Rect Gui::FC_getFontTextRect(FC_Font_Shared font, const char *text) {
 //*******************************
 // Gui::getTextureAndRect
 //*******************************
-void Gui::getTextureAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text, FC_Font_Shared font,
+void Gui::getTextureAndRect(int x, int y, const char *text, FC_Font_Shared font,
                             SDL_Shared<SDL_Texture> *texture, FC_Rect *rect) {
     int text_width;
     int text_height;
@@ -309,7 +309,7 @@ int Gui::renderLogo(bool small) {
 // Gui::loadThemeTexture
 //*******************************
 SDL_Shared<SDL_Texture>
-Gui::loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, const string& themePath, const string& defaultPath, const string& texname) {
+Gui::loadThemeTexture(const string& themePath, const string& defaultPath, const string& texname) {
     SDL_Shared<SDL_Texture> tex = nullptr;
     if (DirEntry::exists(themePath + themeData.values[texname])) {
         tex = IMG_LoadTexture(renderer, (themePath + themeData.values[texname]).c_str());
@@ -356,8 +356,8 @@ void Gui::loadAssets(bool reloadMusic) {
     logoRect.w = atoi(themeData.values["lw"].c_str());
     logoRect.h = atoi(themeData.values["lh"].c_str());
 
-    backgroundImg = loadThemeTexture(renderer, themePath, defaultPath, "background");
-    logo = loadThemeTexture(renderer, themePath, defaultPath, "logo");
+    backgroundImg = loadThemeTexture(themePath, defaultPath, "background");
+    logo = loadThemeTexture(themePath, defaultPath, "logo");
     if (cfg.inifile.values["jewel"] != "none") {
         if (cfg.inifile.values["jewel"] == "default") {
             cdJewel = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/nofilter.png").c_str());
@@ -370,21 +370,21 @@ void Gui::loadAssets(bool reloadMusic) {
         cdJewel = nullptr;
     }
 
-    buttonTextureMap["O"] = loadThemeTexture(renderer, themePath, defaultPath, "circle");
-    buttonTextureMap["X"] = loadThemeTexture(renderer, themePath, defaultPath, "cross");
-    buttonTextureMap["T"] = loadThemeTexture(renderer, themePath, defaultPath, "triangle");
-    buttonTextureMap["S"] = loadThemeTexture(renderer, themePath, defaultPath, "square");
-    buttonTextureMap["Select"] = loadThemeTexture(renderer, themePath, defaultPath, "select");
-    buttonTextureMap["Start"] = loadThemeTexture(renderer, themePath, defaultPath, "start");
-    buttonTextureMap["L1"] = loadThemeTexture(renderer, themePath, defaultPath, "l1");
-    buttonTextureMap["R1"] = loadThemeTexture(renderer, themePath, defaultPath, "r1");
-    buttonTextureMap["L2"] = loadThemeTexture(renderer, themePath, defaultPath, "l2");
-    buttonTextureMap["R2"] = loadThemeTexture(renderer, themePath, defaultPath, "r2");
-    buttonTextureMap["Check"] = loadThemeTexture(renderer, themePath, defaultPath, "check");
-    buttonTextureMap["Uncheck"] = loadThemeTexture(renderer, themePath, defaultPath, "uncheck");
-    buttonTextureMap["Esc"] = loadThemeTexture(renderer, themePath, defaultPath, "esc");
-    buttonTextureMap["Enter"] = loadThemeTexture(renderer, themePath, defaultPath, "enter");
-    buttonTextureMap["Tab"] = loadThemeTexture(renderer, themePath, defaultPath, "tab");
+    buttonTextureMap["O"] = loadThemeTexture(themePath, defaultPath, "circle");
+    buttonTextureMap["X"] = loadThemeTexture(themePath, defaultPath, "cross");
+    buttonTextureMap["T"] = loadThemeTexture(themePath, defaultPath, "triangle");
+    buttonTextureMap["S"] = loadThemeTexture(themePath, defaultPath, "square");
+    buttonTextureMap["Select"] = loadThemeTexture(themePath, defaultPath, "select");
+    buttonTextureMap["Start"] = loadThemeTexture(themePath, defaultPath, "start");
+    buttonTextureMap["L1"] = loadThemeTexture(themePath, defaultPath, "l1");
+    buttonTextureMap["R1"] = loadThemeTexture(themePath, defaultPath, "r1");
+    buttonTextureMap["L2"] = loadThemeTexture(themePath, defaultPath, "l2");
+    buttonTextureMap["R2"] = loadThemeTexture(themePath, defaultPath, "r2");
+    buttonTextureMap["Check"] = loadThemeTexture(themePath, defaultPath, "check");
+    buttonTextureMap["Uncheck"] = loadThemeTexture(themePath, defaultPath, "uncheck");
+    buttonTextureMap["Esc"] = loadThemeTexture(themePath, defaultPath, "esc");
+    buttonTextureMap["Enter"] = loadThemeTexture(themePath, defaultPath, "enter");
+    buttonTextureMap["Tab"] = loadThemeTexture(themePath, defaultPath, "tab");
 
     string fontPath = (themePath + themeData.values["font"]);
     int fontSize = 0;
@@ -938,7 +938,7 @@ Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_
 // Gui::renderAllTokenInfo
 // renders/draws the text and emoji icons at the chosen position on the screen
 //*******************************
-void Gui::renderAllTokenInfo(SDL_Shared<SDL_Renderer> renderer, FC_Font_Shared font,
+void Gui::renderAllTokenInfo(FC_Font_Shared font,
                              AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign) {
 
     if (!font)
@@ -980,7 +980,7 @@ int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAli
     if (!font)
         font = themeFont;   // default to themeFont
     AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(font, text);
-    renderAllTokenInfo(renderer, themeFont, allTokenInfo, x, y, xAlign);
+    renderAllTokenInfo(themeFont, allTokenInfo, x, y, xAlign);
 
     return allTokenInfo.totalSize.h;    // return the height
 }
@@ -1032,11 +1032,13 @@ void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
     }
 
 #if SDL_VERSION_ATLEAST(2,0,0)
+    if (textColor.a == 0)
+        cout << "alpha in SDL_Color is 0 for text: " << text << endl;
     assert(textColor.a > 0);    // rendering the text will do no good if it's transparent
-    cout << "alpha in SDL_Color is 0 for text: " << text << endl;
 #else
+    if (textColor.unused == 0)
+        cout << "alpha in SDL_Color is 0 for text: " << text << endl;
     assert(textColor.unused > 0);
-    cout << "alpha in SDL_Color is 0 for text: " << text << endl;
 #endif
     FC_DrawColor(font, renderer, x, y, textColor, text.c_str());
 };
