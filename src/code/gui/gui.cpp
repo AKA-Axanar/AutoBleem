@@ -924,6 +924,19 @@ int Gui::getCheckIconWidth() {
 }
 
 //*******************************
+// Gui::align_xPosition
+//*******************************
+int Gui::align_xPosition(XAlignment xAlign, int x, int width) {
+    if (xAlign == XALIGN_CENTER) {
+        x = (SCREEN_WIDTH / 2) - width / 2;
+    } else if (xAlign == XALIGN_RIGHT) {
+        x = SCREEN_WIDTH - x - width;
+    }
+
+    return x;
+}
+
+//*******************************
 // Text tokenizing structure routines
 //*******************************
 
@@ -997,11 +1010,7 @@ void Gui::renderAllTokenInfo(FC_Font_Shared font,
     if (!font)
         font = themeFont;   // default to themeFont
 
-    if (xAlign == XALIGN_CENTER) {
-        x = (SCREEN_WIDTH / 2) - allTokenInfo.totalSize.w / 2;
-    } else if (xAlign == XALIGN_RIGHT) {
-        x = SCREEN_WIDTH - x - allTokenInfo.totalSize.w;
-    }
+    x = align_xPosition(xAlign, x, allTokenInfo.totalSize.w);
 
     // adjust the text y position so the text is centered on the emoji centers
     int fontHeight = FC_GetLineHeight(font);
@@ -1055,11 +1064,7 @@ void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
 
     FC_Rect rect = gui->FC_getFontTextRect(font, text, x, y);
 
-    if (xAlign == XALIGN_CENTER) {
-        rect.x = (SCREEN_WIDTH / 2) - (rect.w / 2);
-    } else if (xAlign == XALIGN_RIGHT) {
-        rect.x = SCREEN_WIDTH - x - rect.w;
-    }
+    x = gui->align_xPosition(xAlign, x, rect.w);
 
     if (background) {
         // render a grey box behind the text

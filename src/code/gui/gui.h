@@ -208,6 +208,7 @@ public:
     FC_Rect getTextRectOfTheme();
 
     int getCheckIconWidth();    // returns the width of the check icon texture.  used to compute the x position.
+    int align_xPosition(XAlignment xAlign, int x, int width);
 
     //*******************************
     // Text tokenizing structure routines
