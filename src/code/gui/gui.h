@@ -241,7 +241,7 @@ public:
 
     // if background == true it draws a solid grey box around/behind the text
     // this routine does not support emoji icons.  text only.
-    static void renderTextOnly_WithColor(int x, int y, const std::string & text, SDL_Color textColor,
+    void renderTextOnly_WithColor(int x, int y, const std::string & text, SDL_Color textColor,
                                          FC_Font_Shared font, XAlignment xAlign, bool background);
 
     // returns rectangle height

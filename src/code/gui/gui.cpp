@@ -1010,7 +1010,8 @@ void Gui::renderAllTokenInfo(FC_Font_Shared font,
     if (!font)
         font = themeFont;   // default to themeFont
 
-    x = align_xPosition(xAlign, x, allTokenInfo.totalSize.w);
+    if (xAlign != XALIGN_LEFT)
+        x = align_xPosition(xAlign, x, allTokenInfo.totalSize.w);
 
     // adjust the text y position so the text is centered on the emoji centers
     int fontHeight = FC_GetLineHeight(font);
@@ -1059,12 +1060,9 @@ void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
     if (font == nullptr || text.size() == 0)
         return;
 
-    auto gui = Gui::getInstance();
-    auto renderer = gui->renderer;
+    FC_Rect rect = FC_getFontTextRect(font, text, x, y);
 
-    FC_Rect rect = gui->FC_getFontTextRect(font, text, x, y);
-
-    x = gui->align_xPosition(xAlign, x, rect.w);
+    x = align_xPosition(xAlign, x, rect.w);
 
     if (background) {
         // render a grey box behind the text
