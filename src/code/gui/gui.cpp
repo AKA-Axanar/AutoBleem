@@ -190,118 +190,28 @@ Uint8 Gui::getB(const string &val) {
 }
 
 //*******************************
-// Gui::getOpscreenRectOfTheme
+// Gui::watchJoystickPort
 //*******************************
-SDL_Rect Gui::getOpscreenRectOfTheme() {
-    SDL_Rect rect;
-    rect.x = atoi(themeData.values["opscreenx"].c_str());
-    rect.y = atoi(themeData.values["opscreeny"].c_str());
-    rect.w = atoi(themeData.values["opscreenw"].c_str());
-    rect.h = atoi(themeData.values["opscreenh"].c_str());
+void Gui::watchJoystickPort() {
 
-    return rect;
-}
-
-//*******************************
-// Gui::getTextRectOfTheme
-//*******************************
-SDL_Rect Gui::getTextRectOfTheme() {
-    SDL_Rect rect;
-    rect.x = atoi(themeData.values["textx"].c_str());
-    rect.y = atoi(themeData.values["texty"].c_str());
-    rect.w = atoi(themeData.values["textw"].c_str());
-    rect.h = atoi(themeData.values["texth"].c_str());
-
-    return rect;
-}
-
-//*******************************
-// Gui::FC_getFontRect
-// set rect.h to font height, init rest to 0
-//*******************************
-FC_Rect Gui::FC_getFontRect(FC_Font_Shared font) {
-    FC_Rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.w = 0;
-    rect.h = FC_GetLineHeight(font);
-
-    return rect;
-}
-
-//*******************************
-// Gui::FC_getFontTextRect
-// get Rect of font text
-//*******************************
-FC_Rect Gui::FC_getFontTextRect(FC_Font_Shared font, const char *text) {
-    FC_Rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    if (text != nullptr)
-        rect.w = FC_GetWidth(font, text);
-    else
-        rect.w = 0;
-    rect.h = FC_GetLineHeight(font);
-
-    return rect;
-
-}
-
-//*******************************
-// Gui::getTextureAndRect
-//*******************************
-void Gui::getTextureAndRect(int x, int y, const char *text, FC_Font_Shared font,
-                            SDL_Shared<SDL_Texture> *texture, FC_Rect *rect) {
-    int text_width;
-    int text_height;
-    SDL_Shared<SDL_Surface> surface;
-    string fg = themeData.values["text_fg"];
-    SDL_Color textColor = {getR(fg), getG(fg), getB(fg), 0};
-
-    if (strlen(text) == 0) {
-        Uint32 pixelFormat = SDL_GetWindowPixelFormat(window);
-        *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, 0, 0);
-        rect->x = 0;
-        rect->y = 0;
-        rect->h = 0;
-        rect->w = 0;
-        return;
-    }
-
-    surface = TTF_RenderUTF8_Blended(get_ttf_source(font), text, textColor);
-    *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    text_width = surface->w;
-    text_height = surface->h;
-    rect->x = x;
-    rect->y = y;
-    rect->w = text_width;
-    rect->h = text_height;
-}
-
-//*******************************
-// Gui::renderBackground
-//*******************************
-void Gui::renderBackground() {
-    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, backgroundImg, nullptr, &backgroundRect);
-}
-
-//*******************************
-// Gui::renderLogo
-//*******************************
-int Gui::renderLogo(bool small) {
-    if (!small) {
-        SDL_RenderCopy(renderer, logo, nullptr, &logoRect);
-        return 0;
-    } else {
-        SDL_Rect rect;
-        rect.x = atoi(themeData.values["opscreenx"].c_str());
-        rect.y = atoi(themeData.values["opscreeny"].c_str());
-        rect.w = logoRect.w / 3;
-        rect.h = logoRect.h / 3;
-        SDL_RenderCopy(renderer, logo, nullptr, &rect);
-        return rect.y + rect.h;
+    int numJoysticks = SDL_NumJoysticks();
+    if (numJoysticks != joysticks.size()) {
+        cout << "Pad changed" << endl;
+        for (SDL_Joystick *joy:joysticks) {
+            if (SDL_JoystickGetAttached(joy)) {
+                SDL_JoystickClose(joy);
+            }
+            joysticks.clear();
+            joynames.clear();
+        }
+        SDL_Joystick *joystick;
+        for (int i = 0; i < SDL_NumJoysticks(); i++) {
+            joystick = SDL_JoystickOpen(i);
+            joysticks.push_back(joystick);
+            joynames.push_back(SDL_JoystickName(joystick));
+            cout << "Pad connected" << endl;
+            cout << "--" << SDL_JoystickName(joystick) << endl;
+        }
     }
 }
 
@@ -878,6 +788,146 @@ void Gui::finish() {
 }
 
 //*******************************
+// Gui::exportDBToRetroarch
+//*******************************
+void Gui::exportDBToRetroarch() {
+    ordered_json j;
+    j["version"]="1.0";
+
+    PsGames gamesList;
+    db->getGames(&gamesList);
+    sort(gamesList.begin(), gamesList.end(), sortByTitle);
+
+    ordered_json items = ordered_json::array();
+    // copy the gamesList into json object
+    for_each(begin(gamesList), end(gamesList), [&](PsGamePtr &game)
+    {
+        ordered_json item = ordered_json::object();
+
+        string gameFile = (game->folder + sep + game->base);
+        if (!DirEntry::matchExtension(game->base, ".pbp")) {
+            gameFile += ".cue";
+        }
+        gameFile += "";
+
+        string base;
+        if (DirEntry::isPBPFile(game->base)) {
+            base = game->base.substr(0, game->base.length() - 4);
+        } else {
+            base = game->base;
+        }
+        if (DirEntry::exists(game->folder + sep + base + ".m3u")) {
+            gameFile = game->folder + sep + base + ".m3u";
+        }
+
+
+        item["path"]=gameFile;
+        item["label"]=game->title;
+        item["core_path"]=Env::getPathToRetroarchCoreFile();
+        item["core_name"]="DETECT";
+        item["crc32"]="00000000|crc";
+        item["db_name"]=RA_PLAYLIST;
+
+        items.push_back(item);
+    });
+
+    j["items"] = items;
+
+    cout << j.dump() << endl;
+    std::ofstream o(Env::getPathToRetroarchDir() + sep + "playlists/" + RA_PLAYLIST);
+    o << std::setw(2) << j << std::endl;
+    o.flush();
+    o.close();
+}
+
+//*******************************
+// Rect and Size routines
+//*******************************
+
+//*******************************
+// Gui::FC_getFontTextSize
+// return FC_Size w of font text and h of font
+//*******************************
+FC_Size Gui::FC_getFontTextSize(FC_Font_Shared font, const char *text) {
+    assert(font != nullptr);
+    FC_Size size;
+    if (font == nullptr || text == nullptr || strlen(text) == 0)
+        size.w = 0;
+    else
+        size.w = FC_GetWidth(font, text);
+    if (font == nullptr)
+        size.h = 0;
+    else
+        size.h = FC_GetLineHeight(font);
+
+    return size;
+}
+
+//*******************************
+// Gui::FC_getFontTextRect
+// return FC_Rect w of font text and h of font
+//*******************************
+FC_Rect Gui::FC_getFontTextRect(FC_Font_Shared font, const char *text, int x, int y) {
+    FC_Size size = FC_getFontTextSize(font, text);
+    FC_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.w = size.w;
+    rect.h = size.h;
+
+    return rect;
+
+}
+
+//*******************************
+// Gui::getOpscreenRectOfTheme
+//*******************************
+SDL_Rect Gui::getOpscreenRectOfTheme() {
+    SDL_Rect rect;
+    rect.x = atoi(themeData.values["opscreenx"].c_str());
+    rect.y = atoi(themeData.values["opscreeny"].c_str());
+    rect.w = atoi(themeData.values["opscreenw"].c_str());
+    rect.h = atoi(themeData.values["opscreenh"].c_str());
+
+    return rect;
+}
+
+//*******************************
+// Gui::getTextRectOfTheme
+//*******************************
+SDL_Rect Gui::getTextRectOfTheme() {
+    SDL_Rect rect;
+    rect.x = atoi(themeData.values["textx"].c_str());
+    rect.y = atoi(themeData.values["texty"].c_str());
+    rect.w = atoi(themeData.values["textw"].c_str());
+    rect.h = atoi(themeData.values["texth"].c_str());
+
+    return rect;
+}
+
+//*******************************
+// Gui::getCheckIconWidth
+// returns the width of the check/uncheck icon textures
+//*******************************
+int Gui::getCheckIconWidth() {
+    int checkIconWidth=0;
+    int checkIconHeight=0;
+    auto it = buttonTextureMap.find("Check");
+    if (it != buttonTextureMap.end()) {
+        SDL_QueryTexture(it->second, nullptr, nullptr, &checkIconWidth, &checkIconHeight);
+    } else {
+        cout << "missing check icon" << endl;
+        assert(false);
+    }
+
+    return checkIconWidth;
+}
+
+//*******************************
+// Text tokenizing structure routines
+//*******************************
+
+//*******************************
 // Gui::getAllTokenInfoForLineOfTextAndEmojis
 // break up the text into tokens of pure text or an emoji icon marker
 // return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
@@ -920,8 +970,7 @@ Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_
                 cout << "emoji not found for " << tokenString << endl;
             }
         } else {
-            tokenInfo.size.w += FC_GetWidth(font, tokenString.c_str());
-            tokenInfo.size.h = FC_GetLineHeight(font);
+            tokenInfo.size = FC_getFontTextSize(font, tokenString);
             // update overall size
             allInfo.totalSize.w += tokenInfo.size.w;
             if (tokenInfo.size.h > allInfo.totalSize.h)
@@ -933,6 +982,10 @@ Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_
 
     return allInfo;
 }
+
+//*******************************
+// Rendering routines
+//*******************************
 
 //*******************************
 // Gui::renderAllTokenInfo
@@ -993,30 +1046,19 @@ int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAli
 void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
                                    SDL_Color textColor, FC_Font_Shared font,
                                    XAlignment xAlign, bool background) {
+    assert(font != nullptr);
+    if (font == nullptr || text.size() == 0)
+        return;
+
     auto gui = Gui::getInstance();
-    int text_width = FC_GetWidth(font, text.c_str());
-    int text_height = FC_GetLineHeight(font);
+    auto renderer = gui->renderer;
+
+    FC_Rect rect = gui->FC_getFontTextRect(font, text, x, y);
 
     if (xAlign == XALIGN_CENTER) {
-        x = (SCREEN_WIDTH / 2) - (text_width / 2);
+        rect.x = (SCREEN_WIDTH / 2) - (rect.w / 2);
     } else if (xAlign == XALIGN_RIGHT) {
-        x = SCREEN_WIDTH - x - text_width;
-    }
-
-    SDL_Rect rect{0, 0, 0, 0};
-
-    auto renderer = Gui::getInstance()->renderer;
-
-    if (text.size() == 0) {
-        rect.x = 0;
-        rect.y = 0;
-        rect.h = 0;
-        rect.w = 0;
-    } else {
-        rect.x = x;
-        rect.y = y;
-        rect.w = text_width;
-        rect.h = text_height;
+        rect.x = SCREEN_WIDTH - x - rect.w;
     }
 
     if (background) {
@@ -1042,132 +1084,6 @@ void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
 #endif
     FC_DrawColor(font, renderer, x, y, textColor, text.c_str());
 };
-
-//*******************************
-// Gui::getCheckIconWidth
-// returns the width of the check/uncheck icon textures
-//*******************************
-int Gui::getCheckIconWidth() {
-    int checkIconWidth=0;
-    int checkIconHeight=0;
-    auto it = buttonTextureMap.find("Check");
-    if (it != buttonTextureMap.end()) {
-        SDL_QueryTexture(it->second, nullptr, nullptr, &checkIconWidth, &checkIconHeight);
-    } else {
-        cout << "missing check icon" << endl;
-        assert(false);
-    }
-
-    return checkIconWidth;
-}
-
-//*******************************
-// Gui::renderStatus
-//*******************************
-void Gui::renderStatus(const string &text, int posy) {
-    string bg = themeData.values["text_bg"];
-
-    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["textalpha"].c_str()));
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_Rect rect = getTextRectOfTheme();
-    SDL_RenderFillRect(renderer, &rect);
-
-    int y = atoi(themeData.values["ttop"].c_str());
-    if (posy!=-1)
-        y=posy; // override the bottom status y position.  so far this has never been used.
-
-    renderText(themeFont, text, 0, y, XALIGN_CENTER);
-}
-
-//*******************************
-// Gui::drawText
-//*******************************
-void Gui::drawText(const string &text) {
-    renderBackground();
-    renderLogo(false);
-    renderStatus(text);
-    SDL_RenderPresent(renderer);
-}
-
-//*******************************
-// Gui::renderLabelBox
-//*******************************
-void Gui::renderLabelBox(int line, int yoffset) {
-    string bg = themeData.values["label_bg"];
-    Uint16 fontHeight = FC_GetLineHeight(themeFont);
-    SDL_Rect opscreen = getOpscreenRectOfTheme();
-    SDL_Rect rectSelection;
-    rectSelection.x = opscreen.x + 5;
-    rectSelection.y = yoffset + fontHeight * (line);
-    rectSelection.w = opscreen.w - 10;
-    rectSelection.h = fontHeight;
-
-    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["keyalpha"].c_str()));
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_RenderFillRect(renderer, &rectSelection);
-}
-
-//*******************************
-// Gui::renderSelectionBox
-//*******************************
-void Gui::renderSelectionBox(int line, int yoffset, int xoffset, FC_Font_Shared font) {
-    SDL_Shared<SDL_Texture> textTex;
-    if (!font)
-        font = themeFont;
-
-    string fg = themeData.values["text_fg"];
-    Uint16 fontHeight = FC_GetLineHeight(font);
-    SDL_Rect opscreen = getOpscreenRectOfTheme();
-    SDL_Rect rectSelection;
-    rectSelection.x = opscreen.x + 5 + xoffset;
-    rectSelection.y = yoffset + fontHeight * (line);
-    rectSelection.w = opscreen.w - 10 - xoffset;
-    rectSelection.h = fontHeight;
-
-    SDL_SetRenderDrawColor(renderer, getR(fg), getG(fg), getB(fg), 255);
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_RenderDrawRect(renderer, &rectSelection);
-}
-
-//*******************************
-// Gui::renderTextLineOptions
-//*******************************
-int Gui::renderTextLineOptions(const string &_text, int line, int yoffset, XAlignment xAlign, int xoffset) {
-    string text = _text;
-
-    // if there is a check or uncheck icon, flag which one and remove the emoji toekn from the string
-    int button = -1;
-    if (text.find("|@Check|") != std::string::npos) {
-        button = 1;
-    }
-    if (text.find("|@Uncheck|") != std::string::npos) {
-        button = 0;
-    }
-    if (button != -1) {
-        text = text.substr(0, text.find("|"));
-    }
-
-    // render the text string without the check/uncheck icon
-    int h = renderTextLine(text, line, yoffset, xAlign, xoffset);
-
-    if (button == -1) {
-        return h;   // there is no check/uncheck emoji on this line
-    }
-
-    // render the check/uncheck icon on the right side of opscreen
-    SDL_Rect opscreen = getOpscreenRectOfTheme();
-    Uint16 fontHeight = FC_GetLineHeight(themeFont);
-
-    int x = opscreen.x + opscreen.w - 10 - getCheckIconWidth();
-    int y = (fontHeight * line) + yoffset;
-    if (button == 1) {
-        renderText(themeFont, "|@Check|", x, y);
-    } else if (button == 0) {
-        renderText(themeFont, "|@Uncheck|", x, y);
-    }
-
-    return h;
-}
 
 //*******************************
 // Gui::renderTextLine
@@ -1225,10 +1141,90 @@ int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight
                                  int xLeft, int xRight,
                                  int line, int yoffset, FC_Font_Shared font) {
 
-            renderTextLine(textLeft,  line, yoffset, XALIGN_LEFT, xLeft, font);
+    renderTextLine(textLeft,  line, yoffset, XALIGN_LEFT, xLeft, font);
     int h = renderTextLine(textRight, line, yoffset, XALIGN_LEFT, xRight, font);
 
     return h;   // rectangle height
+}
+
+//*******************************
+// Gui::renderTextLineOptions
+//*******************************
+int Gui::renderTextLineOptions(const string &_text, int line, int yoffset, XAlignment xAlign, int xoffset) {
+    string text = _text;
+
+    // if there is a check or uncheck icon, flag which one and remove the emoji toekn from the string
+    int button = -1;
+    if (text.find("|@Check|") != std::string::npos) {
+        button = 1;
+    }
+    if (text.find("|@Uncheck|") != std::string::npos) {
+        button = 0;
+    }
+    if (button != -1) {
+        text = text.substr(0, text.find("|"));
+    }
+
+    // render the text string without the check/uncheck icon
+    int h = renderTextLine(text, line, yoffset, xAlign, xoffset);
+
+    if (button == -1) {
+        return h;   // there is no check/uncheck emoji on this line
+    }
+
+    // render the check/uncheck icon on the right side of opscreen
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
+
+    int x = opscreen.x + opscreen.w - 10 - getCheckIconWidth();
+    int y = (fontHeight * line) + yoffset;
+    if (button == 1) {
+        renderText(themeFont, "|@Check|", x, y);
+    } else if (button == 0) {
+        renderText(themeFont, "|@Uncheck|", x, y);
+    }
+
+    return h;
+}
+
+//*******************************
+// Gui::renderSelectionBox
+//*******************************
+void Gui::renderSelectionBox(int line, int yoffset, int xoffset, FC_Font_Shared font) {
+    SDL_Shared<SDL_Texture> textTex;
+    if (!font)
+        font = themeFont;
+
+    string fg = themeData.values["text_fg"];
+    Uint16 fontHeight = FC_GetLineHeight(font);
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
+    SDL_Rect rectSelection;
+    rectSelection.x = opscreen.x + 5 + xoffset;
+    rectSelection.y = yoffset + fontHeight * (line);
+    rectSelection.w = opscreen.w - 10 - xoffset;
+    rectSelection.h = fontHeight;
+
+    SDL_SetRenderDrawColor(renderer, getR(fg), getG(fg), getB(fg), 255);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_RenderDrawRect(renderer, &rectSelection);
+}
+
+//*******************************
+// Gui::renderLabelBox
+//*******************************
+void Gui::renderLabelBox(int line, int yoffset) {
+    string bg = themeData.values["label_bg"];
+    Uint16 fontHeight = FC_GetLineHeight(themeFont);
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
+    SDL_Rect rectSelection;
+    rectSelection.x = opscreen.x + 5;
+    rectSelection.y = yoffset + fontHeight * (line);
+    rectSelection.w = opscreen.w - 10;
+    rectSelection.h = fontHeight;
+
+    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["keyalpha"].c_str()));
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_RenderFillRect(renderer, &rectSelection);
 }
 
 //*******************************
@@ -1238,6 +1234,91 @@ void Gui::renderTextChar(const string &text, int line, int yoffset, int x) {
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
     int y = (fontHeight * line) + yoffset;
     FC_DrawAlign(themeFont, renderer, x, y, FC_ALIGN_LEFT, text.c_str());
+}
+
+//*******************************
+// Gui::renderFreeSpace
+//*******************************
+void Gui::renderFreeSpace() {
+    int x = atoi(themeData.values["fsposx"].c_str());
+    int y = atoi(themeData.values["fsposy"].c_str());
+    renderText(themeFont, _("Free space") + " : " + Util::getAvailableSpace(), x, y);
+}
+
+//*******************************
+// Gui::getTextureAndRect
+//*******************************
+void Gui::getTextureAndRect(int x, int y, const char *text, FC_Font_Shared font,
+                            SDL_Shared<SDL_Texture> *texture, FC_Rect *rect) {
+    int text_width;
+    int text_height;
+    SDL_Shared<SDL_Surface> surface;
+    string fg = themeData.values["text_fg"];
+    SDL_Color textColor = {getR(fg), getG(fg), getB(fg), 0};
+
+    if (strlen(text) == 0) {
+        Uint32 pixelFormat = SDL_GetWindowPixelFormat(window);
+        *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, 0, 0);
+        rect->x = 0;
+        rect->y = 0;
+        rect->h = 0;
+        rect->w = 0;
+        return;
+    }
+
+    surface = TTF_RenderUTF8_Blended(get_ttf_source(font), text, textColor);
+    *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    text_width = surface->w;
+    text_height = surface->h;
+    rect->x = x;
+    rect->y = y;
+    rect->w = text_width;
+    rect->h = text_height;
+}
+
+//*******************************
+// Gui::renderBackground
+//*******************************
+void Gui::renderBackground() {
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, backgroundImg, nullptr, &backgroundRect);
+}
+
+//*******************************
+// Gui::renderLogo
+//*******************************
+int Gui::renderLogo(bool small) {
+    if (!small) {
+        SDL_RenderCopy(renderer, logo, nullptr, &logoRect);
+        return 0;
+    } else {
+        SDL_Rect rect;
+        rect.x = atoi(themeData.values["opscreenx"].c_str());
+        rect.y = atoi(themeData.values["opscreeny"].c_str());
+        rect.w = logoRect.w / 3;
+        rect.h = logoRect.h / 3;
+        SDL_RenderCopy(renderer, logo, nullptr, &rect);
+        return rect.y + rect.h;
+    }
+}
+
+//*******************************
+// Gui::renderStatus
+//*******************************
+void Gui::renderStatus(const string &text, int posy) {
+    string bg = themeData.values["text_bg"];
+
+    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["textalpha"].c_str()));
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_Rect rect = getTextRectOfTheme();
+    SDL_RenderFillRect(renderer, &rect);
+
+    int y = atoi(themeData.values["ttop"].c_str());
+    if (posy!=-1)
+        y=posy; // override the bottom status y position.  so far this has never been used.
+
+    renderText(themeFont, text, 0, y, XALIGN_CENTER);
 }
 
 //*******************************
@@ -1254,86 +1335,11 @@ void Gui::renderTextBar() {
 }
 
 //*******************************
-// Gui::renderFreeSpace
+// Gui::drawText
 //*******************************
-void Gui::renderFreeSpace() {
-    int x = atoi(themeData.values["fsposx"].c_str());
-    int y = atoi(themeData.values["fsposy"].c_str());
-    renderText(themeFont, _("Free space") + " : " + Util::getAvailableSpace(), x, y);
-}
-
-//*******************************
-// Gui::watchJoystickPort
-//*******************************
-void Gui::watchJoystickPort() {
-
-    int numJoysticks = SDL_NumJoysticks();
-    if (numJoysticks != joysticks.size()) {
-        cout << "Pad changed" << endl;
-        for (SDL_Joystick *joy:joysticks) {
-            if (SDL_JoystickGetAttached(joy)) {
-                SDL_JoystickClose(joy);
-            }
-            joysticks.clear();
-            joynames.clear();
-        }
-        SDL_Joystick *joystick;
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            joystick = SDL_JoystickOpen(i);
-            joysticks.push_back(joystick);
-            joynames.push_back(SDL_JoystickName(joystick));
-            cout << "Pad connected" << endl;
-            cout << "--" << SDL_JoystickName(joystick) << endl;
-        }
-    }
-}
-
-void Gui::exportDBToRetroarch() {
-    ordered_json j;
-    j["version"]="1.0";
-
-    PsGames gamesList;
-    db->getGames(&gamesList);
-    sort(gamesList.begin(), gamesList.end(), sortByTitle);
-
-    ordered_json items = ordered_json::array();
-    // copy the gamesList into json object
-    for_each(begin(gamesList), end(gamesList), [&](PsGamePtr &game)
-    {
-        ordered_json item = ordered_json::object();
-
-        string gameFile = (game->folder + sep + game->base);
-        if (!DirEntry::matchExtension(game->base, ".pbp")) {
-            gameFile += ".cue";
-        }
-        gameFile += "";
-
-        string base;
-        if (DirEntry::isPBPFile(game->base)) {
-            base = game->base.substr(0, game->base.length() - 4);
-        } else {
-            base = game->base;
-        }
-        if (DirEntry::exists(game->folder + sep + base + ".m3u")) {
-            gameFile = game->folder + sep + base + ".m3u";
-        }
-
-
-        item["path"]=gameFile;
-        item["label"]=game->title;
-        item["core_path"]=Env::getPathToRetroarchCoreFile();
-        item["core_name"]="DETECT";
-        item["crc32"]="00000000|crc";
-        item["db_name"]=RA_PLAYLIST;
-
-        items.push_back(item);
-    });
-
-    j["items"] = items;
-
-    cout << j.dump() << endl;
-    std::ofstream o(Env::getPathToRetroarchDir() + sep + "playlists/" + RA_PLAYLIST);
-    o << std::setw(2) << j << std::endl;
-    o.flush();
-    o.close();
+void Gui::drawText(const string &text) {
+    renderBackground();
+    renderLogo(false);
+    renderStatus(text);
+    SDL_RenderPresent(renderer);
 }
