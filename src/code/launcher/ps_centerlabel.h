@@ -22,6 +22,6 @@ public:
 
     void setText(const std::string & _text, SDL_Color _textColor);
 
-    PsCenterLabel(SDL_Shared<SDL_Renderer> renderer1, const std::string & name1, const std::string & texPath = "");
+    PsCenterLabel(const std::string & name1, const std::string & texPath = "");
     ~PsCenterLabel();
 };
