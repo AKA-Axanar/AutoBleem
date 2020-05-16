@@ -242,7 +242,7 @@ public:
     // if background == true it draws a solid grey box around/behind the text
     // this routine does not support emoji icons.  text only.
     void renderTextOnly_WithColor(int x, int y, const std::string & text, SDL_Color textColor,
-                                         FC_Font_Shared font, XAlignment xAlign, bool background);
+                                         FC_Font_Shared font, XAlignment xAlign = XALIGN_LEFT, bool background = false);
 
     // returns rectangle height
     int renderTextLine(const std::string & text, int line, int yoffset = 0,

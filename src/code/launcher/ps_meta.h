@@ -26,13 +26,7 @@ public:
     std::string region;
     std::string last_played;
     Fonts fonts;
-
-    SDL_Shared<SDL_Texture> discsTex;
-    SDL_Shared<SDL_Texture> gameNameTex;
-    SDL_Shared<SDL_Texture> publisherAndYearTex;
-    SDL_Shared<SDL_Texture> serialAndRegionTex;
-    SDL_Shared<SDL_Texture> playersTex;
-    SDL_Shared<SDL_Texture> datePlayedTex;
+    SDL_Color textColor;
 
     SDL_Shared<SDL_Texture> internalOnTex;
     SDL_Shared<SDL_Texture> internalOffTex;
@@ -52,7 +46,7 @@ public:
     bool internal = false;
     bool hd = false;
     bool locked = false;
-    bool discs = 1;
+    int discs = 1;
     bool favorite = false;
     bool foreign = false;
     bool app = false;
@@ -61,9 +55,9 @@ public:
                      const std::string & yearTxt, const std::string & serial, const std::string & region,
                      const std::string & playersTxt, bool internal, bool hd, bool locked, int discs, bool favorite,
                      bool foreign, bool app, const std::string& last_played,
-                     int r, int g, int b);
+                     SDL_Color _textColor);
 
-    void updateTexts(PsGamePtr & game, int r, int g, int b);
+    void updateTexts(PsGamePtr & game, SDL_Color _textColor);
 
     void destroy();
 
@@ -72,6 +66,4 @@ public:
     void update(long time);
 
     using PsObj::PsObj;
-private:
-    SDL_Shared<SDL_Texture> createTextTex(const std::string & text, Uint8 r, Uint8 g, Uint8 b, FC_Font_Shared font);
 };

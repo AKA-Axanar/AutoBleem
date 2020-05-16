@@ -25,11 +25,11 @@ void GuiLauncher::updateMeta() {
     if (carouselGames.empty()) {
         gameName = "";
         meta->updateTexts(gameName, publisher, year, serial, region, players, false, false, false, 0, false, false,
-                          false, "", fgR, fgG, fgB);
+                          false, "", { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
         return;
     }
     if (selGameIndexInCarouselGamesIsValid())
-        meta->updateTexts(carouselGames[selGameIndex], fgR, fgG, fgB);
+        meta->updateTexts(carouselGames[selGameIndex], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
 }
 
 //*******************************
@@ -430,11 +430,11 @@ void GuiLauncher::loadAssets() {
     meta->y = 285;
     meta->visible = true;
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
-        meta->updateTexts(carouselGames[selGameIndex], fgR, fgG, fgB);
+        meta->updateTexts(carouselGames[selGameIndex], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
     } else {
         meta->updateTexts(gameName, publisher, year, serial, region, players,
                           false, false, false, 0, false, false, false, "",
-                          fgR, fgG, fgB);
+                          { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
     }
     staticElements.push_back(meta);
 
