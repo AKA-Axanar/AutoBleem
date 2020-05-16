@@ -1056,9 +1056,8 @@ int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAli
 void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
                                    SDL_Color textColor, FC_Font_Shared font,
                                    XAlignment xAlign, bool background) {
-    assert(font != nullptr);
-    if (font == nullptr || text.size() == 0)
-        return;
+    if (!font)
+        font = themeFont;
 
     FC_Rect rect = FC_getFontTextRect(font, text, x, y);
 

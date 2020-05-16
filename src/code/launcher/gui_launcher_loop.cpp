@@ -167,8 +167,8 @@ void GuiLauncher::loop_joyMoveLeft() {
                     menu->transition = TR_OPTION;
                     menu->direction = 0;
                     menu->duration = 100;
-                    menuHead->setText(headers[menu->selOption - 1], fgR, fgG, fgB);
-                    menuText->setText(texts[menu->selOption - 1], fgR, fgG, fgB);
+                    menuHead->setText(headers[menu->selOption - 1], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+                    menuText->setText(texts[menu->selOption - 1], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
                     menu->animationStarted = time;
                 }
             }
@@ -205,8 +205,8 @@ void GuiLauncher::loop_joyMoveRight() {
                     menu->transition = TR_OPTION;
                     menu->direction = 1;
                     menu->duration = 100;
-                    menuHead->setText(headers[menu->selOption + 1], fgR, fgG, fgB);
-                    menuText->setText(texts[menu->selOption + 1], fgR, fgG, fgB);
+                    menuHead->setText(headers[menu->selOption + 1], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+                    menuText->setText(texts[menu->selOption + 1], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
                     menu->animationStarted = time;
                 }
             }
@@ -494,8 +494,8 @@ void GuiLauncher::loop_chooseGameDir() {
     if (cancelled)
         return;
     switchSet(currentSet,true);
-    menuHead->setText(headers[0], fgR, fgG, fgB);
-    menuText->setText(texts[0], fgR, fgG, fgB);
+    menuHead->setText(headers[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+    menuText->setText(texts[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
     showSetName();
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         updateMeta();
@@ -544,8 +544,8 @@ void GuiLauncher::loop_chooseRAPlaylist() {
     currentRAPlaylistName = raPlaylists[selected];
     currentSet = SET_RETROARCH;
     switchSet(currentSet,false);
-    menuHead->setText(headers[0], fgR, fgG, fgB);
-    menuText->setText(texts[0], fgR, fgG, fgB);
+    menuHead->setText(headers[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+    menuText->setText(texts[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
     showSetName();
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         updateMeta();
@@ -576,8 +576,8 @@ void GuiLauncher::loop_selectButton_Pressed() {
             currentSet++;
             if (previousSet == SET_APPS) {
                 showAllOptions();
-                menuHead->setText(headers[0], fgR, fgG, fgB);
-                menuText->setText(texts[0], fgR, fgG, fgB);
+                menuHead->setText(headers[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+                menuText->setText(texts[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
             }
 
             if (currentSet > SET_LAST) currentSet = 0;

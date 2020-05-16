@@ -475,8 +475,8 @@ void GuiLauncher::loadAssets() {
     menuText->font = gui->themeFonts[FONT_22_MED];
     menuText->y = 585;
 
-    menuHead->setText(headers[0], fgR, fgG, fgB);
-    menuText->setText(texts[0], fgR, fgG, fgB);
+    menuHead->setText(headers[0], { fgR, fgG, fgB,SDL_ALPHA_OPAQUE });
+    menuText->setText(texts[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
 
     staticElements.push_back(menuHead);
     staticElements.push_back(menuText);
