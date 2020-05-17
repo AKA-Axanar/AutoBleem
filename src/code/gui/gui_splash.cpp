@@ -23,19 +23,10 @@ void GuiSplash::render() {
     gui->backgroundRect.h = h;
     SDL_QueryTexture(gui->logo, NULL, NULL, &w, &h);
 
-    SDL_Shared<SDL_Texture> textTex;
-    SDL_Rect textRec;
-    string splashText = _("AutoBleem")+" " + gui->cfg.inifile.values["version"];
-
-    gui->getEmojiTextTexture(renderer, splashText.c_str(), gui->themeFont, &textTex, &textRec);
-    int screencenter = 1280 / 2;
-    textRec.x = screencenter - (textRec.w / 2);
-    textRec.y = atoi(gui->themeData.values["ttop"].c_str());
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(renderer);
     SDL_SetTextureAlphaMod(gui->backgroundImg, alpha);
     SDL_SetTextureAlphaMod(gui->logo, alpha);
-    SDL_SetTextureAlphaMod(textTex, alpha);
     Mix_VolumeMusic(alpha / 3);
 
     SDL_RenderCopy(renderer, gui->backgroundImg, NULL, &gui->backgroundRect);
@@ -47,14 +38,13 @@ void GuiSplash::render() {
 
     SDL_SetRenderDrawColor(renderer, gui->getR(bg), gui->getG(bg), gui->getB(bg), bg_alpha);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_Rect rect;
-    rect.x = atoi(gui->themeData.values["textx"].c_str());
-    rect.y = atoi(gui->themeData.values["texty"].c_str());
-    rect.w = atoi(gui->themeData.values["textw"].c_str());
-    rect.h = atoi(gui->themeData.values["texth"].c_str());
+    SDL_Rect rect = gui->getTextRectOfTheme();
     SDL_RenderFillRect(renderer, &rect);
 
-    SDL_RenderCopy(renderer, textTex, NULL, &textRec);
+    int y = atoi(gui->themeData.values["ttop"].c_str());
+    string splashText = _("AutoBleem")+" " + gui->cfg.inifile.values["version"];
+    gui->renderText(gui->themeFont, splashText, 0, y, XALIGN_CENTER);
+
     SDL_RenderPresent(renderer);
 }
 

@@ -21,7 +21,7 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
                          const string & serial, const string & region, const string & playersTxt, bool internal,
                          bool hd, bool locked, int discs, bool favorite,  bool foreign, bool app,
                          const string& last_played,
-                         int r,int g, int b) {
+                         SDL_Color _textColor) {
     this->discs = discs;
     this->internal = internal;
     this->hd = hd;
@@ -36,32 +36,20 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
     this->foreign = foreign;
     this->app = app;
     this->last_played = last_played;
+    textColor = _textColor;
+    textColor.a = SDL_ALPHA_OPAQUE; // if you're rendering with a different color you need this or it will be transparent
 
-    gameNameTex = createTextTex(gameName, r,g,b, fonts[FONT_28_BOLD]);
-    publisherAndYearTex = createTextTex(publisher + ", " + year, r,g,b, fonts[FONT_15_BOLD]);
-    if (serial != "")
-        serialAndRegionTex = createTextTex(_("Serial:") + " " + serial + ", " + _("Region:") + " " + region, r,g,b, fonts[FONT_15_BOLD]);
-	else
-        serialAndRegionTex = createTextTex("", r,g,b, fonts[FONT_15_BOLD]);
-    playersTex = createTextTex(playersTxt, r,g,b, fonts[FONT_15_BOLD]);
-    discsTex = createTextTex(to_string(discs), r,g,b, fonts[FONT_15_BOLD]);
-    datePlayedTex = createTextTex(_("Last Played:") + " " + last_played, r,g,b, fonts[FONT_15_BOLD]);
-
-    if (foreign)
-    {
+    if (foreign) {
         trim(publisher);
         if (publisher=="DETECT")
-        {
             publisher = _("Unknown Core (AutoDetect)");
-        }
-        publisherAndYearTex = createTextTex(publisher, r,g,b, fonts[FONT_15_BOLD]);
     }
 }
 
 //*******************************
 // PsMeta::updateTexts
 //*******************************
-void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
+void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
     string appendText = psGame->players == 1 ? _("Player") : _("Players");
     if (!psGame->foreign) {
         if (psGame->serial == "") {
@@ -74,7 +62,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
                     to_string(psGame->players) + " " + appendText,
                     psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
                     psGame->foreign, psGame->app, UtilTime::timeToDisplayTimeString(psGame->last_played),
-                    r, g, b);
+                    _textColor);
     } else
     {
         if (psGame->app)
@@ -86,7 +74,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
                         psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
-                        r, g, b);
+                        _textColor);
         } else {
             psGame->serial = "";
             psGame->region = "";
@@ -95,7 +83,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
                         psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
-                        r, g, b);
+                        _textColor);
         }
     }
 }
@@ -135,95 +123,48 @@ void PsMeta::render() {
         SDL_Rect rect;
         SDL_Rect fullRect;
 
+        auto nameFont = fonts[FONT_28_BOLD];
+        auto otherFont = fonts[FONT_15_BOLD];
+
         int yOffset = 0;
         // game name line
-        {
-            SDL_QueryTexture(gameNameTex, &format, &access, &w, &h);
-            rect.x = x;
-            rect.y = y + yOffset;
-            rect.w = w;
+        // if the game name goes off the end of the screen use a smaller font
+        int textWidth = FC_GetWidth(nameFont, gameName.c_str());
+        if (x + textWidth > SCREEN_WIDTH) {
+            int miniMe = 28.0 * ((float)(SCREEN_WIDTH - x) / (float)(textWidth)) + 0.5;
+            nameFont = Fonts::openSpecificSharedCachedFont(FONT_BOLD, miniMe);
 
-            if (rect.w > 490) rect.w = 490;
-            rect.h = h;
-            fullRect.x = 0;
-            fullRect.y = 0;
-            fullRect.w = w;
-            fullRect.h = h;
-            SDL_RenderCopy(renderer, gameNameTex, &fullRect, &rect);
+            // if it's still a bit over the right edge go down one more font size
+            textWidth = FC_GetWidth(nameFont, gameName.c_str());
+            if (x + textWidth > SCREEN_WIDTH) {
+                --miniMe;
+                nameFont = Fonts::openSpecificSharedCachedFont(FONT_BOLD, miniMe);
+            }
         }
+        gui->renderText(nameFont, gameName, x, y + yOffset);
 
         yOffset += 35;
         // publisher line
-        {
-            SDL_QueryTexture(publisherAndYearTex, &format, &access, &w, &h);
-
-            rect.x = x;
-            rect.y = y + yOffset;
-            rect.w = w;
-            rect.h = h;
-
-            fullRect.x = 0;
-            fullRect.y = 0;
-            fullRect.w = w;
-            fullRect.h = h;
-            SDL_RenderCopy(renderer, publisherAndYearTex, &fullRect, &rect);
-        }
+        gui->renderText(otherFont, publisher, x, y + yOffset);
 
         yOffset += 21;
         // serial number line
-        SDL_QueryTexture(serialAndRegionTex, &format, &access, &w, &h);
-
-        rect.x = x;
-        rect.y = y + yOffset;
-        rect.w = w;
-        rect.h = h;
-
-        fullRect.x = 0;
-        fullRect.y = 0;
-        fullRect.w = w;
-        fullRect.h = h;
-        SDL_RenderCopy(renderer, serialAndRegionTex, &fullRect, &rect);
-
+        gui->renderText(otherFont, _("Serial:") + " " + serial + ", " + _("Region:") + " " + region, x, y + yOffset);
 
         yOffset += 21;
         // last played line
-        {
-            SDL_QueryTexture(datePlayedTex, &format, &access, &w, &h);
-
-            rect.x = x;
-            rect.y = y + yOffset;
-            rect.w = w;
-            rect.h = h;
-
-            fullRect.x = 0;
-            fullRect.y = 0;
-            fullRect.w = w;
-            fullRect.h = h;
-            if (!foreign) {     // if not RA
 #if defined(__x86_64__) || defined(_M_X64)
-                // the devel system has time
-                SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+        // the devel system has time
+        gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #else
-                if (Env::autobleemKernel)
-                    SDL_RenderCopy(renderer, datePlayedTex, &fullRect, &rect);
+        if (Env::autobleemKernel)
+            gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #endif
-            }
-        }
 
         yOffset += 22;
         if (!foreign) {
             // PS1 icons line
-            SDL_QueryTexture(playersTex, &format, &access, &w, &h);
-            rect.x = x + 35;
-            rect.y = y + yOffset;
-            rect.w = w;
-            rect.h = h;
-
-            fullRect.x = 0;
-            fullRect.y = 0;
-            fullRect.w = w;
-            fullRect.h = h;
-            SDL_RenderCopy(renderer, playersTex, &fullRect, &rect);
+            gui->renderText(otherFont, players, x + 35, y + yOffset);
 
             SDL_QueryTexture(tex, &format, &access, &w, &h);
             rect.x = x;
@@ -237,24 +178,14 @@ void PsMeta::render() {
             fullRect.h = h;
             SDL_RenderCopy(renderer, tex, &fullRect, &rect);
 
-            int offset = 190, spread = 40;
+            int xoffset = 190, spread = 40;
             // render internal icon
             rect.x = x + 135;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
 
-            SDL_QueryTexture(discsTex, &format, &access, &w, &h);
-            rect.x = x + 170;
-            rect.y = y + yOffset;
-            rect.w = w;
-            rect.h = h;
+            gui->renderText(otherFont, to_string(discs), x + 170, y + yOffset);
 
-            fullRect.x = 0;
-            fullRect.y = 0;
-            fullRect.w = w;
-            fullRect.h = h;
-            SDL_RenderCopy(renderer, discsTex, &fullRect, &rect);
-
-            rect.x = x + offset;
+            rect.x = x + xoffset;
             rect.y = y + yOffset - 2;
             rect.w = 30;
             rect.h = 30;
@@ -270,24 +201,23 @@ void PsMeta::render() {
             } else {
                 SDL_RenderCopy(renderer, internalOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread;
+            rect.x = x + xoffset + spread;
             if (hd) {
                 SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
             } else {
                 SDL_RenderCopy(renderer, hdOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread * 2;
+            rect.x = x + xoffset + spread * 2;
             if (locked) {
                 SDL_RenderCopy(renderer, lockOnTex, &fullRect, &rect);
             } else {
                 SDL_RenderCopy(renderer, lockOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread * 3;
+            rect.x = x + xoffset + spread * 3;
             if (favorite) {
                 SDL_RenderCopy(renderer, favoriteTex, &fullRect, &rect);
             }
-        } else
-        {
+        } else {
             // retroarch icon
             if (!app) {
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
@@ -303,28 +233,7 @@ void PsMeta::render() {
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
             }
         }
-
     }
-}
-
-//*******************************
-// PsMeta::createTextTex
-//*******************************
-SDL_Shared<SDL_Texture> PsMeta::createTextTex(const string & text, Uint8 r, Uint8 g, Uint8 b, TTF_Font_Shared font) {
-
-    SDL_Shared<SDL_Surface> surface;
-    SDL_Shared<SDL_Texture> texture;
-    SDL_Color textColor = {r, g, b, 0};
-
-    if (text.size() == 0) {
-        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 0, 0);
-
-    } else {
-        surface = TTF_RenderUTF8_Blended(font, text.c_str(), textColor);
-        texture = SDL_CreateTextureFromSurface(renderer, surface);
-    }
-
-    return texture;
 }
 
 //*******************************

@@ -16,7 +16,6 @@
 #include "../engine/scanner.h"
 #include "../engine/padmapper.h"
 #include "gui_sdl_wrapper.h"
-//#include "gui_font_wrapper.h"
 #include "gui_font.h"
 
 #define PCS_DEADZONE     32000
@@ -37,9 +36,10 @@ enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_
 #define EMU_RETROARCH     1
 #define EMU_LAUNCHER      2
 
-#define POS_LEFT 0
-#define POS_CENTER 1
-#define POS_RIGHT 2
+#define SCREEN_WIDTH  1280
+#define SCREEN_HEIGHT 720
+
+enum XAlignment { XALIGN_LEFT, XALIGN_CENTER, XALIGN_RIGHT };
 
 // if you add a new set also update setNames in gui_launcher.cpp
 #define SET_PS1      0
@@ -77,12 +77,15 @@ public:
 //********************
 class Gui : public GuiBase {
 private:
-
     Gui() { mapper.init(); }
 
     string themePath;
 
 public:
+    //*******************************
+    // Member Variables
+    //*******************************
+
     std::vector<SDL_Joystick *> joysticks;
 
     int _cb(int button, SDL_Event *e);
@@ -96,75 +99,6 @@ public:
     // db and internalDB are set in main.cpp and remain alive until exit
     Database *db = nullptr;
     Database *internalDB = nullptr;
-
-    void watchJoystickPort();
-
-    void loadAssets(bool reloadMusic = true);
-
-    void display(bool forceScan, const std::string &_pathToGamesDir, Database *db, bool resume);
-
-    void waitForGamepad();
-
-    void finish();
-
-    void drawText(const std::string & text);
-
-    void getEmojiTextTexture(SDL_Shared<SDL_Renderer> renderer, std::string text,
-                             TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
-
-    static void splash(const std::string & message);
-
-    void menuSelection();
-
-    void saveSelection();
-
-    void renderBackground();
-
-    int renderLogo(bool small);
-
-    void renderStatus(const std::string & text, int pos=-1);
-
-    void renderTextBar();
-
-    // returns rectangle height
-    int renderTextLine(const std::string & text, int line,
-                       int offset = 0, int position = POS_LEFT, int xoffset = 0,
-                       TTF_Font_Shared font = TTF_Font_Shared());   // font will default to themeFont in the cpp
-
-    // returns the SDL_Rect of the screen positions if your rendered this text with these args
-    // this is basically renderTextLine but doesn't render the texct and instead returns the bounding rectangle
-    SDL_Rect getTextRectangleOnScreen(const std::string & text, int line,
-                       int offset = 0, int position = POS_LEFT, int xoffset = 0,
-                       TTF_Font_Shared font = TTF_Font_Shared());    // font will default to themeFont in the cpp
-
-    int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
-                                int offset = 0, TTF_Font_Shared font = TTF_Font_Shared());
-
-    int renderTextLineOptions(const std::string & text, int line, int offset = 0,  int position = POS_LEFT, int xoffset = 0);
-
-    void renderSelectionBox(int line, int offset, int xoffset = 0, TTF_Font_Shared font = TTF_Font_Shared());
-
-    void renderLabelBox(int line, int offset);
-
-    void renderTextChar(const std::string & text, int line, int offset, int posx);
-
-    void renderFreeSpace();
-
-    void getTextAndRect(SDL_Shared<SDL_Renderer> renderer, int x, int y, const char *text,
-                        TTF_Font_Shared font, SDL_Shared<SDL_Texture> *texture, SDL_Rect *rect);
-
-    Uint8 getR(const std::string & val);
-
-    Uint8 getG(const std::string & val);
-
-    Uint8 getB(const std::string & val);
-
-    void criticalException(const std::string & text);
-
-    SDL_Shared<SDL_Texture>
-    loadThemeTexture(SDL_Shared<SDL_Renderer> renderer, std::string themePath, std::string defaultPath, std::string texname);
-
-    void exportDBToRetroarch();
 
     MenuOption menuOption = MENU_OPTION_SCAN;
 
@@ -182,28 +116,13 @@ public:
 
     SDL_Shared<SDL_Texture> backgroundImg;
     SDL_Shared<SDL_Texture> logo;
-    SDL_Shared<SDL_Texture> buttonX;
-    SDL_Shared<SDL_Texture> buttonO;
-    SDL_Shared<SDL_Texture> buttonT;
-    SDL_Shared<SDL_Texture> buttonS;
-    SDL_Shared<SDL_Texture> buttonStart;
-    SDL_Shared<SDL_Texture> buttonSelect;
-    SDL_Shared<SDL_Texture> buttonL1;
-    SDL_Shared<SDL_Texture> buttonR1;
-    SDL_Shared<SDL_Texture> buttonL2;
-    SDL_Shared<SDL_Texture> buttonR2;
-    SDL_Shared<SDL_Texture> buttonCheck;
-    SDL_Shared<SDL_Texture> buttonUncheck;
-    SDL_Shared<SDL_Texture> buttonEsc;
-    SDL_Shared<SDL_Texture> buttonEnter;
-    SDL_Shared<SDL_Texture> buttonBackspace;
-    SDL_Shared<SDL_Texture> buttonTab;
     SDL_Shared<SDL_Texture> cdJewel;
+    std::map<std::string, SDL_Shared<SDL_Texture>> buttonTextureMap;
 
     std::string pathToGamesDir; // path to /Games.  "/media/Games" or "/debugSystemPath/Games".
 
     Mix_Music *music = nullptr;
-    TTF_Font_Shared themeFont;
+    FC_Font_Shared themeFont;
     bool forceScan = false;
 
     Mix_Chunk *cancel = nullptr;
@@ -219,6 +138,14 @@ public:
     int resumepoint = -1;
     string padMapping;
 
+                            //*******************************
+                            // Functions
+                            //*******************************
+
+    //*******************************
+    // Gui Singleton
+    //*******************************
+
     Gui(Gui const &) = delete;
 
     Gui &operator=(Gui const &) = delete;
@@ -228,5 +155,133 @@ public:
         return s;
     }
 
+    //*******************************
+    // Misc Functions
+    //*******************************
+    static void splash(const std::string & message);
+
+    Uint8 getR(const std::string & val);
+
+    Uint8 getG(const std::string & val);
+
+    Uint8 getB(const std::string & val);
+
+    void watchJoystickPort();
+
+    SDL_Shared<SDL_Texture>
+    loadThemeTexture(const std::string& themePath, const std::string& defaultPath, const std::string& texname);
+
+    void loadAssets(bool reloadMusic = true);
+
+    void waitForGamepad();
+
+    void criticalException(const std::string & text);
+
+    void display(bool forceScan, const std::string &_pathToGamesDir, Database *db, bool resume);
+
+    void saveSelection();
+
+    void menuSelection();
+
+    void finish();
+
+    void exportDBToRetroarch();
+
     static bool sortByTitle(const PsGamePtr &i, const PsGamePtr &j) { return SortByCaseInsensitive(i->title, j->title); }
+
+    //*******************************
+    // Rect and Size routines
+    //*******************************
+
+    // return FC_Size w of font text and h of font
+    FC_Size FC_getFontTextSize(FC_Font_Shared font, const char *text=nullptr);
+    FC_Size FC_getFontTextSize(FC_Font_Shared font, const string& text="") {
+        return FC_getFontTextSize(font, text.c_str());
+    }
+    // return FC_Rect w of font text and h of font
+    FC_Rect FC_getFontTextRect(FC_Font_Shared font, const char *text=nullptr, int x=0, int y=0);
+    FC_Rect FC_getFontTextRect(FC_Font_Shared font, const string& text="", int x=0, int y=0) {
+        return FC_getFontTextRect(font, text.c_str(), x, y);
+    }
+
+    FC_Rect getOpscreenRectOfTheme();
+    FC_Rect getTextRectOfTheme();
+
+    int getCheckIconWidth();    // returns the width of the check icon texture.  used to compute the x position.
+    static int align_xPosition(XAlignment xAlign, int x, int width);
+
+    //*******************************
+    // Text tokenizing structure routines
+    //*******************************
+
+    struct TextOrEmojiTokenInfo {
+        std::string tokenString;
+        SDL_Shared<SDL_Texture> emoji;  // not null only if tokenString is an emoji marker such as "|@X|"
+        FC_Rect rect;                   // position, width, and height of rendered text or emoji texture
+                                        // the x, y position is relative to the upper left corner of the string
+    };
+
+    // break up the text into tokens of text or the token of an emoji icon
+    // build a vector of the text, emoji texture pointers, position, width and height of each token and the
+    // total width and height of the entire line.
+    struct AllTextOrEmojiTokenInfo {
+        std::vector<TextOrEmojiTokenInfo> tokenInfos;
+
+        FC_Font_Shared font;
+        int x=0,y=0;            // upper left corner of the string on the display
+        FC_Size totalSize;      // the total width and height of all the tokens
+        bool useTextColor = false;
+        SDL_Color textColor;
+        bool drawBackgroundRect = false;
+
+        AllTextOrEmojiTokenInfo() { }
+        AllTextOrEmojiTokenInfo(FC_Font_Shared _font, const std::string & _text) { getTokenInfo(_font, _text); }
+        void getTokenInfo(FC_Font_Shared _font, const std::string & _text);
+
+        void compute_xy_relativeOffsets(); // compute x offset, center the y offset of each token to the total height
+        void setTextColor(SDL_Color color) { textColor = color; textColor.a = SDL_ALPHA_OPAQUE; useTextColor = true; }
+
+        // renders/draws the text and emoji icons at the chosen position on the screen
+        void render(int x, int y, XAlignment xAlign = XALIGN_LEFT);
+    };
+
+    //*******************************
+    // Text Line Rendering routines
+    //*******************************
+
+    // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
+    int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
+
+    // if background == true it draws a solid grey box around/behind the text
+    // this routine does not support emoji icons.  text only.
+    int renderText_WithColor(FC_Font_Shared font, const std::string & text, int x, int y, SDL_Color textColor,
+                             XAlignment xAlign = XALIGN_LEFT, bool background = false);
+
+    // returns rectangle height
+    int renderTextLine(const std::string & text, int line, int yoffset = 0,
+                       XAlignment xAlign = XALIGN_LEFT, int xoffset = 0,
+                       FC_Font_Shared font = FC_Font_Shared());   // font will default to themeFont in the cpp
+
+    int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
+                                int yoffset = 0, FC_Font_Shared font = FC_Font_Shared());
+
+    int renderTextLineOptions(const std::string & text, int line, int yoffset = 0,  XAlignment xAlign = XALIGN_LEFT, int xoffset = 0);
+
+    void renderSelectionBox(int line, int yoffset, int xoffset = 0, FC_Font_Shared font = FC_Font_Shared());
+
+    void renderLabelBox(int line, int yoffset);
+
+    void renderTextChar(const std::string & text, int line, int yoffset, int posx);
+
+    void renderFreeSpace();
+
+    void renderBackground();
+
+    int renderLogo(bool small);
+
+    void renderStatus(const std::string & text, int pos=-1);
+
+    void renderTextBar();
+
+    void drawText(const std::string & text);
 };

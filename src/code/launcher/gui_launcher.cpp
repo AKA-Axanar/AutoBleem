@@ -14,7 +14,7 @@
 
 using namespace std;
 
-const SDL_Color brightWhite = {255, 255, 255, 0};
+const SDL_Color brightWhite = {255, 255, 255, SDL_ALPHA_OPAQUE};
 
 
 //*******************************
@@ -25,11 +25,11 @@ void GuiLauncher::updateMeta() {
     if (carouselGames.empty()) {
         gameName = "";
         meta->updateTexts(gameName, publisher, year, serial, region, players, false, false, false, 0, false, false,
-                          false, "", fgR, fgG, fgB);
+                          false, "", fgColor);
         return;
     }
     if (selGameIndexInCarouselGamesIsValid())
-        meta->updateTexts(carouselGames[selGameIndex], fgR, fgG, fgB);
+        meta->updateTexts(carouselGames[selGameIndex], fgColor);
 }
 
 //*******************************
@@ -305,59 +305,6 @@ void GuiLauncher::showSetName() {
 }
 
 //*******************************
-// GuiLauncher::renderText
-//*******************************
-void GuiLauncher::renderText(int x, int y, const std::string &text, const SDL_Color &textColor, TTF_Font_Shared font,
-                             int position, bool background) {
-    int text_width = 0;
-    int text_height = 0;
-    SDL_Shared<SDL_Surface> surface;
-    SDL_Shared<SDL_Texture> texture;
-    SDL_Rect rect{0, 0, 0, 0};
-
-    auto renderer = Gui::getInstance()->renderer;
-
-    if (text.size() == 0) {
-        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 0, 0);
-        rect.x = 0;
-        rect.y = 0;
-        rect.h = 0;
-        rect.w = 0;
-    } else {
-        surface = TTF_RenderUTF8_Blended(font, text.c_str(), textColor);
-        texture = SDL_CreateTextureFromSurface(renderer, surface);
-        text_width = surface->w;
-        text_height = surface->h;
-        rect.x = x;
-        rect.y = y;
-        rect.w = text_width;
-        rect.h = text_height;
-    }
-    SDL_Rect inputRect;
-    inputRect.x = 0;
-    inputRect.y = 0;
-    inputRect.w = rect.w;
-    inputRect.h = rect.h;
-
-    if (position == POS_CENTER) {
-        rect.x = 640 - (rect.w / 2);
-    }
-
-    if (background) {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 70);
-        SDL_Rect backRect;
-        backRect.x = rect.x - 10;
-        backRect.y = rect.y - 2;
-        backRect.w = rect.w + 20;
-        backRect.h = rect.h + 4;
-
-        SDL_RenderFillRect(renderer, &backRect);
-    }
-
-    SDL_RenderCopy(renderer, texture, &inputRect, &rect);
-};
-
-//*******************************
 // GuiLauncher::loadAssets
 //*******************************
 // load all assets needed by the screengame i
@@ -395,15 +342,17 @@ void GuiLauncher::loadAssets() {
     Inifile colorsFile;
     if (DirEntry::exists(gui->getCurrentThemePath() + sep + "colors.ini")) {
         colorsFile.load(gui->getCurrentThemePath() + sep + "colors.ini");
-        fgR = gui->getR(colorsFile.values["fg"]);
-        fgG = gui->getG(colorsFile.values["fg"]);
-        fgB = gui->getB(colorsFile.values["fg"]);
-        secR = gui->getR(colorsFile.values["sec"]);
-        secG = gui->getG(colorsFile.values["sec"]);
-        secB = gui->getB(colorsFile.values["sec"]);
+        fgColor.r = gui->getR(colorsFile.values["fg"]);
+        fgColor.g = gui->getG(colorsFile.values["fg"]);
+        fgColor.b = gui->getB(colorsFile.values["fg"]);
+        fgColor.a = SDL_ALPHA_OPAQUE;
+        secColor.r = gui->getR(colorsFile.values["sec"]);
+        secColor.g = gui->getG(colorsFile.values["sec"]);
+        secColor.b = gui->getB(colorsFile.values["sec"]);
+        secColor.a = SDL_ALPHA_OPAQUE;
     }
 
-    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath());
+    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath(), renderer);
 
     // count, x_start, y_start, fontEnum, fontHeight, separationBetweenLines
     notificationLines.createAndSetDefaults(2, 10, 10, FONT_22_MED, 24, 8);
@@ -430,10 +379,10 @@ void GuiLauncher::loadAssets() {
     cout << "Loading theme and creating objects" << endl;
     if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png")) {
         staticMeta = true;
-        background = new PsObj(renderer, "background", gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png");
+        background = new PsObj("background", gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png");
     } else {
         staticMeta = false;
-        background = new PsObj(renderer, "background", gui->getCurrentThemeImagePath() + sep + "GR/JP_US_BG.png");
+        background = new PsObj("background", gui->getCurrentThemeImagePath() + sep + "GR/JP_US_BG.png");
     }
 
     background->x = 0;
@@ -446,18 +395,18 @@ void GuiLauncher::loadAssets() {
     } else {
         footerFile = "GR/Footer.png";
     }
-    auto footer = new PsObj(renderer, "footer", gui->getCurrentThemeImagePath() + sep + footerFile);
-    footer->y = 720 - footer->h;
+    auto footer = new PsObj("footer", gui->getCurrentThemeImagePath() + sep + footerFile);
+    footer->y = SCREEN_HEIGHT - footer->h;
     footer->visible = true;
     staticElements.push_back(footer);
 
-    playButton = new PsObj(renderer, "playButton", gui->getCurrentThemeImagePath() + sep + "GR/Acid_C_Btn.png");
+    playButton = new PsObj("playButton", gui->getCurrentThemeImagePath() + sep + "GR/Acid_C_Btn.png");
     playButton->y = 428;
     playButton->x = 540;
     playButton->visible = selGameIndex != -1;
     staticElements.push_back(playButton);
 
-    playText = new PsZoomBtn(renderer, "playText", gui->getCurrentThemeImagePath() + sep + "BMP_Text/Play_Text.png");
+    playText = new PsZoomBtn("playText", gui->getCurrentThemeImagePath() + sep + "BMP_Text/Play_Text.png");
     playText->y = 428;
     playText->x = 640 - 262 / 2;
     playText->visible = selGameIndex != -1;
@@ -472,69 +421,68 @@ void GuiLauncher::loadAssets() {
     } else {
         settingsFile = "/CB/Function_BG.png";
     }
-    settingsBack = new PsSettingsBack(renderer, "playButton", gui->getCurrentThemeImagePath() + settingsFile);
+    settingsBack = new PsSettingsBack("playButton", gui->getCurrentThemeImagePath() + settingsFile);
     settingsBack->setCurLen(100);
     settingsBack->visible = true;
     staticElements.push_back(settingsBack);
 
-    meta = new PsMeta(renderer, "meta", gui->getCurrentThemeImagePath() + sep + "CB/PlayerOne.png");
+    meta = new PsMeta("meta", gui->getCurrentThemeImagePath() + sep + "CB/PlayerOne.png");
     meta->fonts = gui->themeFonts;
     meta->x = 785;
     meta->y = 285;
     meta->visible = true;
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
-        meta->updateTexts(carouselGames[selGameIndex], fgR, fgG, fgB);
+        meta->updateTexts(carouselGames[selGameIndex], fgColor);
     } else {
         meta->updateTexts(gameName, publisher, year, serial, region, players,
-                          false, false, false, 0, false, false, false, "",
-                          fgR, fgG, fgB);
+                          false, false, false, 0, false, false, false, "", fgColor);
     }
     staticElements.push_back(meta);
 
-    arrow = new PsMoveBtn(renderer, "arrow", gui->getCurrentThemeImagePath() + sep + "GR/arrow.png");
+    arrow = new PsMoveBtn("arrow", gui->getCurrentThemeImagePath() + sep + "GR/arrow.png");
     arrow->x = 640 - 12;
     arrow->y = 360;
     arrow->originaly = arrow->y;
     arrow->visible = false;
     staticElements.push_back(arrow);
 
-    xButton = new PsObj(renderer, "xbtn", gui->getCurrentThemeImagePath() + sep + "GR/X_Btn_ICN.png");
+    xButton = new PsObj("xbtn", gui->getCurrentThemeImagePath() + sep + "GR/X_Btn_ICN.png");
     xButton->x = 605;
     xButton->y = 640;
     xButton->visible = true;
     staticElements.push_back(xButton);
 
-    oButton = new PsObj(renderer, "obtn", gui->getCurrentThemeImagePath() + sep + "GR/Circle_Btn_ICN.png");
+    oButton = new PsObj("obtn", gui->getCurrentThemeImagePath() + sep + "GR/Circle_Btn_ICN.png");
     oButton->x = 765;
     oButton->y = 640;
     oButton->visible = true;
     staticElements.push_back(oButton);
 
-    tButton = new PsObj(renderer, "tbtn", gui->getCurrentThemeImagePath() + sep + "GR/Tri_Btn_ICN.png");
+    tButton = new PsObj("tbtn", gui->getCurrentThemeImagePath() + sep + "GR/Tri_Btn_ICN.png");
     tButton->x = 910;
     tButton->y = 640;
     tButton->visible = true;
     staticElements.push_back(tButton);
 
-    menu = new PsMenu(renderer, "menu", gui->getCurrentThemeImagePath());
+    menu = new PsMenu("menu", gui->getCurrentThemeImagePath());
     menu->loadAssets();
 
-    menuHead = new PsCenterLabel(renderer, "header");
+    menuHead = new PsCenterLabel("header");
     menuHead->font = gui->themeFonts[FONT_28_BOLD];
     menuHead->visible = false;
     menuHead->y = 545;
-    menuText = new PsCenterLabel(renderer, "menuText");
+    menuText = new PsCenterLabel("menuText");
     menuText->visible = false;
     menuText->font = gui->themeFonts[FONT_22_MED];
     menuText->y = 585;
 
-    menuHead->setText(headers[0], fgR, fgG, fgB);
-    menuText->setText(texts[0], fgR, fgG, fgB);
+    menuHead->setText(headers[0], fgColor);
+    menuText->setText(texts[0], fgColor);
 
     staticElements.push_back(menuHead);
     staticElements.push_back(menuText);
 
-    sselector = new PsStateSelector(renderer, "selector");
+    sselector = new PsStateSelector("selector");
     sselector->font30 = gui->themeFonts[FONT_28_BOLD];
     sselector->font24 = gui->themeFonts[FONT_22_MED];
     sselector->visible = false;
@@ -762,9 +710,9 @@ void GuiLauncher::render() {
     menu->render();
 
     auto font24 = gui->themeFonts[FONT_22_MED];
-    renderText(638, 640, _("Enter"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
-    renderText(800, 640, _("Cancel"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
-    renderText(945, 640, _("Button Guide"), {secR, secG, secB, 0}, font24, POS_LEFT, false);
+    gui->renderText_WithColor(font24, _("Enter"), 638, 640, secColor);
+    gui->renderText_WithColor(font24, _("Cancel"), 800, 640, secColor);
+    gui->renderText_WithColor(font24, _("Button Guide"), 945, 640, secColor);
 
     notificationLines.tickTock();
 

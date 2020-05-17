@@ -4,6 +4,7 @@
 
 #include <random>
 #include "starfx.h"
+#include "../gui/gui.h"
 
 StarFx::StarFx()
 {

@@ -43,9 +43,9 @@ void GuiKeyboard::init() {
 void GuiKeyboard::render() {
     gui->renderBackground();
     gui->renderTextBar();
-    int offset = gui->renderLogo(true);
-    gui->renderLabelBox(1, offset);
-    gui->renderTextLine("-= " + label + " =-", 0, offset, POS_CENTER);
+    int yoffset = gui->renderLogo(true);
+    gui->renderLabelBox(1, yoffset);
+    gui->renderTextLine("-= " + label + " =-", 0, yoffset, XALIGN_CENTER);
 
     //*******************************
     // drawRectangle lambda
@@ -69,30 +69,28 @@ void GuiKeyboard::render() {
     else
         displayResult = result;
     displayResult.insert(cursorIndex, "#");
-    gui->renderTextLine(displayResult, 1, offset, POS_CENTER);
+    gui->renderTextLine(displayResult, 1, yoffset, XALIGN_CENTER);
 
-    SDL_Rect rect2;
-    rect2.x = atoi(gui->themeData.values["opscreenx"].c_str());
-    rect2.y = atoi(gui->themeData.values["opscreeny"].c_str());
-    rect2.w = atoi(gui->themeData.values["opscreenw"].c_str());
-    rect2.h = atoi(gui->themeData.values["opscreenh"].c_str());
-
+    SDL_Rect rect2 = gui->getOpscreenRectOfTheme();
+    Uint16 fontHeight = FC_GetLineHeight(gui->themeFont);
     SDL_Shared<SDL_Texture> tex;
-    SDL_Rect rect;
-    gui->getTextAndRect(renderer, 0, 0, "*", gui->themeFont, &tex, &rect);
 
     if (L2_cursor_shift || usingUsbKeyboard) {
-        SDL_Rect rectEditbox = gui->getTextRectangleOnScreen(displayResult, 1, offset, POS_CENTER, 0, gui->themeFont);
+        FC_Rect rectEditbox = gui->FC_getFontTextRect(gui->themeFont, displayResult);
+        rectEditbox.x = gui->align_xPosition(XALIGN_CENTER, 0, rectEditbox.w);
+        rectEditbox.y = (1 * rectEditbox.h) + yoffset;  // line 1 (0 == top)
 
         // compute the bounding box around the cursor (#)
-        SDL_Point textBeforeCursorSize { 0, 0 };
-        if (cursorIndex > 0)    // get the size of the text before the cursor
-            TTF_SizeText(gui->themeFont, displayResult.substr(0, cursorIndex).c_str(), &textBeforeCursorSize.x, &textBeforeCursorSize.y);
-        SDL_Point cursorSize;
-        TTF_SizeText(gui->themeFont, "#", &cursorSize.x, &cursorSize.y);    // get the cursor size
+        FC_Size textBeforeCursorSize;
+        // get the size of the text before the cursor
+        if (cursorIndex > 0) {
+            textBeforeCursorSize = gui->FC_getFontTextSize(gui->themeFont, displayResult.substr(0, cursorIndex));
+        }
+        // get the cursor size
+        FC_Size cursorSize = gui->FC_getFontTextSize(gui->themeFont, "#");
         // bounding box rectangle around the # cursor
-        SDL_Rect cursorRect { rectEditbox.x + textBeforeCursorSize.x, rectEditbox.y,    // x, y position
-                              cursorSize.x, cursorSize.y };                             //w, h
+        SDL_Rect cursorRect { rectEditbox.x + textBeforeCursorSize.w, rectEditbox.y,    // x, y position
+                              cursorSize.w, cursorSize.h };                             // w, h
 
         drawRectangle(cursorRect);
     }
@@ -102,9 +100,9 @@ void GuiKeyboard::render() {
             for (int y = 0; y < numRows; y++) {
                 SDL_Rect rectSelection;
                 rectSelection.x = rect2.x + indentOffset;
-                rectSelection.y = offset + rect.h * (y + 3);
+                rectSelection.y = yoffset + fontHeight * (y + 3);
                 rectSelection.w = rect2.w - (indentOffset + indentOffset);
-                rectSelection.h = rect.h;
+                rectSelection.h = fontHeight;
 
                 int buttonWidth = (rectSelection.w / 10) - (indentOffset + indentOffset);
                 int buttonHeight = rectSelection.h - 2;
@@ -125,7 +123,7 @@ void GuiKeyboard::render() {
                     text = ucase(text);
                 }
 
-                gui->renderTextChar(text, 3 + y, offset, rectSelection.x + 10);
+                gui->renderTextChar(text, 3 + y, yoffset, rectSelection.x + 10);
 
                 // display rectangle around current character
                 if (!L2_cursor_shift) { // don't draw rectangle if in move cursor mode

@@ -43,11 +43,11 @@ void GuiManager::render()
     SDL_RenderClear(renderer);
     gui->renderBackground();
     gui->renderTextBar();
-    offset = gui->renderLogo(true);
+    yoffset = gui->renderLogo(true);
 
     gui->renderFreeSpace();     // this is why this menu's render is special instead of using the base class
 
-    gui->renderTextLine(getTitle(), 0, offset, POS_CENTER);
+    gui->renderTextLine(getTitle(), 0, yoffset, XALIGN_CENTER);
 
     renderLines();
     renderSelectionBox();

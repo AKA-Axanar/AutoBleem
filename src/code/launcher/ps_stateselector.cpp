@@ -66,8 +66,8 @@ void PsStateSelector::render()
         SDL_Rect rect;
         rect.x=0;
         rect.y=100;
-        rect.w=1280;
-        rect.h=720-200;
+        rect.w=SCREEN_WIDTH;
+        rect.h=SCREEN_HEIGHT-200;
         SDL_RenderFillRect(renderer,&rect);
 
         int w = 118 * scale;
@@ -87,28 +87,20 @@ void PsStateSelector::render()
             text = _("SELECT SLOT TO SAVE STATE");
         }
 
-        GuiLauncher::renderText(0, 110, _(text), brightWhite, font30, POS_CENTER, false);   // center=true, background=false
-
         shared_ptr<Gui> gui(Gui::getInstance());
         SDL_Shared<SDL_Texture> infoText;
         SDL_Rect infoRect, infoDest;
 
+        gui->renderText_WithColor(font30, _(text), 0, 110, brightWhite, XALIGN_CENTER);
+
         if (operation==OP_LOAD) {
-            gui->getEmojiTextTexture(renderer,
-                                     "|@T| " + _("Delete") + "     |@X| " + _("Select") + "     |@O| " + _("Cancel") +
-                                     "|", font24, &infoText, &infoRect);
+            gui->renderText(font24, "|@T| " + _("Delete") + "     |@X| " + _("Select") + "     |@O| " + _("Cancel") +
+                                    "|", 0, 150, XALIGN_CENTER);
         } else
         {
-            gui->getEmojiTextTexture(renderer,
-                                     "|@X| " + _("Select") + "     |@O| " + _("Cancel") +
-                                     "|", font24, &infoText, &infoRect);
+            gui->renderText(font24, "|@X| " + _("Select") + "     |@O| " + _("Cancel") +
+                                    "|", 0, 150, XALIGN_CENTER);
         }
-        infoDest.x=640-infoRect.w/2;
-        infoDest.y=150;
-        infoDest.w=infoRect.w;
-        infoDest.h=infoRect.h;
-
-        SDL_RenderCopy(renderer,infoText,&infoRect, &infoDest);
 
         for (int i=0;i<4;i++)
         {
@@ -142,7 +134,7 @@ void PsStateSelector::render()
                 SDL_RenderCopy(renderer, slotImg[i], &input, &imgOut);
             }
 
-            GuiLauncher::renderText(output.x+60, 270, _("Slot")+" "+to_string(i+1), brightWhite, font24, POS_LEFT, false); // center=false, background=false
+            gui->renderText_WithColor(font24, _("Slot") + " " + to_string(i+1), output.x + 60, 270, brightWhite);
         }
     }
 }

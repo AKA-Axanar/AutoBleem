@@ -37,9 +37,9 @@ void NotificationLine::tickTock() {
                 notificationTime = 0;   // turn off the display
         }
         if (notificationTime != 0)
-            GuiLauncher::renderText(x, y, text, textColor, gui->themeFonts[fontEnum], POS_CENTER, true);
+            gui->renderText_WithColor(gui->themeFonts[fontEnum], text, x, y, textColor, XALIGN_CENTER, true);
     } else // not timed - keep display on
-        GuiLauncher::renderText(x, y, text, textColor, gui->themeFonts[fontEnum], POS_CENTER, true);
+        gui->renderText_WithColor(gui->themeFonts[fontEnum], text, x, y, textColor, XALIGN_CENTER, true);
 }
 
 //*******************************

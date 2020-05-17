@@ -24,7 +24,7 @@ void GuiMcManager::loadAssets() {
     shared_ptr<Gui> gui(Gui::getInstance());
     mcGrid = IMG_LoadTexture(renderer, (gui->getCurrentThemeImagePath() + sep + "MC/Dot_Matrix.png").c_str());
     mcPencil = IMG_LoadTexture(renderer, (gui->getCurrentThemeImagePath() + sep + "MC/Pencil_Carsor.png").c_str());
-    fontJIS = Fonts::openNewSharedFont(Env::getWorkingPath() + sep + "japanese.ttf", 20);
+    fontJIS = Fonts::openNewSharedCachedFont(Env::getWorkingPath() + sep + "japanese.ttf", 20, renderer);
 
     memcard1 = new CardEdit(renderer);
     memcard2 = new CardEdit(renderer);
@@ -108,7 +108,7 @@ void GuiMcManager::renderStatic() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
-    gui->renderTextLine("-=" + _("Memory Card Manager") + "=-", 1, 1, POS_CENTER);
+    gui->renderTextLine("-=" + _("Memory Card Manager") + "=-", 1, 1, XALIGN_CENTER);
     gui->renderStatus(
             "|@Start| " + _("Select Right Card") +
             " | |@Select| " + _("Defragment Card") +
@@ -183,14 +183,14 @@ void GuiMcManager::renderMetaInfo() {
 
     string nextSlot = to_string(card->next_slot_map[pencilColumn + pencilRow * 3]);
 
-    gui->renderTextLine(title, -500, 1, POS_CENTER, true, fontJIS);
-    gui->renderTextLine(gameID, 3, 1, POS_CENTER, true);
-    gui->renderTextLine(pCode, 4, 1, POS_CENTER, true);
+    gui->renderTextLine(title, -500, 1, XALIGN_CENTER, true, fontJIS);
+    gui->renderTextLine(gameID, 3, 1, XALIGN_CENTER, true);
+    gui->renderTextLine(pCode, 4, 1, XALIGN_CENTER, true);
 
 
 
-    gui->renderTextLine(leftCardName, -500, 1, POS_LEFT, true);
-    gui->renderTextLine(rightCardName, -500, 1, POS_RIGHT, true);
+    gui->renderTextLine(leftCardName, -500, 1, XALIGN_LEFT, true);
+    gui->renderTextLine(rightCardName, -500, 1, XALIGN_RIGHT, true);
 }
 
 void GuiMcManager::render() {

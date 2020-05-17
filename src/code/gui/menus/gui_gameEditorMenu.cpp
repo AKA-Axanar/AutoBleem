@@ -327,70 +327,70 @@ void GuiEditor::render() {
     int line = 0;
     gui->renderBackground();
     gui->renderTextBar();
-    int offset = gui->renderLogo(true);
+    int yoffset = gui->renderLogo(true);
 
     // Game.ini
 
-    gui->renderTextLine("-=" + gameIni.values["title"] + "=-", line++, offset, POS_CENTER);
+    gui->renderTextLine("-=" + gameIni.values["title"] + "=-", line++, yoffset, XALIGN_CENTER);
 
     if (!internal) {
-        gui->renderTextLine(_("Folder:") + " " + gameIni.entry, line++, offset, POS_CENTER);
+        gui->renderTextLine(_("Folder:") + " " + gameIni.entry, line++, yoffset, XALIGN_CENTER);
     } else {
-        gui->renderTextLine(_("Folder:") + " " + gameData->folder, line++, offset, POS_CENTER);
+        gui->renderTextLine(_("Folder:") + " " + gameData->folder, line++, yoffset, XALIGN_CENTER);
     }
 
-    gui->renderTextLine(_("Published by:") + " " + gameIni.values["publisher"], line++, offset, POS_CENTER);
+    gui->renderTextLine(_("Published by:") + " " + gameIni.values["publisher"], line++, yoffset, XALIGN_CENTER);
 
     gui->renderTextLine(_("Year:") +" "+ gameIni.values["year"] + "   " + _("Players") + ":" + " " +
-                        gameIni.values["players"], line++, offset, POS_CENTER);
+                        gameIni.values["players"], line++, yoffset, XALIGN_CENTER);
 
     gui->renderTextLine(_("Memory Card:") + " " +
                         (gameIni.values["memcard"] == "SONY" ? string(_("Internal")) : gameIni.values["memcard"] + " " +
                                                                                     "(" + _("Custom") + ")"),
-                        line++, offset, POS_CENTER);
+                        line++, yoffset, XALIGN_CENTER);
 
     if (gameData->internal) {
         gui->renderTextLineOptions(
             _("Favorite:") + (gameData->favorite ? string("|@Check|") : string("|@Uncheck|")),
-            OPT_FAVORITE, offset, POS_LEFT, 300);
+            OPT_FAVORITE, yoffset, XALIGN_LEFT, 300);
     } else {
         gui->renderTextLineOptions(
             _("Favorite:") + (gameIni.values["favorite"] == "1" ? string("|@Check|") : string("|@Uncheck|")),
-                    OPT_FAVORITE, offset, POS_LEFT, 300);
+                    OPT_FAVORITE, yoffset, XALIGN_LEFT, 300);
     }
 
     // pcsx.cfg
 
     gui->renderTextLineOptions(
             _("Lock data:") + (gameIni.values["automation"] == "0" ? string("|@Check|") : string("|@Uncheck|")),
-            OPT_LOCK, offset, POS_LEFT, 300);
+            OPT_LOCK, yoffset, XALIGN_LEFT, 300);
 
     gui->renderTextLineOptions(_("High res:") + (highres == 1 ? string("|@Check|") : string("|@Uncheck|")),
-            OPT_HIGHRES, offset, POS_LEFT, 300);
+            OPT_HIGHRES, yoffset, XALIGN_LEFT, 300);
 
     gui->renderTextLineOptions(_("SpeedHack:") + (speedhack == 1 ? string("|@Check|") : string("|@Uncheck|")),
-            OPT_SPEEDHACK, offset, POS_LEFT, 300);
+            OPT_SPEEDHACK, yoffset, XALIGN_LEFT, 300);
 
     gui->renderTextLineOptions(_("Scanlines:") + (scanlines == 1 ? string("|@Check|") : string("|@Uncheck|")),
-            OPT_SCANLINES, offset, POS_LEFT, 300);
+            OPT_SCANLINES, yoffset, XALIGN_LEFT, 300);
 
     gui->renderTextLineOptions(_("Scanline Level:") + " " + to_string(scanlineLevel),
-            OPT_SCANLINELV, offset, POS_LEFT, 300);
+            OPT_SCANLINELV, yoffset, XALIGN_LEFT, 300);
 
     gui->renderTextLineOptions(_("Clock:") + " " + to_string(clock),
-            OPT_CLOCK_PSX, offset, POS_LEFT, 300);
+            OPT_CLOCK_PSX, yoffset, XALIGN_LEFT, 300);
 
     gui->renderTextLineOptions(_("Frameskip:") + " " + to_string(frameskip),
-            OPT_FRAMESKIP, offset, POS_LEFT, 300);
+            OPT_FRAMESKIP, yoffset, XALIGN_LEFT, 300);
 
     if (!internal) {
-        gui->renderTextLineOptions(_("Plugin:") + " " + gpu, OPT_PLUGIN, offset, POS_LEFT, 300);
+        gui->renderTextLineOptions(_("Plugin:") + " " + gpu, OPT_PLUGIN, yoffset, XALIGN_LEFT, 300);
     }
 
     gui->renderTextLineOptions(_("Spu Interpolation:") + " " + to_string(interpolation),
-            OPT_INTERPOLATION, offset, POS_LEFT, 300);
+            OPT_INTERPOLATION, yoffset, XALIGN_LEFT, 300);
 
-    gui->renderSelectionBox(selOption, offset, 300);
+    gui->renderSelectionBox(selOption, yoffset, 300);
 
     string guiMenu = "|@T| " + _("Rename");
 

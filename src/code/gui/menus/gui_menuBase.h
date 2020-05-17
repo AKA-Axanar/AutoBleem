@@ -50,7 +50,7 @@ public:
     virtual void doHome();
     virtual void doEnd();
 
-    TTF_Font_Shared font;
+    FC_Font_Shared font;
     bool useSmallerFont = false;    // useful for 2 column menu with long strings
 
     // plain menu
@@ -62,7 +62,7 @@ public:
     int firstVisibleIndex = 0;      // current visible range on page
     int lastVisibleIndex = 7;       // current visible range on page
     int firstRow = 2;               // row 0 is the title.  this is the first row of the menu item lines
-    int offset = 0;                 // y offset for the line I believe.  set by renderLogo()
+    int yoffset = 0;                 // y offset for the line (y=fontHeight*line + yoffset).  set by renderLogo()
 
     // this is useful in menus that have blank lines like gui_networkMenu.cpp
     virtual bool skipSelectingThisLineWhenMovingByOne(int index) { return false; }
@@ -158,7 +158,7 @@ void GuiMenuBase<LineDataType>::renderLines() {
 template<typename LineDataType>
 void GuiMenuBase<LineDataType>::renderSelectionBox() {
     if (!getVerticalSize() == 0) {
-        gui->renderSelectionBox(selected - firstVisibleIndex + firstRow, offset, 0, font);
+        gui->renderSelectionBox(selected - firstVisibleIndex + firstRow, yoffset, 0, font);
     }
 }
 
@@ -171,8 +171,8 @@ void GuiMenuBase<LineDataType>::render()
     SDL_RenderClear(renderer);
     gui->renderBackground();
     gui->renderTextBar();
-    offset = gui->renderLogo(true);
-    gui->renderTextLine(getTitle(), 0, offset, POS_CENTER);
+    yoffset = gui->renderLogo(true);
+    gui->renderTextLine(getTitle(), 0, yoffset, XALIGN_CENTER);
 
     if (firstRender) {
         computePagePosition();

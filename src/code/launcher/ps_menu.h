@@ -50,5 +50,5 @@ public:
 
     int transition =0;
 
-    PsMenu(SDL_Shared<SDL_Renderer> renderer1, std::string name1, std::string texPath = "");
+    PsMenu(std::string name1, std::string texPath = "");
 };

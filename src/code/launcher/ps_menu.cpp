@@ -9,7 +9,7 @@ using namespace std;
 //*******************************
 // PsMenu::PsMenu
 //*******************************
-PsMenu::PsMenu(SDL_Shared<SDL_Renderer> renderer1, string name1, string texPath) : PsObj(renderer1, name1, "") {
+PsMenu::PsMenu(string name1, string texPath) : PsObj(name1, "") {
     path = texPath;
     loadAssets();
 }

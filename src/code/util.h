@@ -53,6 +53,7 @@ public:
 
     static void cleanPublisherString(std::string & pub);  // remove any trailing "." or spaces
     static void dumpMemory(const char *p, int count);
+    static std::vector<std::string> getTokens(const std::string& str, char delim);
 
     static unsigned int getRandomNumber();
     static unsigned int getRandomIndex(unsigned int size);

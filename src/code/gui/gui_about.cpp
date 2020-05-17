@@ -16,7 +16,7 @@
 void GuiAbout::init() {
     std::shared_ptr<Gui> gui(Gui::getInstance());
     fx.renderer = renderer;
-    font = Fonts::openNewSharedFont(Env::getWorkingPath() + sep + "about.ttf", 17);
+    font = Fonts::openNewSharedCachedFont(Env::getWorkingPath() + sep + "about.ttf", 17, renderer);
     logo = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "ablogo.png").c_str());
 }
 
@@ -53,16 +53,16 @@ void GuiAbout::render() {
     SDL_Rect rect2;
     rect2.x = 0;
     rect2.y = 0;
-    rect2.w = 1280;
-    rect2.h = 720;
+    rect2.w = SCREEN_WIDTH;
+    rect2.h = SCREEN_HEIGHT;
 
     SDL_RenderFillRect(renderer, &rect2);
 
     fx.render();
 
-    int offset = 150;
+    int yoffset = 150;
     SDL_Rect rect;
-    rect.x = 1280/2-100;
+    rect.x = SCREEN_WIDTH/2-100;
     rect.y = 5;
     rect.w = 200;
     rect.h = 141;
@@ -71,7 +71,7 @@ void GuiAbout::render() {
 
     int line = 1;
     for (const string &s:credits) {
-        gui->renderTextLine(s, line, offset, POS_CENTER, 0, font);
+        gui->renderTextLine(s, line, yoffset, XALIGN_CENTER, 0, font);
         line++;
     }
 

@@ -28,7 +28,7 @@ std::string GuiAppStart::getStringLine(const std::string& str, int lineNo)
 
 void GuiAppStart::init()
 {
-    font = Fonts::openNewSharedFont(Environment::getWorkingPath()+ sep + "november.ttf",20);
+    font = Fonts::openNewSharedCachedFont(Environment::getWorkingPath()+ sep + "november.ttf",20, renderer);
     // Try to load app.ini
     appName = game->title;
 
@@ -94,8 +94,8 @@ void GuiAppStart::render() {
         SDL_RenderFillRect(renderer, &rect2);
 
     }
-    int offset = 15;
-    gui->renderTextLine(appName,0, offset ,0,10,font);
+    int yoffset = 15;
+    gui->renderTextLine(appName, 0, yoffset, XALIGN_LEFT, 10, font);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawLine(renderer, rect2.x, 35,rect2.w,35);
 
@@ -125,13 +125,13 @@ void GuiAppStart::render() {
     int currentLine =2;
     if (!readmeLoaded)
     {
-        gui->renderTextLine(_("ReadMe file not found"),2,offset,0,10,font);
+        gui->renderTextLine(_("ReadMe file not found"), 2, yoffset, XALIGN_LEFT, 10, font);
     } else
     {
         for (int i=firstLine;i<firstLine+maxLines;i++)
         {
             std::string lineInFile = getStringLine(buffer,i);
-            gui->renderTextLine(getStringLine(buffer,i),currentLine,offset,0,10,font);
+            gui->renderTextLine(getStringLine(buffer,i), currentLine, yoffset, XALIGN_LEFT, 10, font);
             currentLine++;
         }
     }

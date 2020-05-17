@@ -26,6 +26,6 @@ public:
     virtual std::string getStatusLine() override { return GuiMenuBase::getStatusLine(); }
 
     virtual void renderLineIndexOnRow(int index, int row) override {
-        gui->renderTextLineToColumns(lines[index].line_L, lines[index].line_R, xoffset_L, xoffset_R, row, offset, font);
+        gui->renderTextLineToColumns(lines[index].line_L, lines[index].line_R, xoffset_L, xoffset_R, row, yoffset, font);
     }
 };

@@ -22,9 +22,9 @@ void GuiConfirm::render()
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
-    int offset = gui->renderLogo(true);
-    gui->renderTextLine("-=" + _("Please confirm") + "=-",0,offset, POS_CENTER);
-    gui->renderTextLine(label,2,offset, POS_CENTER);
+    int yoffset = gui->renderLogo(true);
+    gui->renderTextLine("-=" + _("Please confirm") + "=-",0,yoffset, XALIGN_CENTER);
+    gui->renderTextLine(label,2,yoffset, XALIGN_CENTER);
 
 
     gui->renderStatus("|@X| "+_("Confirm")+"  |@O| "+_("Cancel")+" |");

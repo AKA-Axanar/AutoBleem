@@ -12,10 +12,6 @@
 #define SPEED_DIFFERENCE 1.0f
 #define SIZE_DIFFERENCE 0.34f
 
-#define SCREEN_WIDTH  1280
-#define SCREEN_HEIGHT 720
-
-
 using namespace std;
 
 class RGB {

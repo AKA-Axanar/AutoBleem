@@ -23,7 +23,7 @@ void GuiBtnGuide::render() {
 
     gui->renderTextBar();
     // -50 is because the "button guide" line is too low and the lines go below the bottom of the rectangle
-    int offset = gui->renderLogo(true) - 50;
+    int yoffset = gui->renderLogo(true) - 50;
 
     int xLeft = 300;
     int xRight = 520;
@@ -31,7 +31,7 @@ void GuiBtnGuide::render() {
     auto font = gui->sonyFonts[FONT_20_BOLD];
 
     auto renderTextLineToColumns = [&] (const string &textLeft, const string &textRight) {
-        gui->renderTextLineToColumns(textLeft, textRight, xLeft, xRight, line++, offset, font);
+        gui->renderTextLineToColumns(textLeft, textRight, xLeft, xRight, line++, yoffset, font);
     };
 
     renderTextLineToColumns("",                          "-=" + _("Button Guide") + "=-");
@@ -72,7 +72,6 @@ void GuiBtnGuide::loop() {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
-
                 }
             }
             // this is for pc Only
@@ -81,17 +80,11 @@ void GuiBtnGuide::loop() {
             }
             switch (e.type) {
                 case SDL_JOYBUTTONUP:
-
-
                     if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         menuVisible = false;
-
                     };
-
-
             }
-
         }
     }
 }

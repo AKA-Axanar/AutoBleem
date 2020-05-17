@@ -7,6 +7,7 @@
 #include <SDL2/SDL_render.h>
 #include <string>
 #include "../gui/gui_sdl_wrapper.h"
+#include "../gui/gui.h"
 
 //******************
 // PsObj
@@ -15,6 +16,7 @@ class PsObj {
 public:
     virtual ~PsObj() {}
 
+    std::shared_ptr<Gui> gui;
     SDL_Shared<SDL_Renderer> renderer;
     int x = 0, y = 0, w = 0, h = 0;
     int ox = 0, oy = 0, ow = 0, oh = 0;
@@ -26,7 +28,7 @@ public:
     bool visible = false;
     long lastTime = 0;
 
-    PsObj(SDL_Shared<SDL_Renderer> renderer1, std::string name1, std::string texPath = "");
+    PsObj(std::string name1, std::string texPath = "");
 
     virtual void load(const std::string & imagePath);
 
