@@ -287,9 +287,6 @@ public:
 
     void renderFreeSpace();
 
-    void getTextureAndRect(int x, int y, const char *text,
-                           FC_Font_Shared font, SDL_Shared<SDL_Texture> *texture, FC_Rect *rect);
-
     void renderBackground();
 
     int renderLogo(bool small);

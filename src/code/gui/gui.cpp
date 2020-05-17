@@ -1254,37 +1254,6 @@ void Gui::renderFreeSpace() {
 }
 
 //*******************************
-// Gui::getTextureAndRect
-//*******************************
-void Gui::getTextureAndRect(int x, int y, const char *text, FC_Font_Shared font,
-                            SDL_Shared<SDL_Texture> *texture, FC_Rect *rect) {
-    int text_width;
-    int text_height;
-    SDL_Shared<SDL_Surface> surface;
-    string fg = themeData.values["text_fg"];
-    SDL_Color textColor = {getR(fg), getG(fg), getB(fg), 0};
-
-    if (strlen(text) == 0) {
-        Uint32 pixelFormat = SDL_GetWindowPixelFormat(window);
-        *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, 0, 0);
-        rect->x = 0;
-        rect->y = 0;
-        rect->h = 0;
-        rect->w = 0;
-        return;
-    }
-
-    surface = TTF_RenderUTF8_Blended(get_ttf_source(font), text, textColor);
-    *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    text_width = surface->w;
-    text_height = surface->h;
-    rect->x = x;
-    rect->y = y;
-    rect->w = text_width;
-    rect->h = text_height;
-}
-
-//*******************************
 // Gui::renderBackground
 //*******************************
 void Gui::renderBackground() {

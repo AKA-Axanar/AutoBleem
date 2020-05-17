@@ -454,8 +454,6 @@ struct FC_Font
 
 };
 
-TTF_Font* get_ttf_source(FC_Font* font) { return font->ttf_source; }
-
 // Private
 static FC_GlyphData* FC_PackGlyphData(FC_Font* font, Uint32 codepoint, Uint16 width, Uint16 maxWidth, Uint16 maxHeight);
 
