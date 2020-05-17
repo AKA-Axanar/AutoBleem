@@ -217,16 +217,30 @@ public:
     struct TextOrEmojiTokenInfo {
         std::string tokenString;
         SDL_Shared<SDL_Texture> emoji;  // not null only if tokenString is an emoji marker such as "|@X|"
-        FC_Size size;                   // width and height of rendered text or emoji texture
-    };
-    struct AllTextOrEmojiTokenInfo {
-        std::vector<TextOrEmojiTokenInfo> info;
-        FC_Size totalSize;      // the total width and height of all the tokens
+        FC_Rect rect;                   // position, width, and height of rendered text or emoji texture
+                                        // the x, y position is relative to the upper left corner of the string
     };
 
-    // break up the text into tokens of pure text or an emoji icon marker
+    // break up the text into tokens of text or the token of an emoji icon
     // return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
-    AllTextOrEmojiTokenInfo getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & text);
+    struct AllTextOrEmojiTokenInfo {
+        std::vector<TextOrEmojiTokenInfo> tokenInfos;
+
+        FC_Font_Shared font;
+        int x=0,y=0;            // upper left corner of the string on the display
+        FC_Size totalSize;      // the total width and height of all the tokens
+        bool useTextColor = false;
+        SDL_Color textColor;
+
+        AllTextOrEmojiTokenInfo() { }
+        AllTextOrEmojiTokenInfo(FC_Font_Shared _font, const std::string & _text) { getTokenInfo(_font, _text); }
+        void getTokenInfo(FC_Font_Shared _font, const std::string & _text);
+
+        void set_y_toLineAndYOffset(int line, int yOffset) { y = (line * FC_GetLineHeight(font)) + yOffset; }
+        void set_y(int _y) { y = _y; }
+        void compute_xy_offsets(); // compute x offset, center the y offset of each token to the total height
+        void setTextColor(SDL_Color color) { textColor = color; textColor.a = SDL_ALPHA_OPAQUE; useTextColor = true; }
+    };
 
     //*******************************
     // Rendering routines
@@ -243,6 +257,7 @@ public:
     // this routine does not support emoji icons.  text only.
     void renderTextOnly_WithColor(int x, int y, const std::string & text, SDL_Color textColor,
                                          FC_Font_Shared font, XAlignment xAlign = XALIGN_LEFT, bool background = false);
+    //*******************************
 
     // returns rectangle height
     int renderTextLine(const std::string & text, int line, int yoffset = 0,

@@ -937,15 +937,27 @@ int Gui::align_xPosition(XAlignment xAlign, int x, int width) {
 }
 
 //*******************************
-// Text tokenizing structure routines
+// Gui::AllTextOrEmojiTokenInfo::compute_xy_offsets
+// compute x offset, center the y offset of each token to the total height
 //*******************************
+void Gui::AllTextOrEmojiTokenInfo::compute_xy_offsets() {
+    int xOffset = 0;
+    for (auto& info : tokenInfos) {
+        x = xOffset;
+        xOffset += info.rect.w;
+        info.rect.y = (totalSize.h - info.rect.h) / 2;
+    }
+}
 
 //*******************************
-// Gui::getAllTokenInfoForLineOfTextAndEmojis
+// Gui::AllTextOrEmojiTokenInfo::getTokenInfo
 // break up the text into tokens of pure text or an emoji icon marker
 // return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
 //*******************************
-Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_Shared font, const std::string & _text) {
+void Gui::AllTextOrEmojiTokenInfo::getTokenInfo(FC_Font_Shared _font, const string & _text) {
+    font = _font;
+    auto gui = Gui::getInstance();
+
     //
     // break up the text into tokens of text and emoji markers
     //
@@ -959,7 +971,6 @@ Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_
     //
     // fill the info structures
     //
-    AllTextOrEmojiTokenInfo allInfo;
 
     for (const auto& tokenString : tokenStrings) {      // for each token string
         if (tokenString == "") continue;
@@ -967,33 +978,42 @@ Gui::AllTextOrEmojiTokenInfo Gui::getAllTokenInfoForLineOfTextAndEmojis(FC_Font_
         tokenInfo.tokenString = tokenString;
         if (tokenString[0] == '@') {    // if emoji marker
             int w, h;
-            auto it = buttonTextureMap.find(tokenString.c_str()+1);
-            if (it != buttonTextureMap.end()) {
+            auto it = gui->buttonTextureMap.find(tokenString.c_str()+1);
+            if (it != gui->buttonTextureMap.end()) {
                 tokenInfo.emoji = it->second;   // save the texture pointer
                 SDL_QueryTexture(it->second, nullptr, nullptr, &w, &h);
-                tokenInfo.size.w = w;
-                tokenInfo.size.h = h;
+                tokenInfo.rect.x = 0;
+                tokenInfo.rect.y = 0;
+                tokenInfo.rect.w = w;
+                tokenInfo.rect.h = h;
                 // update overall size
-                allInfo.totalSize.w += w;
-                if (h > allInfo.totalSize.h)
-                    allInfo.totalSize.h = h;
+                totalSize.w += w;
+                if (h > totalSize.h)
+                    totalSize.h = h;
                 // add the token info
-                allInfo.info.emplace_back(tokenInfo);
+                tokenInfos.emplace_back(tokenInfo);
             } else {
                 cout << "emoji not found for " << tokenString << endl;
             }
         } else {
-            tokenInfo.size = FC_getFontTextSize(font, tokenString);
+            tokenInfo.rect = gui->FC_getFontTextRect(font, tokenString);
             // update overall size
-            allInfo.totalSize.w += tokenInfo.size.w;
-            if (tokenInfo.size.h > allInfo.totalSize.h)
-                allInfo.totalSize.h = tokenInfo.size.h;
+            totalSize.w += tokenInfo.rect.w;
+            if (tokenInfo.rect.h > totalSize.h)
+                totalSize.h = tokenInfo.rect.h;
             // add the token info
-            allInfo.info.emplace_back(tokenInfo);
+            tokenInfos.emplace_back(tokenInfo);
         }
     }
 
-    return allInfo;
+    int xOffset = 0;
+    for (auto& tokenInfo : tokenInfos) {
+        // set the x posit within the string
+        tokenInfo.rect.x = xOffset;
+        xOffset += tokenInfo.rect.w;
+        // adjust the text y and emoji y so they are centered in the total height
+        tokenInfo.rect.y = (totalSize.h - tokenInfo.rect.h) / 2;
+    }
 }
 
 //*******************************
@@ -1010,27 +1030,29 @@ void Gui::renderAllTokenInfo(FC_Font_Shared font,
     if (!font)
         font = themeFont;   // default to themeFont
 
+    // compute x offset, center the y offset of each token to the total height
+    allTokenInfo.compute_xy_offsets();
+
+    // adjust the upper left corner postion if needed
     if (xAlign != XALIGN_LEFT)
         x = align_xPosition(xAlign, x, allTokenInfo.totalSize.w);
 
-    // adjust the text y position so the text is centered on the emoji centers
-    int fontHeight = FC_GetLineHeight(font);
-    int text_y = y + (allTokenInfo.totalSize.h - fontHeight)/2;
-
-    for (auto& tokenInfo : allTokenInfo.info) {
+    for (auto& tokenInfo : allTokenInfo.tokenInfos) {
         if (tokenInfo.emoji) {
             // the token is an emoji texture
-            FC_Rect rect;
-            rect.x = x;
-            rect.y = y + (allTokenInfo.totalSize.h - tokenInfo.size.h); // center the emoji in y
-            rect.w = tokenInfo.size.w;
-            rect.h = tokenInfo.size.h;
-            SDL_RenderCopy(renderer, tokenInfo.emoji, nullptr, &rect);
-            x += tokenInfo.size.w;
+            FC_Rect tempRect = tokenInfo.rect;
+            tempRect.x += x;
+            tempRect.y += y;
+            SDL_RenderCopy(renderer, tokenInfo.emoji, nullptr, &tempRect);
         } else {
             // the token is text
-            FC_DrawAlign(font, renderer, x, text_y, FC_ALIGN_LEFT, tokenInfo.tokenString.c_str());
-            x += tokenInfo.size.w;
+            if (allTokenInfo.useTextColor) {
+                FC_DrawColor(font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y,
+                             allTokenInfo.textColor, tokenInfo.tokenString.c_str());
+            } else {
+                FC_DrawAlign(font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y,
+                             FC_ALIGN_LEFT, tokenInfo.tokenString.c_str());
+            }
         }
     }
 }
@@ -1128,7 +1150,7 @@ SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int yoffset
         textRec.y=line;
     }
 
-    AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(font, text);
+    AllTextOrEmojiTokenInfo allTokenInfo(font, text);
     textRec.w = allTokenInfo.totalSize.w;
     textRec.h = allTokenInfo.totalSize.h;
     textRec.x = (SCREEN_WIDTH / 2) - allTokenInfo.totalSize.w / 2;
