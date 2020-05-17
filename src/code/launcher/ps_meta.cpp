@@ -179,7 +179,7 @@ void PsMeta::render() {
             rect.x = x + 135;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
 
-            gui->renderText(otherFont, to_string(discs), x, y + yOffset);
+            gui->renderText(otherFont, to_string(discs), x + 170, y + yOffset);
 
             rect.x = x + xoffset;
             rect.y = y + yOffset - 2;

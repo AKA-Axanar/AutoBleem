@@ -222,7 +222,8 @@ public:
     };
 
     // break up the text into tokens of text or the token of an emoji icon
-    // return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
+    // build a vector of the text, emoji texture pointers, position, width and height of each token and the
+    // total width and height of the entire line.
     struct AllTextOrEmojiTokenInfo {
         std::vector<TextOrEmojiTokenInfo> tokenInfos;
 
@@ -245,7 +246,7 @@ public:
     };
 
     //*******************************
-    // Rendering routines
+    // Text Line Rendering routines
     //*******************************
 
     // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
@@ -255,7 +256,6 @@ public:
     // this routine does not support emoji icons.  text only.
     int renderText_WithColor(FC_Font_Shared font, const std::string & text, int x, int y, SDL_Color textColor,
                              XAlignment xAlign = XALIGN_LEFT, bool background = false);
-    //*******************************
 
     // returns rectangle height
     int renderTextLine(const std::string & text, int line, int yoffset = 0,
