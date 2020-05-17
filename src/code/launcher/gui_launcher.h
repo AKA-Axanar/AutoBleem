@@ -137,8 +137,8 @@ public:
     PsMenu *menu;
     PsStateSelector * sselector= nullptr;
 
-    Uint8 fgR=255, fgG=255, fgB=255;
-    Uint8 secR=100, secG=100, secB=100;
+    SDL_Color fgColor { 255, 255, 255, SDL_ALPHA_OPAQUE };
+    SDL_Color secColor { 100, 100, 100, SDL_ALPHA_OPAQUE };
 
     std::vector<PsObj *> staticElements;
     std::vector<PsObj *> frontElemets;

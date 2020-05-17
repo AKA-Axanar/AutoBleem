@@ -25,11 +25,11 @@ void GuiLauncher::updateMeta() {
     if (carouselGames.empty()) {
         gameName = "";
         meta->updateTexts(gameName, publisher, year, serial, region, players, false, false, false, 0, false, false,
-                          false, "", { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+                          false, "", fgColor);
         return;
     }
     if (selGameIndexInCarouselGamesIsValid())
-        meta->updateTexts(carouselGames[selGameIndex], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+        meta->updateTexts(carouselGames[selGameIndex], fgColor);
 }
 
 //*******************************
@@ -342,12 +342,14 @@ void GuiLauncher::loadAssets() {
     Inifile colorsFile;
     if (DirEntry::exists(gui->getCurrentThemePath() + sep + "colors.ini")) {
         colorsFile.load(gui->getCurrentThemePath() + sep + "colors.ini");
-        fgR = gui->getR(colorsFile.values["fg"]);
-        fgG = gui->getG(colorsFile.values["fg"]);
-        fgB = gui->getB(colorsFile.values["fg"]);
-        secR = gui->getR(colorsFile.values["sec"]);
-        secG = gui->getG(colorsFile.values["sec"]);
-        secB = gui->getB(colorsFile.values["sec"]);
+        fgColor.r = gui->getR(colorsFile.values["fg"]);
+        fgColor.g = gui->getG(colorsFile.values["fg"]);
+        fgColor.b = gui->getB(colorsFile.values["fg"]);
+        fgColor.a = SDL_ALPHA_OPAQUE;
+        secColor.r = gui->getR(colorsFile.values["sec"]);
+        secColor.g = gui->getG(colorsFile.values["sec"]);
+        secColor.b = gui->getB(colorsFile.values["sec"]);
+        secColor.a = SDL_ALPHA_OPAQUE;
     }
 
     gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath(), renderer);
@@ -430,11 +432,10 @@ void GuiLauncher::loadAssets() {
     meta->y = 285;
     meta->visible = true;
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
-        meta->updateTexts(carouselGames[selGameIndex], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+        meta->updateTexts(carouselGames[selGameIndex], fgColor);
     } else {
         meta->updateTexts(gameName, publisher, year, serial, region, players,
-                          false, false, false, 0, false, false, false, "",
-                          { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+                          false, false, false, 0, false, false, false, "", fgColor);
     }
     staticElements.push_back(meta);
 
@@ -475,8 +476,8 @@ void GuiLauncher::loadAssets() {
     menuText->font = gui->themeFonts[FONT_22_MED];
     menuText->y = 585;
 
-    menuHead->setText(headers[0], { fgR, fgG, fgB,SDL_ALPHA_OPAQUE });
-    menuText->setText(texts[0], { fgR, fgG, fgB, SDL_ALPHA_OPAQUE });
+    menuHead->setText(headers[0], fgColor);
+    menuText->setText(texts[0], fgColor);
 
     staticElements.push_back(menuHead);
     staticElements.push_back(menuText);
@@ -709,9 +710,9 @@ void GuiLauncher::render() {
     menu->render();
 
     auto font24 = gui->themeFonts[FONT_22_MED];
-    gui->renderTextOnly_WithColor(638, 640, _("Enter"), {secR, secG, secB, SDL_ALPHA_OPAQUE}, font24, XALIGN_LEFT, false);
-    gui->renderTextOnly_WithColor(800, 640, _("Cancel"), {secR, secG, secB, SDL_ALPHA_OPAQUE}, font24, XALIGN_LEFT, false);
-    gui->renderTextOnly_WithColor(945, 640, _("Button Guide"), {secR, secG, secB, SDL_ALPHA_OPAQUE}, font24, XALIGN_LEFT, false);
+    gui->renderTextOnly_WithColor(638, 640, _("Enter"), secColor, font24, XALIGN_LEFT, false);
+    gui->renderTextOnly_WithColor(800, 640, _("Cancel"), secColor, font24, XALIGN_LEFT, false);
+    gui->renderTextOnly_WithColor(945, 640, _("Button Guide"), secColor, font24, XALIGN_LEFT, false);
 
     notificationLines.tickTock();
 
