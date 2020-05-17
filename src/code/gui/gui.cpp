@@ -1061,7 +1061,7 @@ void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
 
     FC_Rect rect = FC_getFontTextRect(font, text, x, y);
 
-    x = align_xPosition(xAlign, x, rect.w);
+    rect.x = x = align_xPosition(xAlign, x, rect.w);
 
     if (background) {
         // render a grey box behind the text
