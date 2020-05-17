@@ -262,12 +262,6 @@ public:
                        XAlignment xAlign = XALIGN_LEFT, int xoffset = 0,
                        FC_Font_Shared font = FC_Font_Shared());   // font will default to themeFont in the cpp
 
-    // returns the SDL_Rect of the screen positions if your rendered this text with these args
-    // this is basically renderTextLine but doesn't render the texct and instead returns the bounding rectangle
-    SDL_Rect getTextRectangleOnScreen(const std::string & text, int line,
-                                      int yoffset = 0, XAlignment xAlign = XALIGN_LEFT, int xoffset = 0,
-                                      FC_Font_Shared font = FC_Font_Shared());    // font will default to themeFont in the cpp
-
     int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
                                 int yoffset = 0, FC_Font_Shared font = FC_Font_Shared());
 

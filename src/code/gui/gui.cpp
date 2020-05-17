@@ -1118,34 +1118,6 @@ int Gui::renderTextLine(const string &text, int line, int yoffset, XAlignment xA
 }
 
 //*******************************
-// Gui::getTextRectangleOnScreen
-//*******************************
-// returns the SDL_Rect of the screen positions if your rendered this text with these args
-SDL_Rect Gui::getTextRectangleOnScreen(const string &text, int line, int yoffset,  XAlignment xAlign, int xoffset, FC_Font_Shared font) {
-    if (!font)
-        font = themeFont;   // default to themeFont
-
-    SDL_Rect opscreen = getOpscreenRectOfTheme();
-    Uint16 fontHeight = FC_GetLineHeight(themeFont);
-    FC_Rect textRec;
-    textRec.x = opscreen.x + 10 + xoffset;
-    textRec.y = (fontHeight * line) + yoffset;
-
-    if (line<0)
-    {
-        line=-line;
-        textRec.y=line;
-    }
-
-    AllTextOrEmojiTokenInfo allTokenInfo(font, text);
-    textRec.w = allTokenInfo.totalSize.w;
-    textRec.h = allTokenInfo.totalSize.h;
-    textRec.x = (SCREEN_WIDTH / 2) - allTokenInfo.totalSize.w / 2;
-
-    return textRec;
-}
-
-//*******************************
 // Gui::renderTextLineToColumns
 //*******************************
 int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight,

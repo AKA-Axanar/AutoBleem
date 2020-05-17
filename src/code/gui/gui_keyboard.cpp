@@ -76,7 +76,9 @@ void GuiKeyboard::render() {
     SDL_Shared<SDL_Texture> tex;
 
     if (L2_cursor_shift || usingUsbKeyboard) {
-        SDL_Rect rectEditbox = gui->getTextRectangleOnScreen(displayResult, 1, yoffset, XALIGN_CENTER, 0, gui->themeFont);
+        FC_Rect rectEditbox = gui->FC_getFontTextRect(gui->themeFont, displayResult);
+        rectEditbox.x = gui->align_xPosition(XALIGN_CENTER, 0, rectEditbox.w);
+        rectEditbox.y = (1 * rectEditbox.h) + yoffset;  // line 1 (0 == top)
 
         // compute the bounding box around the cursor (#)
         FC_Size textBeforeCursorSize;
@@ -87,7 +89,7 @@ void GuiKeyboard::render() {
         // get the cursor size
         FC_Size cursorSize = gui->FC_getFontTextSize(gui->themeFont, "#");
         // bounding box rectangle around the # cursor
-        SDL_Rect cursorRect { rectEditbox.x + textBeforeCursorSize.w, rectEditbox.h,    // x, y position
+        SDL_Rect cursorRect { rectEditbox.x + textBeforeCursorSize.w, rectEditbox.y,    // x, y position
                               cursorSize.w, cursorSize.h };                             // w, h
 
         drawRectangle(cursorRect);
