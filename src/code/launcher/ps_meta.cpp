@@ -128,17 +128,21 @@ void PsMeta::render() {
 
         int yOffset = 0;
         // game name line
-#if 1
-        gui->renderText(nameFont, gameName, x, y + yOffset);
-#else
         // if the game name goes off the end of the screen use a smaller font
-        if (x + FC_GetWidth(nameFont, gameName.c_str()) <= SCREEN_WIDTH)
-            gui->renderText(nameFont, gameName, x, y + yOffset);
-        else if (x + FC_GetWidth(fonts[FONT_20_BOLD], gameName.c_str()) <= SCREEN_WIDTH)
-            gui->renderText(fonts[FONT_20_BOLD], gameName, x, y + yOffset);
-        else
-            gui->renderText(fonts[FONT_15_BOLD], gameName, x, y + yOffset);
-#endif
+        int textWidth = FC_GetWidth(nameFont, gameName.c_str());
+        if (x + textWidth > SCREEN_WIDTH) {
+            int miniMe = 28.0 * ((float)(SCREEN_WIDTH - x) / (float)(textWidth)) + 0.5;
+            nameFont = Fonts::openSpecificSharedCachedFont(FONT_BOLD, miniMe);
+
+            // if it's still a bit over the right edge go down one more font size
+            textWidth = FC_GetWidth(nameFont, gameName.c_str());
+            if (x + textWidth > SCREEN_WIDTH) {
+                --miniMe;
+                nameFont = Fonts::openSpecificSharedCachedFont(FONT_BOLD, miniMe);
+            }
+        }
+        gui->renderText(nameFont, gameName, x, y + yOffset);
+
         yOffset += 35;
         // publisher line
         gui->renderText(otherFont, publisher, x, y + yOffset);

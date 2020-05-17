@@ -3,6 +3,7 @@
 #include "../util.h"
 #include <cassert>
 #include "../DirEntry.h"
+#include "gui.h"
 
 using namespace std;
 
@@ -97,6 +98,36 @@ FC_Font_Shared Fonts::openNewSharedCachedFont(const string &filename, int fontSi
         cout << "Success opening font " << filename << " of size " << fontSize << endl;
     } else {
         cout << "FAILURE opening font " << filename << " of size " << fontSize << endl;
+        font = nullptr;
+        assert(false);
+    }
+
+    return font;
+}
+
+
+//********************
+// Fonts::openSpecificSharedCachedFont
+// low level open shared font.  filename is the full path to the ttf file.  fontSize is the font point size.
+//********************
+FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) {
+    auto gui = Gui::getInstance();
+    auto renderer = gui->renderer;
+
+    string rootPath = gui->getCurrentThemeFontPath();
+    string fontPath;
+    if (type == FONT_MED)
+        fontPath = rootPath + sep + "SST-Medium.ttf";
+    else
+        fontPath = rootPath + sep + "SST-Bold.ttf";
+
+    FC_Font* fc_font = FC_CreateFont();
+    FC_LoadFont(fc_font, renderer, fontPath.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
+    FC_Font_Shared font = FC_Font_Shared(fc_font);
+    if (font) {
+        cout << "Success opening font " << fontPath << " of size " << fontSize << endl;
+    } else {
+        cout << "FAILURE opening font " << fontPath << " of size " << fontSize << endl;
         font = nullptr;
         assert(false);
     }

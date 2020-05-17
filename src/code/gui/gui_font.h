@@ -70,6 +70,7 @@ public:
     FC_Font_Shared & operator [] (FontEnum size) { return fonts[size]; }
 
     static FC_Font_Shared openNewSharedCachedFont(const std::string &filename, int fontSize, SDL_Shared<SDL_Renderer> renderer);
+    static FC_Font_Shared openSpecificSharedCachedFont(FontType type, int fontSize);
 
     //static TTF_Font_Shared openNewSharedTTFFont(const std::string &filename, int fontSize);
 
