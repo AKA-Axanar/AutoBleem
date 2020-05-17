@@ -710,9 +710,9 @@ void GuiLauncher::render() {
     menu->render();
 
     auto font24 = gui->themeFonts[FONT_22_MED];
-    gui->renderTextOnly_WithColor(638, 640, _("Enter"), secColor, font24, XALIGN_LEFT, false);
-    gui->renderTextOnly_WithColor(800, 640, _("Cancel"), secColor, font24, XALIGN_LEFT, false);
-    gui->renderTextOnly_WithColor(945, 640, _("Button Guide"), secColor, font24, XALIGN_LEFT, false);
+    gui->renderText_WithColor(font24, _("Enter"), 638, 640, secColor);
+    gui->renderText_WithColor(font24, _("Cancel"), 800, 640, secColor);
+    gui->renderText_WithColor(font24, _("Button Guide"), 945, 640, secColor);
 
     notificationLines.tickTock();
 

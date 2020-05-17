@@ -40,6 +40,6 @@ PsCenterLabel::~PsCenterLabel()
 void PsCenterLabel::render()
 {
     if (visible) {
-        gui->renderTextOnly_WithColor(x, y, text, textColor, gui->themeFont, XALIGN_CENTER, false);
+        gui->renderText_WithColor(gui->themeFont, text, x, y, textColor, XALIGN_CENTER);
     }
 }

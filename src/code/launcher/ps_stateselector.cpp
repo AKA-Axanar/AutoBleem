@@ -91,7 +91,7 @@ void PsStateSelector::render()
         SDL_Shared<SDL_Texture> infoText;
         SDL_Rect infoRect, infoDest;
 
-        gui->renderTextOnly_WithColor(0, 110, _(text), brightWhite, font30, XALIGN_CENTER, false);   // background=false
+        gui->renderText_WithColor(font30, _(text), 0, 110, brightWhite, XALIGN_CENTER);
 
         if (operation==OP_LOAD) {
             gui->renderText(font24, "|@T| " + _("Delete") + "     |@X| " + _("Select") + "     |@O| " + _("Cancel") +
@@ -134,8 +134,7 @@ void PsStateSelector::render()
                 SDL_RenderCopy(renderer, slotImg[i], &input, &imgOut);
             }
 
-            gui->renderTextOnly_WithColor(output.x+60, 270, _("Slot")+" "+to_string(i+1),
-                                          brightWhite, font24, XALIGN_LEFT, false); // center=false, background=false
+            gui->renderText_WithColor(font24, _("Slot") + " " + to_string(i+1), output.x + 60, 270, brightWhite);
         }
     }
 }

@@ -937,10 +937,10 @@ int Gui::align_xPosition(XAlignment xAlign, int x, int width) {
 }
 
 //*******************************
-// Gui::AllTextOrEmojiTokenInfo::compute_xy_offsets
+// Gui::AllTextOrEmojiTokenInfo::compute_xy_relativeOffsets
 // compute x offset, center the y offset of each token to the total height
 //*******************************
-void Gui::AllTextOrEmojiTokenInfo::compute_xy_offsets() {
+void Gui::AllTextOrEmojiTokenInfo::compute_xy_relativeOffsets() {
     int xOffset = 0;
     for (auto& info : tokenInfos) {
         x = xOffset;
@@ -955,8 +955,10 @@ void Gui::AllTextOrEmojiTokenInfo::compute_xy_offsets() {
 // return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
 //*******************************
 void Gui::AllTextOrEmojiTokenInfo::getTokenInfo(FC_Font_Shared _font, const string & _text) {
-    font = _font;
     auto gui = Gui::getInstance();
+    font = _font;
+    if (!font)
+        font = gui->themeFont;   // if font == nullptr, default to themeFont
 
     //
     // break up the text into tokens of text and emoji markers
@@ -1024,18 +1026,25 @@ void Gui::AllTextOrEmojiTokenInfo::getTokenInfo(FC_Font_Shared _font, const stri
 // Gui::renderAllTokenInfo
 // renders/draws the text and emoji icons at the chosen position on the screen
 //*******************************
-void Gui::renderAllTokenInfo(FC_Font_Shared font,
-                             AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign) {
-
-    if (!font)
-        font = themeFont;   // default to themeFont
-
+void Gui::renderAllTokenInfo(AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign) {
     // compute x offset, center the y offset of each token to the total height
-    allTokenInfo.compute_xy_offsets();
+    allTokenInfo.compute_xy_relativeOffsets();
 
     // adjust the upper left corner postion if needed
     if (xAlign != XALIGN_LEFT)
         x = align_xPosition(xAlign, x, allTokenInfo.totalSize.w);
+
+    if (allTokenInfo.drawBackgroundRect) {
+        // render a grey box behind the text
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 70);
+        SDL_Rect backRect;
+        backRect.x = x - 10;
+        backRect.y = y - 2;
+        backRect.w = allTokenInfo.totalSize.w + 20;
+        backRect.h = allTokenInfo.totalSize.h + 4;
+
+        SDL_RenderFillRect(renderer, &backRect);
+    }
 
     for (auto& tokenInfo : allTokenInfo.tokenInfos) {
         if (tokenInfo.emoji) {
@@ -1047,10 +1056,10 @@ void Gui::renderAllTokenInfo(FC_Font_Shared font,
         } else {
             // the token is text
             if (allTokenInfo.useTextColor) {
-                FC_DrawColor(font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y,
+                FC_DrawColor(allTokenInfo.font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y,
                              allTokenInfo.textColor, tokenInfo.tokenString.c_str());
             } else {
-                FC_DrawAlign(font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y,
+                FC_DrawAlign(allTokenInfo.font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y,
                              FC_ALIGN_LEFT, tokenInfo.tokenString.c_str());
             }
         }
@@ -1062,51 +1071,26 @@ void Gui::renderAllTokenInfo(FC_Font_Shared font,
 // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
 //*******************************
 int Gui::renderText(FC_Font_Shared font, const string & text, int x, int y, XAlignment xAlign) {
-    if (!font)
-        font = themeFont;   // default to themeFont
-    AllTextOrEmojiTokenInfo allTokenInfo = getAllTokenInfoForLineOfTextAndEmojis(font, text);
-    renderAllTokenInfo(themeFont, allTokenInfo, x, y, xAlign);
+    AllTextOrEmojiTokenInfo allTokenInfo(font, text);
+    renderAllTokenInfo(allTokenInfo, x, y, xAlign);
 
     return allTokenInfo.totalSize.h;    // return the height
 }
 
 //*******************************
-// Gui::renderTextOnly_WithColor
+// Gui::renderText_WithColor
 // if background == true it draws a solid grey box around/behind the text
 // this routine does not support emoji icons.  text only.
 //*******************************
-void Gui::renderTextOnly_WithColor(int x, int y, const std::string &text,
-                                   SDL_Color textColor, FC_Font_Shared font,
-                                   XAlignment xAlign, bool background) {
-    if (!font)
-        font = themeFont;
+int Gui::renderText_WithColor(FC_Font_Shared font, const std::string &text, int x, int y, SDL_Color textColor,
+                              XAlignment xAlign, bool background) {
+    AllTextOrEmojiTokenInfo allTokenInfo(font, text);
+    allTokenInfo.setTextColor(textColor);
+    allTokenInfo.drawBackgroundRect = background;
 
-    FC_Rect rect = FC_getFontTextRect(font, text, x, y);
+    renderAllTokenInfo(allTokenInfo, x, y, xAlign);
 
-    rect.x = x = align_xPosition(xAlign, x, rect.w);
-
-    if (background) {
-        // render a grey box behind the text
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 70);
-        SDL_Rect backRect;
-        backRect.x = rect.x - 10;
-        backRect.y = rect.y - 2;
-        backRect.w = rect.w + 20;
-        backRect.h = rect.h + 4;
-
-        SDL_RenderFillRect(renderer, &backRect);
-    }
-
-#if SDL_VERSION_ATLEAST(2,0,0)
-    if (textColor.a == 0)
-        cout << "alpha in SDL_Color is 0 for text: " << text << endl;
-    assert(textColor.a > 0);    // rendering the text will do no good if it's transparent
-#else
-    if (textColor.unused == 0)
-        cout << "alpha in SDL_Color is 0 for text: " << text << endl;
-    assert(textColor.unused > 0);
-#endif
-    FC_DrawColor(font, renderer, x, y, textColor, text.c_str());
+    return allTokenInfo.totalSize.h;    // return the height
 };
 
 //*******************************

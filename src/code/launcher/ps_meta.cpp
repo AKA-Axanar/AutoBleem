@@ -129,39 +129,38 @@ void PsMeta::render() {
         int yOffset = 0;
         // game name line
 #if 1
-        gui->renderTextOnly_WithColor(x, y + yOffset, gameName, textColor, nameFont);
+        gui->renderText(nameFont, gameName, x, y + yOffset);
 #else
         // if the game name goes off the end of the screen use a smaller font
         if (x + FC_GetWidth(nameFont, gameName.c_str()) <= SCREEN_WIDTH)
-            gui->renderTextOnly_WithColor(x, y + yOffset, gameName, textColor, nameFont);
+            gui->renderText(nameFont, gameName, x, y + yOffset);
         else if (x + FC_GetWidth(fonts[FONT_20_BOLD], gameName.c_str()) <= SCREEN_WIDTH)
-            gui->renderTextOnly_WithColor(x, y + yOffset, gameName, textColor, fonts[FONT_20_BOLD]);
+            gui->renderText(fonts[FONT_20_BOLD], gameName, x, y + yOffset);
         else
-            gui->renderTextOnly_WithColor(x, y + yOffset, gameName, textColor, fonts[FONT_15_BOLD]);
+            gui->renderText(fonts[FONT_15_BOLD], gameName, x, y + yOffset);
 #endif
         yOffset += 35;
         // publisher line
-        gui->renderTextOnly_WithColor(x, y + yOffset, publisher, textColor, otherFont);
+        gui->renderText(otherFont, publisher, x, y + yOffset);
 
         yOffset += 21;
         // serial number line
-        string temp = _("Serial:") + " " + serial + ", " + _("Region:") + " " + region;
-        gui->renderTextOnly_WithColor(x, y + yOffset, temp, textColor, otherFont);
+        gui->renderText(otherFont, _("Serial:") + " " + serial + ", " + _("Region:") + " " + region, x, y + yOffset);
 
         yOffset += 21;
         // last played line
 #if defined(__x86_64__) || defined(_M_X64)
         // the devel system has time
-        gui->renderTextOnly_WithColor(x, y + yOffset, _("Last Played:") + " " + last_played, textColor, otherFont);
+        gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #else
         if (Env::autobleemKernel)
-            gui->renderTextOnly_WithColor(x, y + yOffset, _("Last Played:") + " " + last_played, textColor, otherFont);
+            gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #endif
 
         yOffset += 22;
         if (!foreign) {
             // PS1 icons line
-            gui->renderTextOnly_WithColor(x + 35, y + yOffset, players, textColor, otherFont);
+            gui->renderText(otherFont, players, x + 35, y + yOffset);
 
             SDL_QueryTexture(tex, &format, &access, &w, &h);
             rect.x = x;
@@ -180,7 +179,7 @@ void PsMeta::render() {
             rect.x = x + 135;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
 
-            gui->renderTextOnly_WithColor(x + 170, y + yOffset, to_string(discs), textColor, otherFont);
+            gui->renderText(otherFont, to_string(discs), x, y + yOffset);
 
             rect.x = x + xoffset;
             rect.y = y + yOffset - 2;

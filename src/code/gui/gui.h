@@ -208,7 +208,7 @@ public:
     FC_Rect getTextRectOfTheme();
 
     int getCheckIconWidth();    // returns the width of the check icon texture.  used to compute the x position.
-    int align_xPosition(XAlignment xAlign, int x, int width);
+    static int align_xPosition(XAlignment xAlign, int x, int width);
 
     //*******************************
     // Text tokenizing structure routines
@@ -231,14 +231,19 @@ public:
         FC_Size totalSize;      // the total width and height of all the tokens
         bool useTextColor = false;
         SDL_Color textColor;
+        bool drawBackgroundRect = false;
 
         AllTextOrEmojiTokenInfo() { }
         AllTextOrEmojiTokenInfo(FC_Font_Shared _font, const std::string & _text) { getTokenInfo(_font, _text); }
         void getTokenInfo(FC_Font_Shared _font, const std::string & _text);
 
-        void set_y_toLineAndYOffset(int line, int yOffset) { y = (line * FC_GetLineHeight(font)) + yOffset; }
+        void set_x(int _x) { x = _x; }
+        void set_x(XAlignment xAlign, int _x) { x = Gui::align_xPosition(xAlign, _x, totalSize.w); }
+
         void set_y(int _y) { y = _y; }
-        void compute_xy_offsets(); // compute x offset, center the y offset of each token to the total height
+        void set_y_toLineAndYOffset(int line, int yOffset) { y = (line * totalSize.h) + yOffset; }
+
+        void compute_xy_relativeOffsets(); // compute x offset, center the y offset of each token to the total height
         void setTextColor(SDL_Color color) { textColor = color; textColor.a = SDL_ALPHA_OPAQUE; useTextColor = true; }
     };
 
@@ -247,16 +252,15 @@ public:
     //*******************************
 
     // renders/draws the text and emoji icons at the chosen position on the screen
-    void renderAllTokenInfo(FC_Font_Shared font,
-                            AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign = XALIGN_LEFT);
+    void renderAllTokenInfo(AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
     // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
     int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
     // if background == true it draws a solid grey box around/behind the text
     // this routine does not support emoji icons.  text only.
-    void renderTextOnly_WithColor(int x, int y, const std::string & text, SDL_Color textColor,
-                                         FC_Font_Shared font, XAlignment xAlign = XALIGN_LEFT, bool background = false);
+    int renderText_WithColor(FC_Font_Shared font, const std::string & text, int x, int y, SDL_Color textColor,
+                             XAlignment xAlign = XALIGN_LEFT, bool background = false);
     //*******************************
 
     // returns rectangle height
