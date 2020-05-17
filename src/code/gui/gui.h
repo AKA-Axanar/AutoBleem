@@ -237,22 +237,16 @@ public:
         AllTextOrEmojiTokenInfo(FC_Font_Shared _font, const std::string & _text) { getTokenInfo(_font, _text); }
         void getTokenInfo(FC_Font_Shared _font, const std::string & _text);
 
-        void set_x(int _x) { x = _x; }
-        void set_x(XAlignment xAlign, int _x) { x = Gui::align_xPosition(xAlign, _x, totalSize.w); }
-
-        void set_y(int _y) { y = _y; }
-        void set_y_toLineAndYOffset(int line, int yOffset) { y = (line * totalSize.h) + yOffset; }
-
         void compute_xy_relativeOffsets(); // compute x offset, center the y offset of each token to the total height
         void setTextColor(SDL_Color color) { textColor = color; textColor.a = SDL_ALPHA_OPAQUE; useTextColor = true; }
+
+        // renders/draws the text and emoji icons at the chosen position on the screen
+        void render(int x, int y, XAlignment xAlign = XALIGN_LEFT);
     };
 
     //*******************************
     // Rendering routines
     //*******************************
-
-    // renders/draws the text and emoji icons at the chosen position on the screen
-    void renderAllTokenInfo(AllTextOrEmojiTokenInfo& allTokenInfo, int x, int y, XAlignment xAlign = XALIGN_LEFT);
 
     // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
     int renderText(FC_Font_Shared font, const std::string & text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
