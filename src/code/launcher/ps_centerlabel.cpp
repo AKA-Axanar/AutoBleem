@@ -22,7 +22,6 @@ void PsCenterLabel::setText(const string & _text, SDL_Color _textColor)
     textColor = _textColor;
     textColor.a = SDL_ALPHA_OPAQUE; // if you're rendering with a different color you need this or it will be transparent
 
-    font = gui->themeFont;
     textSize = gui->FC_getFontTextSize(font, text);
     x = gui->align_xPosition(XALIGN_CENTER, x, textSize.w);
 }
@@ -40,6 +39,6 @@ PsCenterLabel::~PsCenterLabel()
 void PsCenterLabel::render()
 {
     if (visible) {
-        gui->renderText_WithColor(gui->themeFont, text, x, y, textColor, XALIGN_CENTER);
+        gui->renderText_WithColor(font, text, x, y, textColor, XALIGN_CENTER);
     }
 }
