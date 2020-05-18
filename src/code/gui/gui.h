@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include "abl.h"
 #include "../main.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -16,19 +17,10 @@
 #include "../engine/scanner.h"
 #include "../engine/padmapper.h"
 #include "gui_sdl_wrapper.h"
+//#include "gui_font_wrapper.h"
 #include "gui_font.h"
+#include "../environment.h"
 
-#define PCS_DEADZONE     32000
-#define PCS_BTN_L2       4
-#define PCS_BTN_R2       5
-#define PCS_BTN_L1       6
-#define PCS_BTN_R1       7
-#define PCS_BTN_START    9
-#define PCS_BTN_SQUARE   3
-#define PCS_BTN_TRIANGLE 0
-#define PCS_BTN_CROSS    2
-#define PCS_BTN_CIRCLE   1
-#define PCS_BTN_SELECT   8
 
 enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_OPTION_RETRO, MENU_OPTION_START };
 
@@ -77,20 +69,12 @@ public:
 //********************
 class Gui : public GuiBase {
 private:
-    Gui() { mapper.init(); }
+
+    Gui() { mapper.probePads(); }
 
     string themePath;
 
 public:
-    //*******************************
-    // Member Variables
-    //*******************************
-
-    std::vector<SDL_Joystick *> joysticks;
-
-    int _cb(int button, SDL_Event *e);
-
-    vector<string> joynames;
     PadMapper mapper;
     Inifile themeData;
     Inifile defaultData;
@@ -99,6 +83,43 @@ public:
     // db and internalDB are set in main.cpp and remain alive until exit
     Database *db = nullptr;
     Database *internalDB = nullptr;
+
+
+    void loadAssets(bool reloadMusic = true);
+
+    void display(bool forceScan, const std::string &_pathToGamesDir, Database *db, bool resume);
+
+    void hideMouseCursor();
+
+    void finish();
+
+
+    static void splash(const std::string & message);
+
+    void menuSelection();
+
+    void saveSelection();
+
+    Uint8 getR(const std::string &val);
+
+    Uint8 getG(const std::string &val);
+
+    Uint8 getB(const std::string &val);
+
+    void criticalException(const std::string &text);
+
+    SDL_Shared<SDL_Texture>
+    loadThemeTexture(const string& themePath, const string& defaultPath, const string& texname);
+
+    void exportDBToRetroarch();
+
+    void stopAudio();
+    void playMusic(bool customMusic, string musicPath);
+    void restartAudio(int freq);
+    void freeMusic();
+    bool customMusic=false;
+    int freq = 44100;
+    string musicPath;
 
     MenuOption menuOption = MENU_OPTION_SCAN;
 
@@ -138,14 +159,6 @@ public:
     int resumepoint = -1;
     string padMapping;
 
-                            //*******************************
-                            // Functions
-                            //*******************************
-
-    //*******************************
-    // Gui Singleton
-    //*******************************
-
     Gui(Gui const &) = delete;
 
     Gui &operator=(Gui const &) = delete;
@@ -154,38 +167,6 @@ public:
         static std::shared_ptr<Gui> s{new Gui};
         return s;
     }
-
-    //*******************************
-    // Misc Functions
-    //*******************************
-    static void splash(const std::string & message);
-
-    Uint8 getR(const std::string & val);
-
-    Uint8 getG(const std::string & val);
-
-    Uint8 getB(const std::string & val);
-
-    void watchJoystickPort();
-
-    SDL_Shared<SDL_Texture>
-    loadThemeTexture(const std::string& themePath, const std::string& defaultPath, const std::string& texname);
-
-    void loadAssets(bool reloadMusic = true);
-
-    void waitForGamepad();
-
-    void criticalException(const std::string & text);
-
-    void display(bool forceScan, const std::string &_pathToGamesDir, Database *db, bool resume);
-
-    void saveSelection();
-
-    void menuSelection();
-
-    void finish();
-
-    void exportDBToRetroarch();
 
     static bool sortByTitle(const PsGamePtr &i, const PsGamePtr &j) { return SortByCaseInsensitive(i->title, j->title); }
 
@@ -283,5 +264,5 @@ public:
 
     void renderTextBar();
 
-    void drawText(const std::string & text);
+    void drawText(const std::string &text, const string &topLine="");
 };

@@ -45,7 +45,7 @@ void GuiBtnGuide::render() {
     renderTextLineToColumns("|@L2| + |@Select|",         _("Change RetroBoot System"));
     line++;
     renderTextLineToColumns("",                          "-=" + _("In Game") + "=-");
-    renderTextLineToColumns("|@Select| + |@T|",          _("Emulator config MENU"));
+    renderTextLineToColumns("|@Select| + |@Start|",          _("Emulator config MENU"));
     renderTextLineToColumns(_("RESET"),                  _("Quit emulation - back to AutoBleem"));
     line++;
     renderTextLineToColumns("",                          "-=" + _("In Retroarch Game") + "=-");
@@ -65,11 +65,12 @@ void GuiBtnGuide::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     menuVisible = true;
     while (menuVisible) {
-        gui->watchJoystickPort();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
                 }
@@ -79,8 +80,8 @@ void GuiBtnGuide::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_JOYBUTTONUP:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+                case SDL_CONTROLLERBUTTONUP:
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         menuVisible = false;
                     };

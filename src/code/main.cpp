@@ -25,6 +25,7 @@
 #include "launcher/ra_integrator.h"
 #include "launcher/launch_interceptor.h"
 #include "launcher/gui_app_start.h"
+#include "gui/abl.h"
 
 using namespace std;
 
@@ -187,8 +188,12 @@ void rewriteGamelistXml() {
 // main
 //*******************************
 int main(int argc, char *argv[]) {
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_InitSubSystem(SDL_INIT_AUDIO);
+    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
     Env::autobleemKernel = DirEntry::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
+
 
     if (argc == 1 + 1) {
         // the single arg is the path to the usb drive
@@ -217,7 +222,7 @@ int main(int argc, char *argv[]) {
     // now that Environment is setup, routines that need the paths can be called
     shared_ptr<Gui> gui(Gui::getInstance());
     shared_ptr<Scanner> scanner(Scanner::getInstance());
-
+    gui->mapper.init();
     lang->load(gui->cfg.inifile.values["language"]);
 
     Coverdb *coverdb = new Coverdb();
@@ -305,14 +310,13 @@ int main(int argc, char *argv[]) {
             {
                 Mix_CloseAudio();
             }
-            numtimesopened=Mix_QuerySpec(&frequency, &format, &channels);
-
-            for (SDL_Joystick* joy:gui->joysticks) {
-                if (SDL_JoystickGetAttached(joy)) {
-                    SDL_JoystickClose(joy);
-                }
+            while(Mix_QuerySpec(&frequency, &format, &channels))
+            {
+                Mix_CloseAudio();
             }
-            SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+
+
+            gui->mapper.flushPads();
 
             gui->saveSelection();
             EmuInterceptor *interceptor;
@@ -350,11 +354,15 @@ int main(int argc, char *argv[]) {
                 ra->reloadHistory();  // they could have changed
             }
 
-            SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-
             usleep(300*1000);
+
+
+            gui->mapper.probePads();
             gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;
+            // remove all events if something left
+            SDL_PumpEvents();
+            SDL_FlushEvents(SDL_FIRSTEVENT,SDL_LASTEVENT);
 
             gui->display(false, pathToGamesDir, db, true);
         }

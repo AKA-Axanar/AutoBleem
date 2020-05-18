@@ -36,7 +36,6 @@ void GuiPadTest::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     int buttonDownCount = 0;
     while (buttonDownCount >= 0 && buttonDownCount < 3) {
-        gui->watchJoystickPort();
         SDL_Event e;
         auto status = SDL_PollEvent(&e);
         if (status) {
@@ -45,25 +44,25 @@ void GuiPadTest::loop() {
             } else if (e.type == SDL_KEYUP) {
                 appendLine("SDL_KEYUP = " + to_string(e.key.keysym.scancode));
 
-            } else if (e.type == SDL_JOYBUTTONDOWN) {
-                appendLine("SDL_JOYBUTTONDOWN = " + to_string(e.jbutton.button));
+            } else if (e.type == SDL_CONTROLLERBUTTONDOWN) {
+                appendLine("SDL_CONTROLLERBUTTONDOWN = " + to_string(e.cbutton.button));
                 buttonDownCount++;
-            } else if (e.type == SDL_JOYBUTTONUP) {
-                appendLine("SDL_JOYBUTTONUP = " + to_string(e.jbutton.button));
+            } else if (e.type == SDL_CONTROLLERBUTTONUP) {
+                appendLine("SDL_CONTROLLERBUTTONUP = " + to_string(e.cbutton.button));
                 if (buttonDownCount > 0)
                     buttonDownCount--;
 
-            } else if (e.type == SDL_JOYHATMOTION) {
-                appendLine("SDL_JOYHATMOTION = " + to_string(e.jhat.value));
-            } else if (e.type == SDL_JOYAXISMOTION) {
+            } else if (e.type == SDL_CONTROLLERHATMOTIONUP) {
+                appendLine("SDL_CONTROLLERHATMOTIONUP = " + to_string(e.jhat.value));
+            } else if (e.type == SDL_CONTROLLERHATMOTIONDOWN) {
 #if 0
                 // controller on valium
                 if (e.jaxis.value == -32768 || e.jaxis.value == 32767 || e.jaxis.value == 0 ||
                     e.jaxis.value == -1 || e.jaxis.value == 1) {
-                    appendLine("SDL_JOYAXISMOTION = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
+                    appendLine("SDL_CONTROLLERHATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
                 }
 #else
-                appendLine("SDL_JOYAXISMOTION = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
+                appendLine("SDL_CONTROLLERHATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
 #endif
             } else if (e.type == SDL_MOUSEMOTION ||
                        e.type == SDL_MOUSEBUTTONDOWN ||

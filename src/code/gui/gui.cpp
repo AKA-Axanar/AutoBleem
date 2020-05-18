@@ -12,7 +12,6 @@
 #include <SDL2/SDL_image.h>
 #include "../ver_migration.h"
 #include "../launcher/gui_launcher.h"
-#include "gui_padconfig.h"
 #include "gui_padTest.h"
 #include <unistd.h>
 #include <iostream>
@@ -28,20 +27,14 @@ template<class K, class V, class dummy_compare, class A>
 using my_workaround_fifo_map = fifo_map<K, V, fifo_map_compare<K>, A>;
 using ordered_json = basic_json<my_workaround_fifo_map>;
 
+
 #define RA_PLAYLIST "AutoBleem.lpl"
 
-                                    //*******************************
-                                    // GuiBase
-                                    //*******************************
 
 //********************
 // GuiBase::GuiBase
 //********************
 GuiBase::GuiBase() {
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-    SDL_InitSubSystem(SDL_INIT_AUDIO);
-
     window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -52,6 +45,7 @@ GuiBase::GuiBase() {
     SDL_SetWindowGrab(window, SDL_TRUE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
+
 
     TTF_Init();
     sonyFonts.openAllFonts(Env::getSonyFontPath(), renderer);
@@ -114,6 +108,7 @@ string GuiBase::getCurrentThemeSoundPath() {
     if (!DirEntry::exists(path)) {
         path = Env::getSonyPath() + sep + "sounds";
     }
+    cout << path << endl;
     return path;
 #else
     string path =  "/media/themes/" + cfg.inifile.values["theme"] + "/sounds";
@@ -145,9 +140,6 @@ string GuiBase::getCurrentThemeFontPath() {
 #endif
 }
 
-                                    //*******************************
-                                    // Gui
-                                    //*******************************
 
 //*******************************
 // Gui::splash
@@ -189,32 +181,71 @@ Uint8 Gui::getB(const string &val) {
     return atoi(Util::commaSep(val, 2).c_str());
 }
 
-//*******************************
-// Gui::watchJoystickPort
-//*******************************
-void Gui::watchJoystickPort() {
 
-    int numJoysticks = SDL_NumJoysticks();
-    if (numJoysticks != joysticks.size()) {
-        cout << "Pad changed" << endl;
-        for (SDL_Joystick *joy:joysticks) {
-            if (SDL_JoystickGetAttached(joy)) {
-                SDL_JoystickClose(joy);
-            }
-            joysticks.clear();
-            joynames.clear();
-        }
-        SDL_Joystick *joystick;
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            joystick = SDL_JoystickOpen(i);
-            joysticks.push_back(joystick);
-            joynames.push_back(SDL_JoystickName(joystick));
-            cout << "Pad connected" << endl;
-            cout << "--" << SDL_JoystickName(joystick) << endl;
-        }
+
+void Gui::stopAudio() {
+    int numtimesopened, frequency, channels;
+    Uint16 format;
+    numtimesopened=Mix_QuerySpec(&frequency, &format, &channels);
+    for (int i=0;i<numtimesopened;i++)
+    {
+        Mix_CloseAudio();
+    }
+    while(Mix_QuerySpec(&frequency, &format, &channels))
+    {
+        Mix_CloseAudio();
     }
 }
 
+void Gui::restartAudio(int freq) {
+    int numtimesopened, frequency, channels;
+    Uint16 format;
+    numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
+    for (int i = 0; i < numtimesopened; i++) {
+        Mix_CloseAudio();
+    }
+    while (Mix_QuerySpec(&frequency, &format, &channels));
+
+
+    if (Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
+        printf("Unable to open audio: %s\n", Mix_GetError());
+    }
+
+    const char *driver_name = SDL_GetCurrentAudioDriver();
+
+    if (driver_name) {
+        printf("Audio subsystem initialized; driver = %s.\n", driver_name);
+    } else {
+        printf("Audio subsystem not initialized.\n");
+    }
+}
+
+void Gui::playMusic(bool customMusic, string musicPath) {
+    if (cfg.inifile.values["nomusic"] != "true")
+        if (themeData.values["loop"] != "-1") {
+            if (!customMusic) {
+                music = Mix_LoadMUS((themePath + themeData.values["music"]).c_str());
+                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                if (Mix_PlayMusic(music, themeData.values["loop"] == "1" ? -1 : 0) == -1) {
+                    printf("Unable to play music file: %s\n", Mix_GetError());
+                }
+            } else {
+                music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
+                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
+                if (Mix_PlayMusic(music, -1) == -1) {
+                    printf("Unable to play music file: %s\n", Mix_GetError());
+                }
+            }
+
+        }
+}
+
+void Gui::freeMusic() {
+    if (music != nullptr) {
+        Mix_FreeMusic(music);
+        music = nullptr;
+    }
+}
 //*******************************
 // Gui::loadThemeTexture
 //*******************************
@@ -228,6 +259,7 @@ Gui::loadThemeTexture(const string& themePath, const string& defaultPath, const 
     }
     return tex;
 }
+
 
 //*******************************
 // Gui::loadAssets
@@ -304,15 +336,11 @@ void Gui::loadAssets(bool reloadMusic) {
     themeFont = Fonts::openNewSharedCachedFont(fontPath, fontSize, renderer);
 
     if (reloadMusic) {
-        if (music != nullptr) {
-
-            Mix_FreeMusic(music);
-            music = nullptr;
-        }
+        freeMusic();
     }
-    bool customMusic = false;
-    int freq = 32000;
-    string musicPath = themeData.values["music"];
+    customMusic = false;
+    freq = 32000;
+    musicPath = themeData.values["music"];
     if (cfg.inifile.values["music"] != "--") {
         customMusic = true;
         musicPath = cfg.inifile.values["music"];
@@ -323,64 +351,27 @@ void Gui::loadAssets(bool reloadMusic) {
     }
 
     if (reloadMusic) {
-        int numtimesopened, frequency, channels;
-        Uint16 format;
-        numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
-        for (int i = 0; i < numtimesopened; i++) {
-            Mix_CloseAudio();
-        }
-        numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
-
-        if (Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
-            printf("Unable to open audio: %s\n", Mix_GetError());
-        }
+        this->restartAudio(freq);
+        this->playMusic(customMusic, musicPath);
     }
     cursor = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cursor.wav").c_str());
     cancel = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cancel.wav").c_str());
     home_up = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "home_up.wav").c_str());
     home_down = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "home_down.wav").c_str());
     resume = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "resume_new.wav").c_str());
-
-    if (reloadMusic)
-    if (cfg.inifile.values["nomusic"] != "true")
-        if (themeData.values["loop"] != "-1") {
-
-
-            if (!customMusic) {
-                music = Mix_LoadMUS((themePath + themeData.values["music"]).c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, themeData.values["loop"] == "1" ? -1 : 0) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
-                }
-            } else {
-                music = Mix_LoadMUS((Env::getWorkingPath() + sep + "music/" + musicPath).c_str());
-                if (music == nullptr) { printf("Unable to load Music file: %s\n", Mix_GetError()); }
-                if (Mix_PlayMusic(music, -1) == -1) {
-                    printf("Unable to play music file: %s\n", Mix_GetError());
-                }
-            }
-
-        }
 }
 
 //*******************************
-// Gui::waitForGamepad
+// Gui::hideMouseCursor
 //*******************************
-void Gui::waitForGamepad() {
-    int joysticksFound = SDL_NumJoysticks();
-    while (joysticksFound == 0) {
-        drawText(_("PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC"));
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-        SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-        joysticksFound = SDL_NumJoysticks();
-#if defined(__x86_64__) || defined(_M_X64)
+void Gui::hideMouseCursor() {
 
+#if defined(__x86_64__) || defined(_M_X64)
 #else
-        SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
     SDL_SetWindowGrab(window, SDL_TRUE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
-    }
 }
 
 //*******************************
@@ -391,18 +382,15 @@ void Gui::criticalException(const string &text) {
     while (true) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
-                    drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
-                }
-            }
+            mapper.handleHotPlug(&e);
+            mapper.handlePowerBtn(&e);
+
             if (e.type == SDL_QUIT)
                 return;
             else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
                 return;
 
-            if (e.type == SDL_JOYBUTTONDOWN) {
+            if (e.type == SDL_CONTROLLERBUTTONDOWN) {
                 return;
             }
         }
@@ -413,8 +401,6 @@ void Gui::criticalException(const string &text) {
 // Gui::display
 //*******************************
 void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, bool resume) {
-    joysticks.clear();
-    joynames.clear();
     this->db = db;
     this->pathToGamesDir = _pathToGamesDir;
     this->forceScan = forceScan;
@@ -439,36 +425,7 @@ void Gui::display(bool forceScan, const string &_pathToGamesDir, Database *db, b
         auto *splashScreen = new GuiSplash(renderer);
         splashScreen->show();
         delete splashScreen;
-
-#if 1
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            SDL_Joystick *joystick = SDL_JoystickOpen(i);
-            if (!mapper.isKnownPad(SDL_JoystickInstanceID(joystick))) {
-                cout << "New pad type" << endl;
-                // new controller configuration
-                auto cfgPad = new GuiPadConfig(renderer);
-                cfgPad->joyid = SDL_JoystickInstanceID(joystick);
-                cfgPad->show();
-                delete cfgPad;
-            }
-        }
-#else   // build verion to test controllers.  GuiPadTest displays the SDL event coming from the controller.
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            SDL_Joystick *joystick = SDL_JoystickOpen(i);
-            // for debugging new controllers
-            // this will display a scrollable window displaying all the events coming from the new controller
-            // for testing.  it also writes the output to ab_out.txt
-            // hold down three buttons to exit and do a safe shutdown!
-            auto cfgTest = new GuiPadTest(renderer);
-            cfgTest->joyid = SDL_JoystickInstanceID(joystick);
-            cfgTest->alsoWriteToCout = true;
-                cfgTest->show();
-            delete cfgTest;
-            Util::powerOff();
-        }
-#endif
-
-        waitForGamepad();
+        hideMouseCursor();
     } else {
         resumingGui = true;
     }
@@ -494,9 +451,6 @@ void Gui::saveSelection() {
 bool otherMenuShift = false;
 bool powerOffShift = false;
 
-int Gui::_cb(int button, SDL_Event *e) {
-    return mapper.translateButton(button, e);
-}
 
 //*******************************
 // Gui::menuSelection
@@ -504,19 +458,7 @@ int Gui::_cb(int button, SDL_Event *e) {
 void Gui::menuSelection() {
     shared_ptr<Scanner> scanner(Scanner::getInstance());
 
-    SDL_Joystick *joystick;
-    if (joysticks.empty())
-        for (int i = 0; i < SDL_NumJoysticks(); i++) {
-            joystick = SDL_JoystickOpen(i);
-            joysticks.push_back(joystick);
-            cout << "--" << SDL_JoystickName(joystick) << endl;
-        }
-    // Check if all OK
-// commented this part out.  it was just annoying people who only played RA
-//    if (scanner->noGamesFoundDuringScan) {
-//        criticalException(_("WARNING: NO GAMES FOUND. PRESS ANY BUTTON."));
-//    }
-    //
+
     if (!coverdb->isValid()) {
         criticalException(_("WARNING: NO COVER DB FOUND. PRESS ANY BUTTON."));
     }
@@ -541,20 +483,27 @@ void Gui::menuSelection() {
 
     string forceScanMenu = _("Games changed. Press") + "  |@X|  " + _("to scan") + "|";
     string otherMenu;
-    if (Env::autobleemKernel)
-        otherMenu += "|@S|  " + _("Hardware Information") + "  ";
+
+    otherMenu += "|@S|  " + _("Hardware Information") + "  ";
     otherMenu += "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
-    cout << SDL_NumJoysticks() << "joysticks were found." << endl;
+
+
+    string gamepadNotice = "";
+    if (SDL_NumJoysticks() > mapper.getActivePadNum()) {
+        gamepadNotice = _(
+                "NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup.");
+    }
 
     if (!forceScan) {
-        drawText(mainMenu);
+        drawText(mainMenu, gamepadNotice);
 
     } else {
-        drawText(forceScanMenu);
+        drawText(forceScanMenu, gamepadNotice);
     }
+
+
     bool menuVisible = true;
     while (menuVisible) {
-        watchJoystickPort();
         if (startingGame) {
             drawText(runningGame->title);
             this->menuOption = MENU_OPTION_START;
@@ -574,68 +523,42 @@ void Gui::menuSelection() {
         }
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
-                    drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
-                }
-            }
-
+            mapper.handleHotPlug(&e);
+            mapper.handlePowerBtn(&e);
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
             }
-
-            if (e.type == SDL_JOYDEVICEADDED )
-            {
-                int joyid = e.jdevice.which;
-                SDL_Joystick *joystick = SDL_JoystickOpen(joyid);
-                if (!mapper.isKnownPad(SDL_JoystickInstanceID(joystick))) {
-                    cout << "New pad type" << endl;
-                    // new controller configuration
-                    auto cfgPad = new GuiPadConfig(renderer);
-                    cfgPad->joyid = SDL_JoystickInstanceID(joystick);
-                    cfgPad->show();
-                    delete cfgPad;
-                    if (!forceScan) {
-                        drawText(mainMenu);
-
-                    } else {
-                        drawText(forceScanMenu);
-                    }
-                }
-            }
             switch (e.type) {
 
-                case SDL_JOYBUTTONUP:
+                case SDL_CONTROLLERBUTTONUP:
                     if (!forceScan) {
-                        if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
+                        if (e.cbutton.button == SDL_BTN_L1) {
                             Mix_PlayChannel(-1, cursor, 0);
                             drawText(mainMenu);
                             otherMenuShift = false;
                         }
-                        if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
+                        if (e.cbutton.button == SDL_BTN_L2) {
                             Mix_PlayChannel(-1, cursor, 0);
                             powerOffShift = false;
                         }
                     }
                     break;
-                case SDL_JOYBUTTONDOWN:
+                case SDL_CONTROLLERBUTTONDOWN:
                     if (!forceScan) {
-                        if (e.jbutton.button == _cb(PCS_BTN_L1, &e)) {
+                        if (e.cbutton.button == SDL_BTN_L1) {
                             Mix_PlayChannel(-1, cursor, 0);
                             drawText(otherMenu);
                             otherMenuShift = true;
                         }
-                        if (e.jbutton.button == _cb(PCS_BTN_L2, &e)) {
+                        if (e.cbutton.button == SDL_BTN_L2) {
                             Mix_PlayChannel(-1, cursor, 0);
                             powerOffShift = true;
                         }
                     }
 
                     if (powerOffShift) {
-                        if (e.jbutton.button == _cb(PCS_BTN_R2, &e)) {
+                        if (e.cbutton.button == SDL_BTN_R2) {
                             Mix_PlayChannel(-1, cursor, 0);
                             drawText(_("POWERING OFF... PLEASE WAIT"));
 #if defined(__x86_64__) || defined(_M_X64)
@@ -650,7 +573,7 @@ void Gui::menuSelection() {
 
                     if (!otherMenuShift) {
                         if (!forceScan)
-                            if (e.jbutton.button == _cb(PCS_BTN_START, &e)) {
+                            if (e.cbutton.button == SDL_BTN_START) {
                                 if (cfg.inifile.values["ui"] == "classic") {
                                     Mix_PlayChannel(-1, cursor, 0);
                                     this->menuOption = MENU_OPTION_RUN;
@@ -658,7 +581,7 @@ void Gui::menuSelection() {
                                 } else {
                                     if (lastSet < 0) {
                                         lastSet = SET_PS1;
-                                        lastSelIndex=0;
+                                        lastSelIndex = 0;
                                         resumingGui = false;
                                     }
                                     Mix_PlayChannel(-1, cursor, 0);
@@ -674,7 +597,7 @@ void Gui::menuSelection() {
                             };
 
                         if (!forceScan)
-                            if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
+                            if (e.cbutton.button == SDL_BTN_SQUARE) {
                                 Mix_PlayChannel(-1, cursor, 0);
                                 if (!DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
 
@@ -697,13 +620,13 @@ void Gui::menuSelection() {
                                 }
                             };
 
-                        if (e.jbutton.button == _cb(PCS_BTN_CROSS, &e)) {
+                        if (e.cbutton.button == SDL_BTN_CROSS) {
                             Mix_PlayChannel(-1, cursor, 0);
                             this->menuOption = MENU_OPTION_SCAN;
 
                             menuVisible = false;
                         };
-                        if (e.jbutton.button == _cb(PCS_BTN_TRIANGLE, &e)) {
+                        if (e.cbutton.button == SDL_BTN_TRIANGLE) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto *aboutScreen = new GuiAbout(renderer);
                             aboutScreen->show();
@@ -712,7 +635,7 @@ void Gui::menuSelection() {
                             menuSelection();
                             menuVisible = false;
                         };
-                        if (e.jbutton.button == _cb(PCS_BTN_SELECT, &e)) {
+                        if (e.cbutton.button == SDL_BTN_SELECT) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto options = new GuiOptions(renderer);
                             options->show();
@@ -722,23 +645,34 @@ void Gui::menuSelection() {
                         };
                         if (!forceScan)
                             if (cfg.inifile.values["ui"] == "classic")
-                                if (e.jbutton.button == _cb(PCS_BTN_CIRCLE, &e)) {
+                                if (e.cbutton.button == SDL_BTN_CIRCLE) {
                                     Mix_PlayChannel(-1, cancel, 0);
                                     this->menuOption = MENU_OPTION_SONY;
                                     menuVisible = false;
                                 };
                         break;
                     } else {
-                        if (e.jbutton.button == _cb(PCS_BTN_SQUARE, &e)) {
+                        if (e.cbutton.button == SDL_BTN_SQUARE) {
                             Mix_PlayChannel(-1, cursor, 0);
-                            if (Env::autobleemKernel) {
-                                string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
-                                vector<const char *> argvNew { cmd.c_str(), nullptr };
-                                Util::execFork(cmd.c_str(), argvNew);
-                            }
+                            stopAudio();
+                            mapper.flushPads();
+#if defined(__x86_64__) || defined(_M_X64)
+                            drawText("Small delay to test");
+                            SDL_Delay(2000);
+#endif
+                            string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
+                            vector<const char *> argvNew{cmd.c_str(), nullptr};
+                            Util::execFork(cmd.c_str(), argvNew);
+                            SDL_PumpEvents();
+                            SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
+                            mapper.probePads();
+                            restartAudio(freq);
+                            playMusic(customMusic,musicPath);
+                            menuSelection();
+                            menuVisible = false;
                         };
 
-                        if (e.jbutton.button == _cb(PCS_BTN_CROSS, &e)) {
+                        if (e.cbutton.button == SDL_BTN_CROSS) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto memcardsScreen = new GuiMemcards(renderer);
                             memcardsScreen->show();
@@ -748,7 +682,7 @@ void Gui::menuSelection() {
                             menuVisible = false;
                         };
 
-                        if (e.jbutton.button == _cb(PCS_BTN_CIRCLE, &e)) {
+                        if (e.cbutton.button == SDL_BTN_CIRCLE) {
                             Mix_PlayChannel(-1, cursor, 0);
                             auto managerScreen = new GuiManager(renderer);
                             managerScreen->show();
@@ -1289,9 +1223,11 @@ void Gui::renderTextBar() {
 //*******************************
 // Gui::drawText
 //*******************************
-void Gui::drawText(const string &text) {
+void Gui::drawText(const string &text, const string &topLine) {
     renderBackground();
     renderLogo(false);
     renderStatus(text);
+    renderStatus(topLine, 5);
     SDL_RenderPresent(renderer);
 }
+

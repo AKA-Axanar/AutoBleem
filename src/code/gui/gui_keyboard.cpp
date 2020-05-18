@@ -154,7 +154,7 @@ void GuiKeyboard::render() {
 // returns true if applicable event type and it was handled
 bool GuiKeyboard::handlePowerShutdownAndQuit(SDL_Event &e) {
     if (e.type == SDL_KEYDOWN) {
-        if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+        if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
             Util::powerOff();
             return true;    // but it will never get here
@@ -433,9 +433,10 @@ void GuiKeyboard::loop() {
 
     menuVisible = true;
     while (menuVisible) {
-        gui->watchJoystickPort();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
             if (handlePowerShutdownAndQuit(e))
                 continue;
 
@@ -474,38 +475,38 @@ void GuiKeyboard::loop() {
                     doKbdTextInput(e);
                     break;
 
-                case SDL_JOYBUTTONUP:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_L1, &e)) {
+                case SDL_CONTROLLERBUTTONUP:
+                    if (e.cbutton.button == SDL_BTN_L1) {
                         doL1_up();
-                    } else if (e.jbutton.button == gui->_cb(PCS_BTN_L2, &e)) {
+                    } else if (e.cbutton.button == SDL_BTN_L2) {
                         doL2_up();
                     }
                     break;
 
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_L1, &e)) {     // caps shift
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_L1) {     // caps shift
                         doL1_down();
-                    } else if (e.jbutton.button == gui->_cb(PCS_BTN_L2, &e)) {     // move cursor shift
+                    } else if (e.cbutton.button == SDL_BTN_L2) {     // move cursor shift
                         doL2_down();
                     }
 
                     if (!L2_cursor_shift) {
-                        if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE, &e)) {   // delete char on the left
+                        if (e.cbutton.button == SDL_BTN_TRIANGLE) {   // delete char on the left
                             doTriangle();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE, &e)) {     //insert space
+                        } else if (e.cbutton.button == SDL_BTN_SQUARE) {     //insert space
                             doSquare();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS, &e)) {
+                        } else if (e.cbutton.button == SDL_BTN_CROSS) {
                             doCross();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_START, &e)) {  // Confirm
+                        } else if (e.cbutton.button == SDL_BTN_START) {  // Confirm
                             doStart();
-                        } else if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) { // Cancel
+                        } else if (e.cbutton.button == SDL_BTN_CIRCLE) { // Cancel
                             doCircle();
                         }
                     }
                     break;
 
-                case SDL_JOYAXISMOTION:
-                case SDL_JOYHATMOTION:
+                case SDL_CONTROLLERHATMOTIONDOWN:
+                case SDL_CONTROLLERHATMOTIONUP:
                     if (gui->mapper.isRight(&e)) {
                         doJoyRight();
                     } else if (gui->mapper.isLeft(&e)) {

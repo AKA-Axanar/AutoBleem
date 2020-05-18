@@ -1,0 +1,6 @@
+Sony PlayStation Classic Controller     Buttons OK, Analog sticks not available 
+Sony Dualshock3(genuine) - USB          Buttons OK, Analog sticks OK
+Sony Dualshock3(genuine) - BT           Buttons OK, Analog sticks OK
+Sony Dualshock4  - BT                   Buttons OK, Analog sticks OK
+Sony DualShock3(SHANWAN clone) -USB/BT  Buttons OK, Analog sticks OK
+Tracer Jula GTX 545                     Linux not supported by gamepad receiver(discovered as HID device)
