@@ -39,11 +39,12 @@ void GuiConfirm::loop()
     shared_ptr<Gui> gui(Gui::getInstance());
     menuVisible = true;
     while (menuVisible) {
-        gui->watchJoystickPort();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
                 }
@@ -55,14 +56,14 @@ void GuiConfirm::loop()
             }
 
             switch (e.type) {
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e)) {
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_CROSS) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         result = true;
                         menuVisible = false;
                     };
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE,&e)) {
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         result = false;
                         menuVisible = false;

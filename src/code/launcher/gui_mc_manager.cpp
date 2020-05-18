@@ -213,11 +213,12 @@ void GuiMcManager::loop() {
     bool menuVisible = true;
     while (menuVisible) {
 
-        gui->watchJoystickPort();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
 
@@ -228,20 +229,20 @@ void GuiMcManager::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         trySave();
                         menuVisible = false;
                     };
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS, &e)) {
+                    if (e.cbutton.button == SDL_BTN_CROSS) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         trySave();
                         memcard1->load_file(card1path);
                         memcard2->load_file(card2path);
                         changes = false;
                     };
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_SELECT, &e)) {
+                    if (e.cbutton.button == SDL_BTN_SELECT) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         CardEdit *newCard = new CardEdit(renderer);
                         CardEdit *src;
@@ -284,7 +285,7 @@ void GuiMcManager::loop() {
                         };
                     }
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_START, &e)) {
+                    if (e.cbutton.button == SDL_BTN_START) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         trySave();
                         auto select = new GuiSelectMemcard(renderer);
@@ -312,7 +313,7 @@ void GuiMcManager::loop() {
                         }
                         delete select;
                     }
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE, &e)) {
+                    if (e.cbutton.button == SDL_BTN_TRIANGLE) {
                         CardEdit *card;
                         if (pencilMemcard == 1) {
                             card = memcard1;
@@ -334,7 +335,7 @@ void GuiMcManager::loop() {
 
 
                     };
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE, &e)) {
+                    if (e.cbutton.button == SDL_BTN_SQUARE) {
                         CardEdit *src, *dest;
                         if (pencilMemcard == 1) {
                             src = memcard1;
@@ -374,8 +375,8 @@ void GuiMcManager::loop() {
                     };
                     break;
 
-                case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                case SDL_JOYHATMOTION:
+                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
+                case SDL_CONTROLLERHATMOTIONUP:
                     if (gui->mapper.isCenter(&e)) {
 
                     }

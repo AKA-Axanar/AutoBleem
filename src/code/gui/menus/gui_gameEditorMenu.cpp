@@ -424,11 +424,12 @@ void GuiEditor::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     menuVisible = true;
     while (menuVisible) {
-        gui->watchJoystickPort();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
                 }
@@ -438,23 +439,28 @@ void GuiEditor::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                case SDL_JOYHATMOTION:
+                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
+                case SDL_CONTROLLERHATMOTIONUP:
 
                     if (gui->mapper.isDown(&e)) {
-
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        selOption++;
-                        if (selOption > OPT_LAST) {
-                            selOption = OPT_LAST;
-                        }
+                        do {
+                            Mix_PlayChannel(-1, gui->cursor, 0);
+                            selOption++;
+                            if (selOption > OPT_LAST) {
+                                selOption = OPT_LAST;
+                            }
+                            render();
+                        } while (fastForwardUntilAnotherEvent(120));
                     }
                     if (gui->mapper.isUp(&e)) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        selOption--;
-                        if (selOption < OPT_FIRST) {
-                            selOption = OPT_FIRST;
-                        }
+                        do {
+                            Mix_PlayChannel(-1, gui->cursor, 0);
+                            selOption--;
+                            if (selOption < OPT_FIRST) {
+                                selOption = OPT_FIRST;
+                            }
+                            render();
+                        } while (fastForwardUntilAnotherEvent(120));
                     }
 
 
@@ -474,10 +480,10 @@ void GuiEditor::loop() {
                     }
                     break;
 
-                case SDL_JOYBUTTONDOWN:
+                case SDL_CONTROLLERBUTTONDOWN:
                     if (!internal) {
                         if (gameIni.values["memcard"] == "SONY") {
-                            if (e.jbutton.button == gui->_cb(PCS_BTN_START, &e)) {
+                            if (e.cbutton.button == SDL_BTN_START) {
                                 Mix_PlayChannel(-1, gui->cursor, 0);
                                 GuiKeyboard *keyboard = new GuiKeyboard(renderer);
                                 keyboard->label = _("Enter new name for memory card");
@@ -505,7 +511,7 @@ void GuiEditor::loop() {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                     }
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE, &e)) {
+                    if (e.cbutton.button == SDL_BTN_SQUARE) {
                         if (!internal) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             GuiSelectMemcard *selector = new GuiSelectMemcard(renderer);
@@ -527,14 +533,14 @@ void GuiEditor::loop() {
                         }
                     };
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         cover = nullptr;
                         menuVisible = false;
 
                     };
 
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE, &e)) {
+                    if (e.cbutton.button == SDL_BTN_TRIANGLE) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
                         GuiKeyboard *keyboard = new GuiKeyboard(renderer);
                         keyboard->label = _("Enter new game name");

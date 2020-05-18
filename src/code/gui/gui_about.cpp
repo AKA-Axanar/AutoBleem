@@ -87,25 +87,18 @@ void GuiAbout::loop() {
     menuVisible = true;
     while (menuVisible) {
         render();
-        gui->watchJoystickPort();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
-                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
 
-                }
-            }
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_JOYBUTTONUP:
-
-
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         menuVisible = false;
 

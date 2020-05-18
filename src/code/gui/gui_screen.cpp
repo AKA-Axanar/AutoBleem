@@ -11,16 +11,18 @@ void GuiScreen::loop()
 {
     menuVisible = true;
     while (menuVisible) {
-        gui->watchJoystickPort();
+
         SDL_Event e;
 
         while (SDL_PollEvent(&e)) {
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
             if (handlePowerShutdownAndQuit(e))
                 continue;
 
             switch (e.type) {
-                case SDL_JOYAXISMOTION:
-                case SDL_JOYHATMOTION:
+                case SDL_CONTROLLERHATMOTIONDOWN:
+                case SDL_CONTROLLERHATMOTIONUP:
 
                     if (gui->mapper.isUp(&e))
                         doJoyUp();
@@ -34,49 +36,49 @@ void GuiScreen::loop()
                         doJoyCenter();
                     break;
 
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e))
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_CROSS)
                         doCross_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE,&e))
+                    else if (e.cbutton.button == SDL_BTN_CIRCLE)
                         doCircle_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE,&e))
+                    else if (e.cbutton.button == SDL_BTN_TRIANGLE)
                         doTriangle_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE,&e))
+                    else if (e.cbutton.button == SDL_BTN_SQUARE)
                         doSquare_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_START,&e))
+                    else if (e.cbutton.button == SDL_BTN_START)
                         doStart_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SELECT,&e))
+                    else if (e.cbutton.button == SDL_BTN_SELECT)
                         doSelect_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L1,&e))
+                    else if (e.cbutton.button == SDL_BTN_L1)
                         doL1_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R1,&e))
+                    else if (e.cbutton.button == SDL_BTN_R1)
                         doR1_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L2,&e))
+                    else if (e.cbutton.button == SDL_BTN_L2)
                         doL2_Pressed();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R2,&e))
+                    else if (e.cbutton.button == SDL_BTN_R2)
                         doR2_Pressed();
                     break;
 
-                case SDL_JOYBUTTONUP:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS,&e))
+                case SDL_CONTROLLERBUTTONUP:
+                    if (e.cbutton.button == SDL_BTN_CROSS)
                         doCross_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE,&e))
+                    else if (e.cbutton.button == SDL_BTN_CIRCLE)
                         doCircle_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_TRIANGLE,&e))
+                    else if (e.cbutton.button == SDL_BTN_TRIANGLE)
                         doTriangle_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SQUARE,&e))
+                    else if (e.cbutton.button == SDL_BTN_SQUARE)
                         doSquare_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_START,&e))
+                    else if (e.cbutton.button == SDL_BTN_START)
                         doStart_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_SELECT,&e))
+                    else if (e.cbutton.button == SDL_BTN_SELECT)
                         doSelect_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L1,&e))
+                    else if (e.cbutton.button == SDL_BTN_L1)
                         doL1_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R1,&e))
+                    else if (e.cbutton.button == SDL_BTN_R1)
                         doR1_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_L2,&e))
+                    else if (e.cbutton.button == SDL_BTN_L2)
                         doL2_Released();
-                    else if (e.jbutton.button == gui->_cb(PCS_BTN_R2,&e))
+                    else if (e.cbutton.button == SDL_BTN_R2)
                         doR2_Released();
                     break;
 
@@ -120,7 +122,7 @@ void GuiScreen::loop()
 // returns true if applicable event type and it was handled
 bool GuiScreen::handlePowerShutdownAndQuit(SDL_Event &e) {
     if (e.type == SDL_KEYDOWN) {
-        if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+        if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
             Util::powerOff();
             return true;    // but it will never get here
@@ -151,7 +153,8 @@ bool GuiScreen::fastForwardUntilAnotherEvent(Uint32 ticksPerFastForwardRepeat) {
             return true;    // fast forward - repeat key
         } else {
             SDL_PumpEvents();
-            int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
+            int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERDEVICEREMAPPED);
+            ret += SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_CONTROLLERHATMOTIONUP, SDL_CONTROLLERHATMOTIONDOWN);
             if (ret > 0) {          // if there is an event in the queue
                 return false;   // exit fast forward mode
             }
@@ -159,108 +162,5 @@ bool GuiScreen::fastForwardUntilAnotherEvent(Uint32 ticksPerFastForwardRepeat) {
     }
 }
 
-#if 0
-//*******************************
-// GuiScreen::fastForwardUntilJoyCenter
-//*******************************
-// usage example:
-// void doSomeJoyEvent() {
-//      do {
-//          whatever you want to do on the event
-//          render();
-//      } while (fastForwardUntilJoyCenter(300);  // repeat every 300 milliseconds
-//
-bool GuiScreen::fastForwardUntilJoyCenter(Uint32 ticksPerFastForwardRepeat) {
-    SDL_Event e;
-    Uint32 startTicks = SDL_GetTicks();
-    cout << "start " << startTicks << endl;
-    while (true) {
-        Uint32 time = SDL_GetTicks() - startTicks;
-        cout << "time " << time << endl;
-        if (time >= ticksPerFastForwardRepeat) {
-            cout << "return true" << endl;
-            return true;    // fast forward - repeat key
-        } else {
-            SDL_PumpEvents();
-            int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
-            if (ret > 0) {          // if there is an event in the queue
-                SDL_PollEvent(&e);  // eat the event
-                cout << "event type " << hex << e.type << dec << endl;
-                if (e.type == SDL_JOYAXISMOTION || e.type == SDL_JOYHATMOTION) {
-                    if (gui->mapper.isCenter(&e)) {
-                        cout << "return false" << endl;
-                        return false;   // exit fast forward mode
-                    }
-                    else
-                        cout << "not center. is = " << e.jaxis.value << endl;
-                }
-            }
-        }
-    }
-}
 
-//*******************************
-// GuiScreen::fastForwardUntilButtonReleased
-//*******************************
-// usage example:
-// void doSomeJoyEvent() {
-//      do {
-//          whatever you want to do on the event
-//          render();
-//      } while (fastForwardUntilButtonReleased(button, 300);  // repeat every 300 milliseconds
-//
-bool GuiScreen::fastForwardUntilButtonReleased(int button, Uint32 ticksPerFastForwardRepeat) {
-    SDL_Event e;
-    Uint32 startTicks = SDL_GetTicks();
-    cout << "start " << startTicks << endl;
-    while (true) {
-        Uint32 time = SDL_GetTicks() - startTicks;
-        cout << "time " << time << endl;
-        if (time >= ticksPerFastForwardRepeat) {
-            cout << "return true" << endl;
-            return true;    // fast forward - repeat key
-        } else {
-            SDL_PumpEvents();
-            int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
-            if (ret > 0) {          // if there is an event in the queue
-                SDL_PollEvent(&e);  // eat the event
-                cout << "event type " << hex << e.type << dec << endl;
-                if ((e.type == SDL_JOYBUTTONUP) && (e.jbutton.button == gui->_cb(button, &e))) {
-                    cout << "return false" << endl;
-                    return false;   // exit fast forward mode
-                }
-                else
-                    cout << "wrong event" << endl;
-            }
-        }
-    }
-}
-#endif
 
-//*******************************
-// GuiScreen::countMoreJoyPressesInQueue
-//*******************************
-// by the time the render() finishes the user may have already pushed the joy button one or more times
-// direction = DIR_UP, DIR_DOWN, etc from padmapper.h
-int GuiScreen::countMoreJoyPressesInQueue(int direction) {
-    int count = 0;
-    while (true) {
-      SDL_Event e;
-      SDL_PumpEvents();     // needed before peek
-      int ret = SDL_PeepEvents(&e, 1, SDL_PEEKEVENT , SDL_FIRSTEVENT, SDL_LASTEVENT);   // look in the queue
-      if (ret > 0 && (e.type == SDL_JOYAXISMOTION || e.type == SDL_JOYHATMOTION)) {
-          if (gui->mapper.isDirection(&e, direction)) {
-              count++;
-              SDL_Event e2;
-              SDL_PollEvent(&e2);  // remove the event from the queue
-          } else if (gui->mapper.isDirection(&e, DIR_NONE)) {
-              SDL_Event e2;
-              SDL_PollEvent(&e2);  // remove the event from the queue
-          } else {
-              return count; // done. not the direction we're looking for.
-          }
-      } else {
-          return count; // done. no event in queue or not the event we're looking for.
-      }
-    }
-}

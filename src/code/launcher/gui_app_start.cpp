@@ -146,12 +146,13 @@ void GuiAppStart::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     bool menuVisible = true;
     while (menuVisible) {
-        gui->watchJoystickPort();
         SDL_Event e;
         render();
         while (SDL_PollEvent(&e)) {
+            gui->mapper.handleHotPlug(&e);
+            gui->mapper.handlePowerBtn(&e);
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
 
@@ -159,19 +160,19 @@ void GuiAppStart::loop() {
             }
 
             switch (e.type) {
-                case SDL_JOYBUTTONDOWN:
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CROSS, &e)) {
+                case SDL_CONTROLLERBUTTONDOWN:
+                    if (e.cbutton.button == SDL_BTN_CROSS) {
                         result = true;
                         menuVisible = false;
                     };
-                    if (e.jbutton.button == gui->_cb(PCS_BTN_CIRCLE, &e)) {
+                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
                         result = false;
                         menuVisible = false;
                     };
                     break;
 
-                case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                case SDL_JOYHATMOTION:
+                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
+                case SDL_CONTROLLERHATMOTIONUP:
                     if (totalLines!=0) {
                         if (gui->mapper.isUp(&e)) {
                             scrolling = -1;

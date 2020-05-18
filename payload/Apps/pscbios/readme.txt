@@ -1,4 +1,4 @@
 ================================================================================
-          PSC BIOS - Network configuration manager for AutoBleem
+          PSC BIOS - Hardware configuration manager for AutoBleem
 ================================================================================
  
