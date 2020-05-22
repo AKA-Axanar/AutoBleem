@@ -230,8 +230,6 @@ Players
 
 Please confirm
 
-PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-
 Please wait ... deleting
 
 Please wait ... deleting covers...
@@ -243,12 +241,6 @@ POWER
 Power Off
 
 POWERING OFF... PLEASE WAIT
-
-Press |@X| to save controller mapping, or |@O| to retry configuration
-
-Press a key for
-
-Press any DPAD button (to determine if it's digital or analogue)
 
 Published by:
 
@@ -359,8 +351,6 @@ USB Games
 Use Controller
 
 WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
-
-WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
 
 Widescreen:
 

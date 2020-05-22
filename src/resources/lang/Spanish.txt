@@ -5,7 +5,7 @@
 .-= Graphics =-.
 .-= Graficos =-.
 .-= Localization support =-.
-.-= Soporte de localizacion =-.
+.-= Traductores =-.
 .-= Retroboot and emulation cores =-.
 .-= Retroboot y cores de emulacion =-.
 .-= Testing =-.
@@ -249,7 +249,7 @@ Pulsa un boton para
 Press any DPAD button (to determine if it's digital or analogue)
 Pulsa cualquier direccion del DPAD (para determinar si es digital o analogico)
 Press |@X| to save controller mapping, or |@O| to retry configuration
-Pulsa |@X| para guardar el mapeo de botones, o |@O| para reiniciar la configuracion
+Pulsa |@X| para guardar el mapeo de mando, o |@O| para reiniciar la configuracion
 Published by:
 Publicado por:
 Quick scroll to next letter
