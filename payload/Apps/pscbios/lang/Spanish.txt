@@ -71,6 +71,7 @@ Detalles de configuracion del Mando
 Gamepad input configuration: 
 Configuracion de entrada del Mando:
 Gamepads
+Mandos
 Go back
 Ir atras
 Interface details:
