@@ -5,7 +5,7 @@
 .-= Linux Kernel Patching =-.
 .-= Parcheo del Kernel Linux =-.
 .-= Localization support =-.
-.-= Soporte de localizacion =-.
+.-= Traductores =-.
 .-= Testing =-.
 .-= Testers =-.
 About
@@ -20,6 +20,8 @@ Bluetooth information:
 Informacion Bluetooth:
 BT Manager
 BT Manager
+Buttons:
+Botones:
 Cancel
 Cancelar
 Caps
@@ -56,8 +58,20 @@ Entry
 Entrada
 Ethernet information:
 Informacion de Ethenet:
+Exit
+Salir
 Found
 Encontrado
+Game Controller information:
+Informacion del Mando:
+Game Controllers number: 
+Numero de Mandos:
+Gamepad configuration details
+Detalles de configuracion del Mando
+Gamepad input configuration: 
+Configuracion de entrada del Mando:
+Gamepads
+Mandos
 Go back
 Ir atras
 Interface details:
@@ -68,12 +82,16 @@ IP configuration:
 ConfiguracionIP:
 Loading timezones...
 Cargando zonas horarias...
+Mapping tester
+Tester de mapeo
 Move Cursor
 Mover Cursor
 New devices:
 Nuevos dispositivos:
-New GamePad found
-Nuevo GamePad encontrado
+Next pad
+Porximo mando
+NO GAME CONTROLLERS OPENED
+NO HAY MANDOS ABIERTOS
 No networks found
 Redes no encontradas
 Not active
@@ -92,16 +110,8 @@ Playstation Classic Hardware Information
 Informacion de Hardware de Playstation Classic
 Please confirm
 Por favor confirma
-PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-POR FAVOR CONECTA EL GAMEPAD A LA PLAYSTATION CLASSIC
 POWERING OFF... PLEASE WAIT
 APAGANDO... POR FAVOR ESPERA
-Press a key for
-Pulsa un boton para
-Press any DPAD button (to determine if it's digital or analogue)
-Pulsa cualquier direccion del DPAD (para determinar si es digital o analogico)
-Press |@X| to save controller mapping, or |@O| to retry configuration
-Pulsa |@X| para guardar el mapeo de botones, o |@O| para reiniciar la configuracion
 Reinitializing Network
 Reiniciando Red
 Restart Network
@@ -130,10 +140,12 @@ SSID:
 SSID:
 Support via Discord:
 Soporte via Discord:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-Este es un software gratuito y de codigo abierto. Funciona COMO ESTA y no nos hacemos responsables de ningun problema o daño.
+This project is freeware. It works AS IS and We take no responsibility for any issues or damage.
+Este proyecto es gratuito. Funciona COMO ESTA y no nos hacemos responsables de ningun problema o daño.
 Timezone:
 Zona Horaria:
+Update mapping
+Actualizar mapeo
 Use Controller
 Usar Mando
 Waiting for IP Address...
