@@ -19,7 +19,7 @@ using namespace std;
 //*******************************
 void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt, const string & yearTxt,
                          const string & serial, const string & region, const string & playersTxt, bool internal,
-                         bool hd, bool locked, int discs, bool favorite,  bool foreign, bool app,
+                         bool hd, bool locked, int discs, bool favorite, bool play_using_ra, bool foreign, bool app,
                          const string& last_played,
                          int r,int g, int b) {
     this->discs = discs;
@@ -27,6 +27,7 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
     this->hd = hd;
     this->locked = locked;
     this->favorite = favorite;
+    this->play_using_ra = play_using_ra;
     this->gameName = gameNameTxt;
     this->publisher = publisherTxt;
     this->year = yearTxt;
@@ -72,7 +73,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
         }
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                     to_string(psGame->players) + " " + appendText,
-                    psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                    psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
                     psGame->foreign, psGame->app, UtilTime::timeToDisplayTimeString(psGame->last_played),
                     r, g, b);
     } else
@@ -84,7 +85,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
 
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
                         psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
                         r, g, b);
         } else {
@@ -93,7 +94,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, int r,int g, int b) {
 
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite,
+                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
                         psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
                         r, g, b);
         }
@@ -270,21 +271,30 @@ void PsMeta::render() {
             } else {
                 SDL_RenderCopy(renderer, internalOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread;
+
+            int spreadCount = 1;
+            rect.x = x + offset + (spread * spreadCount);
             if (hd) {
                 SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
             } else {
                 SDL_RenderCopy(renderer, hdOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread * 2;
+            ++spreadCount;
+            rect.x = x + offset + (spread * spreadCount);
             if (locked) {
                 SDL_RenderCopy(renderer, lockOnTex, &fullRect, &rect);
             } else {
                 SDL_RenderCopy(renderer, lockOffTex, &fullRect, &rect);
             }
-            rect.x = x + offset + spread * 3;
             if (favorite) {
+                ++spreadCount;
+                rect.x = x + offset + (spread * spreadCount);
                 SDL_RenderCopy(renderer, favoriteTex, &fullRect, &rect);
+            }
+            if (play_using_ra) {
+                ++spreadCount;
+                rect.x = x + offset + (spread * spreadCount);
+                SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
             }
         } else
         {

@@ -73,7 +73,18 @@ void GuiEditor::processOptionChange(bool direction) {
             break;
 
         case OPT_PLAY_USING_RA:
-            if (!internal) {
+            if (internal) {
+                if (direction == true) {
+                    if (gameData->play_using_ra == false) {
+                        gameData->play_using_ra = true;
+                    }
+                } else {
+                    if (gameData->play_using_ra == true) {
+                        gameData->play_using_ra = false;
+                    }
+                }
+                gui->internalDB->updatePlayUsingRA(gameData->gameId, gameData->play_using_ra);
+            } else {
                 if (gameIni.values["play_using_ra"] == "")
                     gameIni.values["play_using_ra"] = "false";   // doesn't exist yet in this ini so set to 0
                 if (direction == true) {
