@@ -11,6 +11,7 @@
 #include "../engine/inifile.h"
 #include "../DirEntry.h"
 #include "../environment.h"
+#include "../lightgunSerials.h"
 
 using namespace std;
 
@@ -127,6 +128,7 @@ void PsMeta::render() {
         cdTex =          IMG_LoadTexture(renderer, (curPath + "evoimg/cd.png").c_str());
         favoriteTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/favorite.png").c_str());
         raTex =          IMG_LoadTexture(renderer, (curPath + "evoimg/ra.png").c_str());
+        lightgunTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun.png").c_str());
     }
 
     if (visible) {
@@ -295,6 +297,11 @@ void PsMeta::render() {
                 ++spreadCount;
                 rect.x = x + offset + (spread * spreadCount);
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
+            }
+            if (isLightgunGame(serial)) {
+                ++spreadCount;
+                rect.x = x + offset + (spread * spreadCount);
+                SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
             }
         } else
         {

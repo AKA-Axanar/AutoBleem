@@ -69,6 +69,8 @@ add_executable(
         src/code/DebugTimer.h
         src/code/DirEntry.cpp
         src/code/DirEntry.h
+		src/code/lightgunSerials.cpp
+		src/code/lightgunSerials.h
         src/code/engine/cardedit.cpp
         src/code/engine/cardedit.h
         src/code/engine/cfgprocessor.cpp

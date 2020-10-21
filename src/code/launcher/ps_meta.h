@@ -43,6 +43,7 @@ public:
     SDL_Shared<SDL_Texture> cdTex;
     SDL_Shared<SDL_Texture> favoriteTex;
     SDL_Shared<SDL_Texture> raTex;
+    SDL_Shared<SDL_Texture> lightgunTex;
 
     int nextPos = 0;
     int prevPos = 0;
