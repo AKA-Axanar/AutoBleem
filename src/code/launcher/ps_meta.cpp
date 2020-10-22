@@ -129,6 +129,7 @@ void PsMeta::render() {
         favoriteTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/favorite.png").c_str());
         raTex =          IMG_LoadTexture(renderer, (curPath + "evoimg/ra.png").c_str());
         lightgunTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun.png").c_str());
+        lightgun2Tex =   IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun2.png").c_str());
     }
 
     if (visible) {
@@ -301,7 +302,10 @@ void PsMeta::render() {
             if (isLightgunGame(serial)) {
                 ++spreadCount;
                 rect.x = x + offset + (spread * spreadCount);
-                SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
+                if (players.size() > 0 && players[0] == '2')
+                    SDL_RenderCopy(renderer, lightgun2Tex, &fullRect, &rect);
+                else
+                    SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
             }
         } else
         {
