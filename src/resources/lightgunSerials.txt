@@ -9,6 +9,10 @@ SLES-03783 # Area 51 [MIDWAY CLASSICS] PAL (Justifier/Hyperblaster)
 SLPS-00726 # Area 51 JAP (Justifier/Hyperblaster)
 SLPS-00725 # Area 51 Special Pack JAP (Justifier/Hyperblaster)
 
+SLPS-02553 # Biohazard Gun Survivor JAP
+
+SLPS-00168 # Chaos Control JAP
+
 SLUS-00335 # Crypt Killer US (Justifier/Hyperblaster)
 SLES-00292 # Crypt Killer PAL (Justifier/Hyperblaster)
 
@@ -32,10 +36,18 @@ SLPS-02680 # Ghoul Panic JAP (Released as "Oh! Bakyuuun" in Japan, uses GunCon)
 
 SLPS-01322 # GunBare! Game Tengoku 2 JAP (JPN only)
 
+SLPS-91147 # GunBullet JAP
+SLPS-00930 # GunBullet JAP
+SLPS-00929 # GunBullet + GunCon JAP
+
 SLUS-01398 # Gunfighter: The Legend of Jesse James US (GunCon)
 SLES-03689 # Gunfighter: The Legend of Jesse James PAL (GunCon)
 
 SLPS-01106 # Guntu - Western Front June, 1944 (JPN only, GunCon)
+
+SLPM-86021 # Henry Explorers (JAP)
+
+SCPS-10016 # Horned Owl JAP
 
 SLUS-00630 # Judge Dredd US (Justifier/Hyperblaster or GunCon)
 SLES-00755 # Judge Dredd PAL (Justifier/Hyperblaster or GunCon)
@@ -49,8 +61,10 @@ SLES-01001 # Maximum Force - Pull the Trigger PAL (Justifier/Hyperblaster or Gun
 
 SLES-02244 # Mighty Hits Special PAL (EU/JPN only, Justifier/Hyperblaster)
 SLPS-02165 # Mighty Hits Special JAP (EU/JPN only, Justifier/Hyperblaster)
+SLPS-00583 # Mighty Hits JAP
 
 SLES-03846 # Moorhuhn 3 - Chicken Chase PAL (GunCon)
+SLES-03898 # Moorkokin 3 - La Caza Del Pollo!
 SLES-03278 # Moorhuhn 2 - Die Jagd Geht Weiter PAL (GunCon)
 SLES-04122 # Moorhuhn Kart PAL (GunCon)
 SLES-04174 # Moorhuhn X PAL (GunCon)
@@ -61,22 +75,29 @@ SLUS-00796 # Point Blank 2 US (GunCon)
 SCES-02180 # Point Blank 2 PAL GunCon)
 SLUS-01354 # Point Blank 3 US (GunCon)
 SCES-03383 # Point Blank 3 PAL (GunCon)
+SLUS-00072 # Point Blank 3 [Sold with Orange GunCon] US
 
 SCUS-94408 # Project Horned Owl US (Justifier/Hyperblaster)
+SCPS-10017 # Horned Owl [Limited Edition with Light Gun]
+
+ESPM-70003 # Puffy - P.S. I Love You
 
 SCES-02569 # Rescue Shot PAL (GunCon)
 SCPS-45477 # Rescue Shot Bubibo JAP (GunCon)
 SLPS-02555 # Rescue Shot Bubibo JAP (GunCon)
+SLPM-80522 # Rescue Shot Bubibo & Biohazard - Gun Survivor - GunCon Taiou Shooting Taikenban (Japan)
 
 SLUS-01087 # ?????  Resident Evil Survivor US (JPN/PAL versions) (GunCon)
 SLES-02732 # Resident Evil Survivor PAL (JPN/PAL versions) (GunCon)
 SLES-02744 # Resident Evil Survivor PAL (JPN/PAL versions) (GunCon)
-           # ????? JAP version not found.    Resident Evil Survivor (JPN/PAL versions) (GunCon)
+           # ????? JAP version bin not found.    Resident Evil Survivor (JPN/PAL versions) (GunCon)
 
 SLUS-00012 # Revolution X US (Justifier)
 SLES-00129 # Revolution X PAL (Justifier)
 SLES-00151 # Revolution X PAL (Justifier)
 SLPS-00258 # Revolution X JAP (Justifier)
+
+SLES-04110 # Robin Hood - The Siege PAL
 
 SLUS-00707 # Silent Hill US (Justifier/Hyperblaster, used for an easter egg)
 SLES-01514 # Silent Hill PAL (Justifier/Hyperblaster, used for an easter egg)
@@ -91,24 +112,28 @@ SLPS-00154 # Snatcher JAP (JPN only, Justifier/Hyperblaster, contains light-gun 
 
 SLUS-00381 # Star Wars: Rebel Assault II US (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
 SLUS-00386 # Star Wars: Rebel Assault II US (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-00654 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-10654 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-00656 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-10656 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-00584 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-10584 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-00643 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-10643 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-00644 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
-SLES-10644 # ?????? Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-00654 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-10654 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-00656 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-10656 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-00584 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-10584 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-00643 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-10643 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-00644 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
+SLES-10644 # Star Wars: Rebel Assault II - The Hidden Empire PAL (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
 SLPS-00638 # Star Wars: Rebel Assault II JAP (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
 SLPS-00639 # Star Wars: Rebel Assault II JAP (compatible with the Justifier/Hyperblaster, which is used for certain shooting sequences)
 
 SLUS-00405 # Time Crisis US (GunCon)
 SCES-00657 # Time Crisis PAL (GunCon)
 SCES-00666 # Time Crisis JAP (GunCon)
+SLPS-00635 # Time Crisis [With Guncon] JAP
+SLPS-91087 # Time Crisis [PlayStation the Best] JAP
 
 SLUS-01336 # Time Crisis: Project Titan (GunCon)
 SCES-02776 # Time Crisis: Project Titan (GunCon)
 SCPS-45514 # Time Crisis: Project Titan (GunCon)
 SLPS-03188 # Time Crisis: Project Titan (GunCon)
+
+SLPS-01839 # Tsun Tsun Kumi 3 (also called Tsun Tsun Kumi 3 Kanji Vader)  JAP
