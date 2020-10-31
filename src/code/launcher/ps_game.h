@@ -34,6 +34,7 @@ public:
     int cds = 1;
     // special flags
     bool favorite = false;
+    bool play_using_ra = false;
     int history = 0;    // 0 = not in history list.  1-100 if in the history list
     time_t last_played;     // in seconds since 1970
     bool foreign = false; // to state it is not PS1 game (RA)

@@ -15,18 +15,19 @@
 
 using namespace std;
 
-#define OPT_FIRST          5
-#define OPT_FAVORITE       5
-#define OPT_LOCK           6
-#define OPT_HIGHRES        7
-#define OPT_SPEEDHACK      8
-#define OPT_SCANLINES      9
-#define OPT_SCANLINELV     10
-#define OPT_CLOCK_PSX      11
-#define OPT_FRAMESKIP      12
-#define OPT_PLUGIN         13
-#define OPT_INTERPOLATION  14
-#define OPT_LAST           14
+#define OPT_FIRST           5
+#define OPT_FAVORITE        5
+#define OPT_PLAY_USING_RA   6
+#define OPT_LOCK            7
+#define OPT_HIGHRES         8
+#define OPT_SPEEDHACK       9
+#define OPT_SCANLINES       10
+#define OPT_SCANLINELV      11
+#define OPT_CLOCK_PSX       12
+#define OPT_FRAMESKIP       13
+#define OPT_PLUGIN          14
+#define OPT_INTERPOLATION   15
+#define OPT_LAST            15
 
 //*******************************
 // GuiEditor::processOptionChange
@@ -65,6 +66,34 @@ void GuiEditor::processOptionChange(bool direction) {
                 } else {
                     if (gameIni.values["favorite"] == "1") {
                         gameIni.values["favorite"] = "0";
+                    }
+                }
+                gameIni.save(gameIni.path);
+            }
+            break;
+
+        case OPT_PLAY_USING_RA:
+            if (internal) {
+                if (direction == true) {
+                    if (gameData->play_using_ra == false) {
+                        gameData->play_using_ra = true;
+                    }
+                } else {
+                    if (gameData->play_using_ra == true) {
+                        gameData->play_using_ra = false;
+                    }
+                }
+                gui->internalDB->updatePlayUsingRA(gameData->gameId, gameData->play_using_ra);
+            } else {
+                if (gameIni.values["play_using_ra"] == "")
+                    gameIni.values["play_using_ra"] = "false";   // doesn't exist yet in this ini so set to 0
+                if (direction == true) {
+                    if (gameIni.values["play_using_ra"] == "false") {
+                        gameIni.values["play_using_ra"] = "true";
+                    }
+                } else {
+                    if (gameIni.values["play_using_ra"] == "true") {
+                        gameIni.values["play_using_ra"] = "false";
                     }
                 }
                 gameIni.save(gameIni.path);
@@ -351,12 +380,22 @@ void GuiEditor::render() {
 
     if (gameData->internal) {
         gui->renderTextLineOptions(
-            _("Favorite:") + (gameData->favorite ? string("|@Check|") : string("|@Uncheck|")),
+                _("Favorite:") + (gameData->favorite ? string("|@Check|") : string("|@Uncheck|")),
             OPT_FAVORITE, yoffset, XALIGN_LEFT, 300);
     } else {
         gui->renderTextLineOptions(
-            _("Favorite:") + (gameIni.values["favorite"] == "1" ? string("|@Check|") : string("|@Uncheck|")),
+                _("Favorite:") + (gameIni.values["favorite"] == "1" ? string("|@Check|") : string("|@Uncheck|")),
                     OPT_FAVORITE, yoffset, XALIGN_LEFT, 300);
+    }
+
+    if (gameData->internal) {
+        gui->renderTextLineOptions(
+                _("Play using RA:") + (gameData->play_using_ra ? string("|@Check|") : string("|@Uncheck|")),
+                OPT_PLAY_USING_RA, yoffset, XALIGN_LEFT, 300);
+    } else {
+        gui->renderTextLineOptions(
+                _("Play using RA:") + (gameIni.values["play_using_ra"] == "true" ? string("|@Check|") : string("|@Uncheck|")),
+                OPT_PLAY_USING_RA, yoffset, XALIGN_LEFT, 300);
     }
 
     // pcsx.cfg

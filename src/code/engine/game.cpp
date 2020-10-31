@@ -165,6 +165,7 @@ bool USBGame::print() {
     cout << "pcsx.cfg found: " << pcsxCfgFound << endl;
     cout << "TotalDiscs: " << discs.size() << endl;
     cout << "Favorite: " << favorite << endl;
+    cout << "Play Using RA: " << play_using_ra << endl;
     cout << "Last Played: " << last_played << endl;
     cout << "Last Played: " << UtilTime::timeToDisplayTimeString(last_played) << endl;
 
@@ -337,6 +338,7 @@ void USBGame::updateObj() {
     tmp = valueOrDefault("highres","0");
     if (Util::isInteger(tmp.c_str())) highRes = atoi(tmp.c_str()); else highRes = 0;
     favorite = valueOrDefault("favorite", "0", false);  // favorite is a new field that didn't exist before so
+    play_using_ra = valueOrDefault("play_us_ra", "false", false);  // favorite is a new field that didn't exist before so
     // don't set automationUsed if it doesn't exist
 
     tmp = valueOrDefault("discs", "");
@@ -400,6 +402,7 @@ void USBGame::saveIni(string path) {
         ini->values["memcard"] = memcard;
 
     ini->values["Favorite"] = favorite;
+    ini->values["Play_using_ra"] = play_using_ra;
 
     stringstream ss;
     for (int i = 0; i < discs.size(); i++) {

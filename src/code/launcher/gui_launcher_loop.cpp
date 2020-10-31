@@ -762,6 +762,22 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
         addGameToPS1GameHistoryAsLatestGamePlayed(gui->runningGame);
 
     gui->emuMode = EMU_PCSX;
+
+    // if it's a PS1 game see if the user wants to play it in RetroArch instead
+    if (currentSet == SET_PS1) {
+        if (gui->runningGame->internal) {
+            if (gui->runningGame->play_using_ra)
+                return loop_squareButton_Pressed();     // play internal PSX game in RA
+        } else {
+            Inifile gameini;
+            gameini.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
+            if (gameini.values["play_using_ra"] == "true")
+                return loop_squareButton_Pressed();     // play PSX game in RA
+        }
+        if (gui->cfg.inifile.values["play_all_psx_with_ra"] == "true")
+            return loop_squareButton_Pressed();     // play PSX game in RA
+    }
+
     if (gui->runningGame->foreign)
     {
         if (!gui->runningGame->app) {

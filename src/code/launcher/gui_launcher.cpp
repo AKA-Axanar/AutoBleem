@@ -24,8 +24,17 @@ const SDL_Color brightWhite = {255, 255, 255, SDL_ALPHA_OPAQUE};
 void GuiLauncher::updateMeta() {
     if (carouselGames.empty()) {
         gameName = "";
-        meta->updateTexts(gameName, publisher, year, serial, region, players, false, false, false, 0, false, false,
-                          false, "", fgColor);
+        bool internal {false};
+        bool hd {false};
+        bool locked {false};
+        bool discs {0};
+        bool favorite {false};
+        bool play_using_ra {false};
+        bool foreign {false};
+        bool app {false};
+        string last_played {""};
+        meta->updateTexts(gameName, publisher, year, serial, region, players, internal, hd, locked, discs, favorite,
+                          foreign,play_using_ra, app, last_played, fgColor);
         return;
     }
     if (selGameIndexInCarouselGamesIsValid())
@@ -434,8 +443,18 @@ void GuiLauncher::loadAssets() {
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         meta->updateTexts(carouselGames[selGameIndex], fgColor);
     } else {
+        bool internal {false};
+        bool hd {false};
+        bool locked {false};
+        bool discs {0};
+        bool favorite {false};
+        bool play_using_ra {false};
+        bool foreign {false};
+        bool app {false};
+        string last_played {""};
         meta->updateTexts(gameName, publisher, year, serial, region, players,
-                          false, false, false, 0, false, false, false, "", fgColor);
+                          internal, hd, locked, discs, favorite, play_using_ra, foreign, app, last_played,
+                          fgColor);
     }
     staticElements.push_back(meta);
 

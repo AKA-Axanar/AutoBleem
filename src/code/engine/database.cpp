@@ -139,14 +139,14 @@ static const char DELETE_GAME_ID_FROM_SUBDIR_GAMES_TO_DISPLAY_ON_ROW[] = "DELETE
 
 // used by: refreshGameInternal
 static const char GAMES_DATA_SINGLE_INTERNAL[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
-                                     FAVORITE, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
+                                     FAVORITE, PLAY_USING_RA, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
                                      WHERE g.GAME_ID=?  \
                                      GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
                                      ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
 // used by: getInternalGames
 static const char GAMES_DATA_INTERNAL[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
-                                     FAVORITE, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
+                                     FAVORITE, PLAY_USING_RA, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
                                      GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
                                      ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
@@ -167,6 +167,12 @@ static const char ADD_LAST_PLAYED_COLUMN[] = "ALTER TABLE GAME ADD COLUMN LAST_P
 
 // used by: updateDatePlayed for the internal.db and regional.db
 static const char UPDATE_LAST_PLAYED[] = "UPDATE GAME SET LAST_PLAYED=? WHERE GAME_ID=?";
+
+// used by: addPlayUsingRAColumn for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
+static const char ADD_PLAY_USING_RA_COLUMN[] = "ALTER TABLE GAME ADD COLUMN PLAY_USING_RA INT DEFAULT 0";
+
+// used by: addPlayUsingRAColumn for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
+static const char UPDATE_PLAY_USING_RA[] = "UPDATE GAME SET PLAY_USING_RA=? WHERE GAME_ID=?";
 
 //*******************************
 // ????.db
@@ -310,6 +316,26 @@ bool Database::updateFavorite(int id, int favorite) {
 }
 
 //*******************************
+// Database::updatePlayUsingRA
+//*******************************
+bool Database::updatePlayUsingRA(int id, int play_using_ra) {
+    char *errorReport = nullptr;
+    sqlite3_stmt *res = nullptr;
+    int rc = sqlite3_prepare_v2(db, UPDATE_PLAY_USING_RA, -1, &res, nullptr);
+    if (rc != SQLITE_OK) {
+        cerr << "Failed: db:: updatePlayUsingRA, " << id << ", " << play_using_ra << endl;
+        cerr << sqlite3_errmsg(db) << endl;
+        if (!errorReport) sqlite3_free(errorReport);
+        return false;
+    }
+    sqlite3_bind_int(res, 1, play_using_ra);
+    sqlite3_bind_int(res, 2, id);
+    sqlite3_step(res);
+    sqlite3_finalize(res);
+    return true;
+}
+
+//*******************************
 // Database::updateHistory
 // 0 = not in history, 1-100 history from latest game played to oldest
 //*******************************
@@ -408,9 +434,10 @@ bool Database::getInternalGames(PsGames *result) {
             int players = sqlite3_column_int(res, 4);
             const unsigned char *base = sqlite3_column_text(res, 5);
             int discs = sqlite3_column_int(res, 6);
-            int fav = sqlite3_column_int(res, 7);
-            int history = sqlite3_column_int(res, 8);
-            int last_played = sqlite3_column_int(res, 9);
+            int favorite = sqlite3_column_int(res, 7);
+            int play_using_ra = sqlite3_column_int(res, 8);
+            int history = sqlite3_column_int(res, 9);
+            int last_played = sqlite3_column_int(res, 10);
 
             PsGamePtr psGame{new PsGame};
             psGame->gameId = id;
@@ -427,7 +454,8 @@ bool Database::getInternalGames(PsGames *result) {
             psGame->memcard = "SONY";
             psGame->internal = true;
             psGame->cds = discs;
-            psGame->favorite = (fav != 0);
+            psGame->favorite = (favorite != 0);
+            psGame->play_using_ra = (play_using_ra != 0);
             psGame->history = history;
             psGame->last_played = last_played;
             result->push_back(psGame);
@@ -458,9 +486,10 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
             int players = sqlite3_column_int(res, 4);
             const unsigned char *base = sqlite3_column_text(res, 5);
             int discs = sqlite3_column_int(res, 6);
-            int fav = sqlite3_column_int(res, 7);
-            int history = sqlite3_column_int(res, 8);
-            int last_played = sqlite3_column_int(res, 9);
+            int favorite = sqlite3_column_int(res, 7);
+            int play_using_ra = sqlite3_column_int(res, 8);
+            int history = sqlite3_column_int(res, 9);
+            int last_played = sqlite3_column_int(res, 10);
 
             psGame->gameId = id;
             psGame->title = string(reinterpret_cast<const char *>(title));
@@ -476,7 +505,8 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
             psGame->memcard = "SONY";
             psGame->internal = true;
             psGame->cds = discs;
-            psGame->favorite = (fav != 0);
+            psGame->favorite = (favorite != 0);
+            psGame->play_using_ra = (play_using_ra != 0);
             psGame->history = history;
             psGame->last_played = last_played;
 
@@ -487,6 +517,7 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
                 psGame->locked =  !(ini.values["automation"]=="1");
                 psGame->hd =       (ini.values["highres"]=="1");
                 psGame->favorite = (ini.values["favorite"] == "1");
+                psGame->play_using_ra = (ini.values["play_using_ra"] == "true");
             }
         }
     } else {
@@ -542,6 +573,7 @@ bool Database::refreshGame(PsGamePtr &game) {
                 game->locked =  !(ini.values["automation"]=="1");
                 game->hd =       (ini.values["highres"]=="1");
                 game->favorite = (ini.values["favorite"] == "1");
+                game->play_using_ra = (ini.values["play_using_ra"] == "true");
             }
         }
     } else {
@@ -597,6 +629,7 @@ bool Database::getGames(PsGames *result) {
                 game->locked =  !(ini.values["automation"]=="1");
                 game->hd =       (ini.values["highres"]=="1");
                 game->favorite = (ini.values["favorite"] == "1");
+                game->play_using_ra = (ini.values["play_using_ra"] == "true");
             }
             result->push_back(game);
         }
@@ -951,6 +984,13 @@ bool Database::createInitialDatabase() {
 //*******************************
 void Database::addFavoriteColumn() {
     executeCreateStatement((char*) ADD_FAVORITE_COLUMN, "Favorite column" );
+}
+
+//*******************************
+// Database::addPlayUsingRAColumn
+//*******************************
+void Database::addPlayUsingRAColumn() {
+    executeCreateStatement((char*) ADD_PLAY_USING_RA_COLUMN, "Play Using RA column" );
 }
 
 //*******************************

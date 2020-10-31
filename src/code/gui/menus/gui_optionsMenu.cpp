@@ -90,6 +90,7 @@ void GuiOptions::fill() {
     lines.emplace_back(CFG_WIDESCREEN, _("Widescreen:"), "aspect", true, vector<string> ({ "false", "true" }) );
     lines.emplace_back(CFG_GFX_FILTER, _("GFX Filter:"), "mip", true, vector<string> ({ "true", "false" }) );
     lines.emplace_back(CFG_RACONFIG, _("Update RA Config:"), "raconfig", true, vector<string> ({ "false", "true" }) );
+    lines.emplace_back(CFG_PLAY_ALL_PSX_WITH_RA, _("Play all PSX games with RA:"), "play_all_psx_with_ra", true, vector<string> ({ "false", "true" }) );
     lines.emplace_back(CFG_SHOWINGTIMEOUT, _("Showing Timeout (0 = no timeout):"), "showingtimeout", false, getTimeoutValues());
     lines.emplace_back(CFG_LANG, _("Language:"), "language", false, lang->getListOfLanguages());
 

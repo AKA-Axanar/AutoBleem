@@ -48,13 +48,14 @@ public:
     bool locked = false;
     int discs = 1;
     bool favorite = false;
+    bool play_using_ra = false;
     bool foreign = false;
     bool app = false;
 
     void updateTexts(const std::string & gameNameTxt, const std::string & publisherTxt,
                      const std::string & yearTxt, const std::string & serial, const std::string & region,
                      const std::string & playersTxt, bool internal, bool hd, bool locked, int discs, bool favorite,
-                     bool foreign, bool app, const std::string& last_played,
+                     bool play_using_ra, bool foreign, bool app, const std::string& last_played,
                      SDL_Color _textColor);
 
     void updateTexts(PsGamePtr & game, SDL_Color _textColor);
