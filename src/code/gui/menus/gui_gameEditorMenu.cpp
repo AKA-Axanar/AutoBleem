@@ -389,9 +389,9 @@ void GuiEditor::render() {
     }
 
     if (gameData->internal) {
-//        gui->renderTextLineOptions(
-//                _("Play using RA:") + (gameData->play_using_ra ? string("|@Check|") : string("|@Uncheck|")),
-//                OPT_PLAY_USING_RA, offset, POS_LEFT, 300);
+        gui->renderTextLineOptions(
+                _("Play using RA:") + (gameData->play_using_ra ? string("|@Check|") : string("|@Uncheck|")),
+                OPT_PLAY_USING_RA, offset, POS_LEFT, 300);
     } else {
         gui->renderTextLineOptions(
                 _("Play using RA:") + (gameIni.values["play_using_ra"] == "true" ? string("|@Check|") : string("|@Uncheck|")),
