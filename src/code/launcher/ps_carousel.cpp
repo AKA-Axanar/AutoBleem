@@ -42,7 +42,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                 coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
             } else {
                 coverPng = nullptr;
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
                 if ((*this)->internal) {
                     Metadata md;
                     if (md.lookupBySerial((*this)->serial) && md.bytes && md.dataSize) {

@@ -42,7 +42,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     if (!game->foreign) {
         gameFile += (game->folder + sep + game->base);
-        if (!DirEntry::matchExtension(game->base, ".pbp")) {
+        if (! (DirEntry::matchExtension(game->base, ".pbp") || DirEntry::matchExtension(game->base, ".chd"))){
             gameFile += ".cue";
         }
         gameFile += "";
@@ -105,7 +105,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
         transferConfig(game);
     }
 
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     Gui::splash("I'm sorry Dave.  I'm afraid I can't do that.");
 #else
     int pid = fork();

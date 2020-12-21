@@ -221,6 +221,7 @@ target_link_libraries(autobleem-gui
          SDL2_mixer
          SDL2_ttf
 		 sqlite3
+         mamecd
          ${CMAKE_DL_LIBS}
 )
 

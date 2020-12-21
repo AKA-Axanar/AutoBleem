@@ -15,7 +15,7 @@ using namespace std;
 // CfgProcessor::replaceProperty
 //*******************************
 void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, string newline) {
-    cout << "cfg replace, '" << fullCfgFilePath << "', '" << property << "' with: '" << newline << "'" << endl;
+ //   cout << "cfg replace, '" << fullCfgFilePath << "', '" << property << "' with: '" << newline << "'" << endl;
     if (!DirEntry::exists(fullCfgFilePath)) {
         cout << "  cfg file doesn't exist" << endl;
         return;
@@ -65,7 +65,7 @@ void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, stri
 // CfgProcessor::getValueFromCfgFile
 //*******************************
 string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property) {
-    cout << "cfg getValue, '" << fullCfgFilePath << "', '" << property << "'" << endl;
+   // cout << "cfg getValue, '" << fullCfgFilePath << "', '" << property << "'" << endl;
     fstream file(fullCfgFilePath, ios::in);
     vector<string> lines;
     lines.clear();

@@ -49,7 +49,7 @@ string SerialScanner::fixSerial(string serial) {
 string SerialScanner::scanSerial(ImageType imageType, string path, string firstBinPath)
 {
     string serial = scanSerialInternal(imageType,path,firstBinPath);
-    cout <<serial<<endl;
+    std::cout <<serial<<endl;
     if (serial.empty())
     {
         serial = workarounds(imageType,path,firstBinPath);
@@ -61,6 +61,7 @@ string SerialScanner::scanSerial(ImageType imageType, string path, string firstB
 // SerialScanner::scanSerialInternal
 //*******************************
 string SerialScanner::scanSerialInternal(ImageType imageType, string path, string firstBinPath) {
+    std::cout << imageType << "   " << path << "   " << firstBinPath << endl;
     if (imageType == IMAGE_PBP) {
         string destinationDir = path ;
         string pbpFileName = DirEntry::findFirstFile(EXT_PBP, destinationDir);
@@ -119,7 +120,7 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
             }
         }
     }
-    if (DirEntry::imageTypeUsesACueFile(imageType)) {
+    if (DirEntry::imageTypeUsesACueFile(imageType) || (imageType==IMAGE_CHD)) {
         string prefixes[] = {
                 "CPCS", "ESPM", "HPS", "LPS", "LSP", "SCAJ", "SCED", "SCES", "SCPS", "SCUS", "SIPS", "SLES", "SLKA",
                 "SLPM", "SLPS", "SLUS"};
@@ -129,7 +130,8 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
 
         for (int level = 1; level < 4; level++) {
             Isodir *dirLoader = new Isodir();
-            IsoDirectory dir = dirLoader->getDir(firstBinPath, level);
+        
+            IsoDirectory dir = dirLoader->getDir(firstBinPath, level, imageType==IMAGE_CHD);
             delete dirLoader;
             string serialFound = "";
             if (!dir.rootDir.empty()) {
@@ -176,6 +178,10 @@ string SerialScanner::workarounds(ImageType imageType, string path, string first
     if (imageType == IMAGE_PBP)
     {
         fileToScan = DirEntry::findFirstFile(EXT_PBP, path);
+    }
+    if (imageType == IMAGE_CHD)
+    {
+        fileToScan = DirEntry::findFirstFile(EXT_CHD, path);
     }
 
     // BH2 - Resident Evil 1.5

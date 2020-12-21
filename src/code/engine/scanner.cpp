@@ -507,6 +507,7 @@ bool Scanner::areThereGameFilesInDir(const string & path) {
     extensions.push_back("bin");
     extensions.push_back("cue");
     extensions.push_back("img");
+    extensions.push_back("chd");
 //    extensions.push_back("iso");
 
     //Getting all files in USBGames Dir

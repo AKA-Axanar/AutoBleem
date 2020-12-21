@@ -356,7 +356,7 @@ PsGames RAIntegrator::parseJSON(string path) {
         game->db_name = item["db_name"];
         game->image_path = item["path"];
 
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
         // if you are running in the debugging environment then /media might be shared drive /media/sf_G_DRIVE etc
         if (game->image_path.substr(0, 6) == "/media")
             game->image_path.replace(0, 6, Env::getPathToUSBRoot());

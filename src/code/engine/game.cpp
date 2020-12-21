@@ -216,6 +216,27 @@ void USBGame::recoverMissingFiles() {
             automationUsed = true;
             cout << "Switching automation in PBP" << endl;
         }
+    } else if (this->imageType == IMAGE_CHD) {
+        // disc link
+        string destinationDir = fullPath ;
+        string chdFileName = DirEntry::findFirstFile(EXT_CHD, destinationDir);
+        if (chdFileName != "") {
+            firstBinPath = destinationDir +  sep +chdFileName;
+            if (discs.size() == 0) {
+                automationUsed = false;
+                Disc disc;
+                disc.diskName = chdFileName;    // the full filename including the .CHD
+                disc.cueFound = true;
+                disc.cueName = chdFileName;
+                disc.binVerified = true;
+                discs.push_back(disc);
+            }
+               if (this->imageType==IMAGE_CHD) imageType = IMAGE_CHD;
+        } else
+        {
+            automationUsed = true;
+            cout << "Switching automation in CHD" << endl;
+        }
     }
     if (DirEntry::imageTypeUsesACueFile(this->imageType)) {
         if (discs.size() == 0) {
@@ -255,6 +276,8 @@ void USBGame::recoverMissingFiles() {
             cerr << "SRC:" << source << " DST:" << destination << endl;
             DirEntry::copy(source, destination);
             // maybe we can do better ?
+            cout << "getting serial from Image File" << endl;
+         
             string serial = SerialScanner::scanSerial(imageType, fullPath, firstBinPath);
             if (serial != "") {
 
@@ -366,6 +389,18 @@ void USBGame::updateObj() {
             if (imageType == IMAGE_PBP) {
                 string pbpName = DirEntry::findFirstFile(EXT_PBP, fullPath );
                 if (pbpName == disc.diskName) {
+                    disc.cueFound = true;
+                } else {
+                    disc.cueFound = false;
+                }
+
+                disc.binVerified = true;
+                disc.cueName = disc.diskName;
+                discs.push_back(disc);
+            }
+            if (imageType == IMAGE_CHD) {
+                string chdName = DirEntry::findFirstFile(EXT_CHD, fullPath );
+                if (chdName == disc.diskName) {
                     disc.cueFound = true;
                 } else {
                     disc.cueFound = false;

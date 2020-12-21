@@ -6,8 +6,11 @@
 #include "../main.h"
 #include <string>
 #include <vector>
+#include "cdreader.h"
 
 #define SECTOR_SIZE 2352
+
+
 
 //******************
 // IsoDirectory
@@ -20,21 +23,18 @@ public:
     std::vector<std::string> rootDir;
 };
 
+
 //******************
 // Isodir
 //******************
-class Isodir {
+class Isodir  {
 public:
-    IsoDirectory getDir(std::string binPath,int maxlevel );
-    void readDir(std::vector<std::string> * data, unsigned int sector, int maxlevel, int level);
-private:
+    IsoDirectory getDir(std::string binPath,int maxlevel, bool useCHD);
+    void readDir(vector<string> *data, CDReader *reader, unsigned int sector, int maxlevel, int level);
     IsoDirectory getEmptyDir();
+   
+private:
+
     std::string removeVersion(std::string input);
-    int getSectorAddress(int sector);
-    unsigned char readChar();
-    std::string readString(int size);
-    unsigned long readDword();
-    int findPrimaryDescriptor(int maxOffset);
-    int offset = 0;
     std::ifstream * stream;
 };

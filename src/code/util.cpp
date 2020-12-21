@@ -17,7 +17,7 @@ using namespace std;
 //*******************************
 void Util::powerOff()
 {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     exit(0);
 #else
     Util::execUnixCommand("shutdown -h now");
@@ -144,7 +144,7 @@ unsigned long Util::readDword(ifstream *stream) {
  * Return the available space of a usb device
  */
 string Util::getAvailableSpace(){
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     return "x86 - does not care about free space - Does not work on mac";
     #else
     string str;

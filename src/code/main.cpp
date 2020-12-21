@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
         // the two args are the path to the regional.db file and the path to the /Games dir on the usb drive
         private_singleArgPassed = false;
         private_pathToRegionalDBFile = argv[1];
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
         private_pathToInternalDBFile = "internal.db";   // it's in the same dir as the autobleem-gui app you are debugging
 #else
         private_pathToInternalDBFile = "/media/System/Databases/internal.db";

@@ -38,7 +38,7 @@ GuiBase::GuiBase() {
     window = SDL_CreateWindow("AutoBleem", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
 
 #else
     SDL_ShowCursor(SDL_DISABLE);
@@ -63,7 +63,7 @@ GuiBase::~GuiBase() {
 // GuiBase::getCurrentThemePath
 //*******************************
 string GuiBase::getCurrentThemePath() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     string path = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
     if (!DirEntry::exists(path)) {
         path = Env::getSonyPath();
@@ -83,7 +83,7 @@ string GuiBase::getCurrentThemePath() {
 // GuiBase::getCurrentThemeImagePath
 //*******************************
 string GuiBase::getCurrentThemeImagePath() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     string path = getCurrentThemePath() + sep + "images";
     if (!DirEntry::exists(path)) {
         path = Env::getSonyPath() + sep + "images";
@@ -103,7 +103,7 @@ string GuiBase::getCurrentThemeImagePath() {
 // GuiBase::getCurrentThemeSoundPath
 //*******************************
 string GuiBase::getCurrentThemeSoundPath() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     string path = getCurrentThemePath() + sep + "sounds";
     if (!DirEntry::exists(path)) {
         path = Env::getSonyPath() + sep + "sounds";
@@ -124,7 +124,7 @@ string GuiBase::getCurrentThemeSoundPath() {
 // GuiBase::getCurrentThemeFontPath
 //*******************************
 string GuiBase::getCurrentThemeFontPath() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     string path = getCurrentThemePath() + sep + "font";
     if (!DirEntry::exists(path)) {
         path = Env::getSonyPath() + sep + "font";
@@ -366,7 +366,7 @@ void Gui::loadAssets(bool reloadMusic) {
 //*******************************
 void Gui::hideMouseCursor() {
 
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
 #else
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetWindowGrab(window, SDL_TRUE);
@@ -561,7 +561,7 @@ void Gui::menuSelection() {
                         if (e.cbutton.button == SDL_BTN_R2) {
                             Mix_PlayChannel(-1, cursor, 0);
                             drawText(_("POWERING OFF... PLEASE WAIT"));
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
                             exit(0);
 #else
                             Util::execUnixCommand("shutdown -h now");
@@ -656,7 +656,7 @@ void Gui::menuSelection() {
                             Mix_PlayChannel(-1, cursor, 0);
                             stopAudio();
                             mapper.flushPads();
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
                             drawText("Small delay to test");
                             SDL_Delay(2000);
 #endif

@@ -94,7 +94,7 @@ string Environment::getPathToInternalDBFile() {
 // PSC: autobleem-gui executable dir
 //*******************************
 string Environment::getWorkingPath() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     if (private_singleArgPassed) {
         string path = private_pathToUSBDrive + sep + "Autobleem/bin/autobleem";
         return path;
@@ -115,7 +115,7 @@ string Environment::getWorkingPath() {
 // PSC: autobleem-gui executable dir
 //*******************************
 string Environment::getSonyPath() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     return getWorkingPath() + sep + "sony";
 #else
     return "/usr/sony/share/data";
@@ -151,7 +151,7 @@ string Environment::getPathToWorkingPathFile(const std::string &filename) {
 // PSC: "/media/themes"
 //*******************************
 string Environment::getPathToThemesDir() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     if (private_singleArgPassed) {
         string path = private_pathToUSBDrive + sep + "themes";
         return path;
@@ -171,7 +171,7 @@ string Environment::getPathToThemesDir() {
 // PSC: "../db"
 //*******************************
 string Environment::getPathToCoversDBDir() {
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
     if (private_singleArgPassed) {
         string path = private_pathToUSBDrive + sep + "Autobleem/bin/db";
         return path;

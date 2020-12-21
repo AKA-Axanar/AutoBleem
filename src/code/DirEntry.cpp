@@ -556,6 +556,8 @@ bool DirEntry::isAGameFile(const std::string &filename) {
         return true;
     if (matchExtension(filename, EXT_IMG))
         return true;
+    if (matchExtension(filename, EXT_CHD))
+        return true;
 
     return false;
 }
@@ -570,6 +572,8 @@ ImageType DirEntry::getGameFileImageType(const std::string &filename) {
         return IMAGE_PBP;
     if (matchExtension(filename, EXT_IMG))
         return IMAGE_IMG;
+    if (matchExtension(filename, EXT_CHD))
+        return IMAGE_CHD;
 
     return IMAGE_NO_GAME_FOUND;
 }
