@@ -52,6 +52,7 @@ bool copyGameFilesInGamesDirToSubDirs(const string & path){
 
     extensions.push_back("pbp");
     extensions.push_back("cue");
+    extensions.push_back("chd");
 
     //Getting all files in USBGames Dir
     DirEntries globalFileList = DirEntry::diru(path);
