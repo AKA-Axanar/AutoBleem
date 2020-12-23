@@ -93,6 +93,7 @@ bool USBGame::verify(std::vector<std::string> *failureReasons) {
             result = false;
         }
         if (!discs[i].cueFound) {
+            cout << i << discs[i].diskName << discs[i].cueFound << endl;
             if (failureReasons)
                 failureReasons->emplace_back(_("Cue file not found"));
             result = false;
@@ -223,15 +224,25 @@ void USBGame::recoverMissingFiles() {
         if (chdFileName != "") {
             firstBinPath = destinationDir +  sep +chdFileName;
             if (discs.size() == 0) {
+                vector<string> extensions;
+                extensions.push_back("chd");
+                DirEntries allFiles = DirEntry::diru(destinationDir);
+                DirEntries fileList = DirEntry::getFilesWithExtension(destinationDir, allFiles, extensions);
                 automationUsed = false;
-                Disc disc;
-                disc.diskName = chdFileName;    // the full filename including the .CHD
-                disc.cueFound = true;
-                disc.cueName = chdFileName;
-                disc.binVerified = true;
-                discs.push_back(disc);
+                for (DirEntry dirEntry:fileList)
+                {
+                    Disc *disc=new Disc();
+                    disc->diskName = dirEntry.name;    // the full filename including the .CHD
+                    disc->cueFound = true;
+                    disc->cueName = dirEntry.name;
+                    disc->binVerified = true;
+                    discs.push_back(*disc);
+                    delete disc;
+                }
+
+
             }
-               if (this->imageType==IMAGE_CHD) imageType = IMAGE_CHD;
+            if (this->imageType==IMAGE_CHD) imageType = IMAGE_CHD;
         } else
         {
             automationUsed = true;
@@ -400,12 +411,7 @@ void USBGame::updateObj() {
             }
             if (imageType == IMAGE_CHD) {
                 string chdName = DirEntry::findFirstFile(EXT_CHD, fullPath );
-                if (chdName == disc.diskName) {
-                    disc.cueFound = true;
-                } else {
-                    disc.cueFound = false;
-                }
-
+                disc.cueFound = true;
                 disc.binVerified = true;
                 disc.cueName = disc.diskName;
                 discs.push_back(disc);
