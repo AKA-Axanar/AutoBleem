@@ -101,7 +101,7 @@ string Util::readString(int size, ifstream *stream) {
 //*******************************
 void Util::skipZeros(ifstream *stream) {
     char c = readChar(stream);
-    while (c == 00) {
+    while (!stream->eof() && !stream->fail() && c == 00) {
         c = readChar(stream);
     }
     stream->seekg(-1, ios::cur);
@@ -113,7 +113,7 @@ void Util::skipZeros(ifstream *stream) {
 string Util::readString(ifstream *stream) {
     string str;
     char c = readChar(stream);
-    while (c != 00) {
+    while (!stream->eof() && !stream->fail() && c != 00) {
         str = str + c;
         c = readChar(stream);
     }
