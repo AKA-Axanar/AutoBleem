@@ -124,7 +124,7 @@ int playstation_event_filter(void *data, SDL_Event *originalEvent) {
         switch (originalEvent->window.event) {
             case SDL_WINDOWEVENT_SHOWN:
                 SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
-                printf("First event %d\n");
+                //printf("First event %d\n");
                 break;
             case SDL_WINDOWEVENT_CLOSE:
                 SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
