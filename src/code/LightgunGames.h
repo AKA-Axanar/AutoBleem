@@ -7,6 +7,9 @@
 #include <vector>
 #include "launcher/ps_game.h"
 
+//********************
+// LightgunGames
+//********************
 struct LightgunGames {
     static std::string filename;
     static std::vector<std::string> lightgunGamePaths;
@@ -26,4 +29,6 @@ struct LightgunGames {
     void RemoveGame(const std::string& gamepath);
 
     void PurgeGamesNotFound();
+
+    PsGames GetAllLightgunGames();
 };

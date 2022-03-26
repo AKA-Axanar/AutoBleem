@@ -7,12 +7,18 @@
 #include "environment.h"
 #include <algorithm>
 #include "DirEntry.h"
+#include "engine/database.h"
+#include "gui/gui.h"
+#include "launcher/ra_integrator.h"
 
 using namespace std;
 
 std::string LightgunGames::filename;
 std::vector<std::string> LightgunGames::lightgunGamePaths;
 
+//********************
+// LightgunGames
+//********************
 LightgunGames::LightgunGames() {
     filename = Environment::getWorkingPath() + sep + string("lightguns.txt");
     lightgunGamePaths = Util::ReadTextFileAsAStringArray(filename, true);
@@ -21,6 +27,9 @@ LightgunGames::LightgunGames() {
     lightgunGamePaths.erase(remove_if(begin(lightgunGamePaths), end(lightgunGamePaths), [] (const string& str) { return str == ""; }), end(lightgunGamePaths));
 }
 
+//********************
+// PathForLightgunFile
+//********************
 string LightgunGames::PathForLightgunFile(PsGamePtr game) {
     if (game == nullptr)
         return "";
@@ -32,10 +41,16 @@ string LightgunGames::PathForLightgunFile(PsGamePtr game) {
    
 }
 
+//********************
+// UpdateFile
+//********************
 void LightgunGames::UpdateFile() {
     Util::WriteStringsToTextFile(lightgunGamePaths, filename, true);
 }
 
+//********************
+// IsGameALightgunGame
+//********************
 bool LightgunGames::IsGameALightgunGame(PsGamePtr game) {
     return IsGameALightgunGame(PathForLightgunFile(game));
 }
@@ -48,6 +63,9 @@ bool LightgunGames::IsGameALightgunGame(const std::string& gamepath) {
     return it != end(lightgunGamePaths);
 }
 
+//********************
+// AddGame
+//********************
 void LightgunGames::AddGame(PsGamePtr game) {
     if (game)
         AddGame(PathForLightgunFile(game));
@@ -63,6 +81,9 @@ void LightgunGames::AddGame(const std::string& gamepath) {
     }
 }
 
+//********************
+// RemoveGame
+//********************
 void LightgunGames::RemoveGame(PsGamePtr game) {
     if (game)
         RemoveGame(PathForLightgunFile(game));
@@ -76,9 +97,35 @@ void LightgunGames::RemoveGame(const std::string& gamepath) {
     UpdateFile();
 }
 
+//********************
+// PurgeGamesNotFound
+//********************
 void LightgunGames::PurgeGamesNotFound() {
     lightgunGamePaths.erase(remove_if(begin(lightgunGamePaths), end(lightgunGamePaths),
                                       [] (const string& gamepath) { return !DirEntry::exists(gamepath); }),
                             end(lightgunGamePaths));
     UpdateFile();
 }
+
+//********************
+// GetAllLightgunGames
+//********************
+PsGames LightgunGames::GetAllLightgunGames() {
+    PsGames psgames;
+    Gui::getInstance()->db->getGames(&psgames);
+    //sort(games.begin(), games.end(), sortByTitle);
+
+    PsGames lightgunGames;
+    copy_if(begin(psgames), end(psgames), end(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
+
+    shared_ptr<RAIntegrator> integrator = RAIntegrator::getInstance();
+    integrator->readGamesFromAllPlaylists();    // updates playlistInfos.  does not return all the games here.
+    for (auto& playlistInfo : integrator->playlistInfos) {
+        copy_if(begin(playlistInfo.psGames), end(playlistInfo.psGames), end(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
+    }
+
+    sort(begin(lightgunGames), end(lightgunGames), [] (PsGamePtr game1, PsGamePtr game2) { return game1->title < game2->title; });
+
+    return lightgunGames;
+}
+
