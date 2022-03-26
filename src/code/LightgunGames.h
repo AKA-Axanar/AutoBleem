@@ -14,6 +14,8 @@ struct LightgunGames {
     LightgunGames();
     void UpdateFile();
 
+    static std::string PathForLightgunFile(PsGamePtr game);
+
     bool IsGameALightgunGame(PsGamePtr game);
     bool IsGameALightgunGame(const std::string& gamepath);
 
