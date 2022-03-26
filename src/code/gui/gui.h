@@ -20,7 +20,7 @@
 //#include "gui_font_wrapper.h"
 #include "gui_font.h"
 #include "../environment.h"
-
+#include "../LightgunGames.h"
 
 enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_OPTION_RETRO, MENU_OPTION_START };
 
@@ -83,7 +83,7 @@ public:
     // db and internalDB are set in main.cpp and remain alive until exit
     Database *db = nullptr;
     Database *internalDB = nullptr;
-
+    LightgunGames lightgunGames;
 
     void loadAssets(bool reloadMusic = true);
 

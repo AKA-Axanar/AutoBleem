@@ -34,7 +34,7 @@ void GuiLauncher::updateMeta() {
         bool app {false};
         string last_played {""};
         meta->updateTexts(gameName, publisher, year, serial, region, players, internal, hd, locked, discs, favorite,
-                          foreign,play_using_ra, app, last_played, fgColor);
+                          foreign,play_using_ra, app, last_played, "", fgColor);
         return;
     }
     if (selGameIndexInCarouselGamesIsValid())
@@ -453,7 +453,7 @@ void GuiLauncher::loadAssets() {
         bool app {false};
         string last_played {""};
         meta->updateTexts(gameName, publisher, year, serial, region, players,
-                          internal, hd, locked, discs, favorite, play_using_ra, foreign, app, last_played,
+                          internal, hd, locked, discs, favorite, play_using_ra, foreign, app, last_played, "", 
                           fgColor);
     }
     staticElements.push_back(meta);

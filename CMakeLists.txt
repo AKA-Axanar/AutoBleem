@@ -195,7 +195,12 @@ add_executable(
         src/code/util.h
         src/code/ver_migration.cpp
         src/code/ver_migration.h
-        src/code/util_time.h src/code/util_time.cpp src/code/gui/abl.c src/code/gui/abl.h)
+        src/code/util_time.h
+		src/code/util_time.cpp
+		src/code/gui/abl.c
+		src/code/gui/abl.h
+		src/code/LightgunGames.h
+		src/code/LightgunGames.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>
