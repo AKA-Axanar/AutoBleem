@@ -17,7 +17,10 @@ struct LightgunGames {
     bool IsGameALightgunGame(PsGamePtr game);
     bool IsGameALightgunGame(const std::string& gamepath);
 
+    void AddGame(PsGamePtr game);
     void AddGame(const std::string& gamepath);
+
+    void RemoveGame(PsGamePtr game);
     void RemoveGame(const std::string& gamepath);
 
     void PurgeGamesNotFound();
