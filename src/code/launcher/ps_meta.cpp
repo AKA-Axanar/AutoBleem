@@ -168,8 +168,14 @@ void PsMeta::render() {
         if (Env::autobleemKernel)
             gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #endif
-
         yOffset += 22;
+
+        int xoffset = 190, spread = 40;
+        int spreadCount = 1;
+
+        //
+        // if PS1
+        //
         if (!foreign) {
             // PS1 icons line
             gui->renderText(otherFont, players, x + 35, y + yOffset);
@@ -186,7 +192,6 @@ void PsMeta::render() {
             fullRect.h = h;
             SDL_RenderCopy(renderer, tex, &fullRect, &rect);
 
-            int xoffset = 190, spread = 40;
             // render internal icon
             rect.x = x + 135;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
@@ -210,7 +215,6 @@ void PsMeta::render() {
                 SDL_RenderCopy(renderer, internalOffTex, &fullRect, &rect);
             }
 
-            int spreadCount = 1;
             rect.x = x + xoffset + (spread * spreadCount);
             if (hd) {
                 SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
@@ -243,7 +247,9 @@ void PsMeta::render() {
                     SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
             }
         } else {
+            //
             // retroarch icon
+            //
             if (!app) {
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
                 rect.x = x;
@@ -256,6 +262,11 @@ void PsMeta::render() {
                 fullRect.w = w;
                 fullRect.h = h;
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
+ 
+                if (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gamePathForLightgunGamesFile)) {
+                    rect.x = x + spread;
+                    SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
+                }
             }
         }
     }
