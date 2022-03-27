@@ -262,10 +262,14 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet i
     }
 
     if (!noForce) {
-        if ((currentSet == SET_RETROARCH) || (currentSet == SET_APPS)) {
-            forceSettingsOnly();
-        }
+        if ((currentSet == SET_RETROARCH) || (currentSet == SET_APPS))
+            showOptions();
     }
+//    if (!noForce) {
+//        if ((currentSet == SET_RETROARCH) || (currentSet == SET_APPS)) {
+//            forceSettingsOnly(currentSet);
+//        }
+//    }
 }
 
 //*******************************
@@ -483,8 +487,8 @@ void GuiLauncher::loadAssets() {
     tButton->visible = true;
     staticElements.push_back(tButton);
 
-    menu = new PsMenu("menu", gui->getCurrentThemeImagePath());
-    menu->loadAssets();
+    psOptionsMenu = new PsMenu("menu", gui->getCurrentThemeImagePath());
+    psOptionsMenu->loadAssets();
 
     menuHead = new PsCenterLabel("header");
     menuHead->font = gui->themeFonts[FONT_28_BOLD];
@@ -528,19 +532,20 @@ void GuiLauncher::loadAssets() {
     frontElemets.push_back(sselector);
 
     //switchSet(currentSet,false);
-    if ((currentSet == SET_RETROARCH) || (currentSet == SET_APPS)) {
-        forceSettingsOnly();
-    } else {
-        if (menu->foreign) {
-            showAllOptions();
-        }
-    }
+    showOptions();
+//    if ((currentSet == SET_RETROARCH) || (currentSet == SET_APPS)) {
+//        forceSettingsOnly(currentSet);
+//    } else {
+//        if (psOptionsMenu->foreign) {
+//            showAllOptions();
+//        }
+//    }
 
     showSetName();
     updateMeta();
 
     if (selGameIndexInCarouselGamesIsValid()) {
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
     }
 }
 
@@ -564,7 +569,7 @@ void GuiLauncher::freeAssets() {
         game.freeTex();
     }
     carouselGames.clear();
-    menu->freeAssets();
+    psOptionsMenu->freeAssets();
 }
 
 //*******************************
@@ -691,7 +696,7 @@ void GuiLauncher::updatePositions() {
 // render method called every loop
 void GuiLauncher::render() {
     if (sselector != nullptr) {
-        sselector->frame = menu->savestate;
+        sselector->frame = psOptionsMenu->savestate;
     }
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
@@ -726,7 +731,7 @@ void GuiLauncher::render() {
         }
     }
 
-    menu->render();
+    psOptionsMenu->render();
 
     auto font24 = gui->themeFonts[FONT_22_MED];
     gui->renderText_WithColor(font24, _("Enter"), 638, 640, secColor);
@@ -754,7 +759,7 @@ void GuiLauncher::nextCarouselGame(int speed) {
     }
     updateMeta();
     if (selGameIndexInCarouselGamesIsValid())
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
 }
 
 //*******************************
@@ -770,7 +775,7 @@ void GuiLauncher::prevCarouselGame(int speed) {
     }
     updateMeta();
     if (selGameIndexInCarouselGamesIsValid())
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
 }
 
 //*******************************
@@ -947,10 +952,10 @@ void GuiLauncher::switchState(int state, int time) {
         this->state = STATE_GAMES;
         arrow->visible = false;
         arrow->animationStarted = time;
-        menu->duration = 200;
-        menu->targety = 520;
-        menu->animationStarted = time;
-        menu->active = false;
+        psOptionsMenu->duration = 200;
+        psOptionsMenu->targety = 520;
+        psOptionsMenu->animationStarted = time;
+        psOptionsMenu->active = false;
         menuHead->visible = false;
         menuText->visible = false;
 
@@ -969,10 +974,10 @@ void GuiLauncher::switchState(int state, int time) {
         this->state = STATE_SET;
         arrow->visible = true;
         arrow->animationStarted = time;
-        menu->duration = 200;
-        menu->targety = 440;
-        menu->animationStarted = time;
-        menu->active = true;
+        psOptionsMenu->duration = 200;
+        psOptionsMenu->targety = 440;
+        psOptionsMenu->animationStarted = time;
+        psOptionsMenu->active = true;
         menuHead->visible = true;
         menuText->visible = true;
         moveMainCover(state);
@@ -980,34 +985,34 @@ void GuiLauncher::switchState(int state, int time) {
 }
 
 //*******************************
-// GuiLauncher::forceSettingsOnly
+// GuiLauncher::showOptions
 //*******************************
-void GuiLauncher::forceSettingsOnly() {
-    menu->foreign = true;
-    menu->selOption = 0;
-    menu->x = 640 - 118 / 2;
-    menu->ox = menu->x;
-    menu->xoff[0] = 0;
-    menu->xoff[1] = 0;
-    menu->xoff[2] = 0;
-    menu->xoff[3] = 0;
+void GuiLauncher::showOptions() {   // "SETTINGS", GAME", "MEMORY CARD", "RESUME"
+    PsGamePtr psGame = GetSelectedCarouselGame();
 
-    menu->direction = 0;
-    menu->duration = 100;
-    menu->animationStarted = 0;
-}
+    if (psGame == nullptr)
+        psOptionsMenu->enableMenu = { true, false, false, false };     // always show AutoBleem Settings
+    else if (!psGame->foreign)
+        psOptionsMenu->enableMenu = { true, true, true, true };        // if PS1
+    else if (!psGame->app)
+        psOptionsMenu->enableMenu = { true, true, false, false };      // if RA
+    else if (psGame->app)
+        psOptionsMenu->enableMenu = { true, false, false, false };     // App
+    else
+        { assert(false); }
 
-//*******************************
-// GuiLauncher::showAllOptions
-//*******************************
-void GuiLauncher::showAllOptions() {
-    menu->foreign = false;
-    menu->selOption = 0;
-    menu->x = 640 - 118 / 2;
-    menu->ox = menu->x;
-    menu->xoff[0] = 0;
-    menu->xoff[1] = 0;
-    menu->xoff[2] = 0;
-    menu->xoff[3] = 0;
-    menu->animationStarted = 0;
+    psOptionsMenu->psGame = psGame;
+    psOptionsMenu->selOption = 0;
+    psOptionsMenu->x = 640 - 118 / 2;
+    psOptionsMenu->ox = psOptionsMenu->x;
+    psOptionsMenu->xoff[0] = 0;
+    psOptionsMenu->xoff[1] = 0;
+    psOptionsMenu->xoff[2] = 0;
+    psOptionsMenu->xoff[3] = 0;
+
+    if (currentSet != SET_APPS) {
+        psOptionsMenu->direction = 0;
+        psOptionsMenu->duration = 100;
+    }
+    psOptionsMenu->animationStarted = 0;
 }

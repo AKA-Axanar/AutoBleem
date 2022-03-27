@@ -54,6 +54,9 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
 // PsMeta::updateTexts
 //*******************************
 void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
+    if (psGame == nullptr)
+        return;
+
     string appendText = psGame->players == 1 ? _("Player") : _("Players");
     if (!psGame->foreign) {
         if (psGame->serial == "") {

@@ -45,7 +45,7 @@ void GuiLauncher::loop() {
             obj->update(time);
         }
 
-        menu->update(time);
+        psOptionsMenu->update(time);
         updatePositions();
         render();
 
@@ -162,16 +162,16 @@ void GuiLauncher::loop_joyMoveLeft() {
         }
     } else if (state == STATE_SET) {
 
-        if (!menu->foreign) {
-            if (menu->selOption != SEL_OPTION_AB_SETTINGS) {
-                if (menu->animationStarted == 0) {
+        if (psOptionsMenu->enableMenu[1]) {     // if more than one menu
+            if (psOptionsMenu->selOption != SEL_OPTION_AB_SETTINGS) {
+                if (psOptionsMenu->animationStarted == 0) {
                     Mix_PlayChannel(-1, gui->cursor, 0);
-                    menu->transition = TR_OPTION;
-                    menu->direction = 0;
-                    menu->duration = 100;
-                    menuHead->setText(headers[menu->selOption - 1], fgColor);
-                    menuText->setText(texts[menu->selOption - 1], fgColor);
-                    menu->animationStarted = time;
+                    psOptionsMenu->transition = TR_OPTION;
+                    psOptionsMenu->direction = 0;
+                    psOptionsMenu->duration = 100;
+                    menuHead->setText(headers[psOptionsMenu->selOption - 1], fgColor);
+                    menuText->setText(texts[psOptionsMenu->selOption - 1], fgColor);
+                    psOptionsMenu->animationStarted = time;
                 }
             }
         }
@@ -199,18 +199,16 @@ void GuiLauncher::loop_joyMoveRight() {
             nextCarouselGame(110);
         }
     } else if (state == STATE_SET) {
-
-        if (!menu->foreign) {
-            if (menu->selOption != SEL_OPTION_RESUME_FROM_SAVESTATE) {
-                if (menu->animationStarted == 0) {
-                    Mix_PlayChannel(-1, gui->cursor, 0);
-                    menu->transition = TR_OPTION;
-                    menu->direction = 1;
-                    menu->duration = 100;
-                    menuHead->setText(headers[menu->selOption + 1], fgColor);
-                    menuText->setText(texts[menu->selOption + 1], fgColor);
-                    menu->animationStarted = time;
-                }
+        // if there is an option menu item to the right
+        if (psOptionsMenu->selOption != psOptionsMenu->enableMenuLastIndex && psOptionsMenu->enableMenu[psOptionsMenu->selOption+1]) {
+            if (psOptionsMenu->animationStarted == 0) {
+                Mix_PlayChannel(-1, gui->cursor, 0);
+                psOptionsMenu->transition = TR_OPTION;
+                psOptionsMenu->direction = 1;
+                psOptionsMenu->duration = 100;
+                menuHead->setText(headers[psOptionsMenu->selOption + 1], fgColor);
+                menuText->setText(texts[psOptionsMenu->selOption + 1], fgColor);
+                psOptionsMenu->animationStarted = time;
             }
         }
 
@@ -230,8 +228,8 @@ void GuiLauncher::loop_joyMoveUp() {
         return;
     }
     if (state == STATE_SET) {
-        if (menu->animationStarted == 0) {
-            menu->transition = TR_MENUON;
+        if (psOptionsMenu->animationStarted == 0) {
+            psOptionsMenu->transition = TR_MENUON;
             switchState(STATE_GAMES, time);
             motionStart = 0;
         }
@@ -246,8 +244,8 @@ void GuiLauncher::loop_joyMoveDown() {
         return;
     }
     if (state == STATE_GAMES) {
-        if (menu->animationStarted == 0) {
-            menu->transition = TR_MENUON;
+        if (psOptionsMenu->animationStarted == 0) {
+            psOptionsMenu->transition = TR_MENUON;
             switchState(STATE_SET, time);
             motionStart = 0;
         }
@@ -363,7 +361,7 @@ void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, t
                                              DefaultShowingTimeout, brightWhite, FONT_22_MED);
                 setInitialPositions(selGameIndex);
                 updateMeta();
-                menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
             } else {
                 // no change
                 Mix_PlayChannel(-1, gui->cancel, 0);
@@ -501,7 +499,7 @@ void GuiLauncher::loop_chooseGameDir() {
     showSetName();
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         updateMeta();
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
     } else {
         updateMeta();
     }
@@ -551,7 +549,7 @@ void GuiLauncher::loop_chooseRAPlaylist() {
     showSetName();
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         updateMeta();
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
     } else {
         updateMeta();
     }
@@ -577,17 +575,17 @@ void GuiLauncher::loop_selectButton_Pressed() {
             int previousSet = currentSet;
             currentSet++;
             if (previousSet == SET_APPS) {
-                showAllOptions();
                 menuHead->setText(headers[0], fgColor);
                 menuText->setText(texts[0], fgColor);
             }
 
             if (currentSet > SET_LAST) currentSet = 0;
             switchSet(currentSet,false);
+            showOptions();
             showSetName();
             if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
                 updateMeta();
-                menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
             } else {
                 updateMeta();
             }
@@ -612,7 +610,7 @@ void GuiLauncher::loop_startButton_Pressed() {
             Mix_PlayChannel(-1, gui->cursor, 0);
             setInitialPositions(selGameIndex);
             updateMeta();
-            menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
         }
     }
 }
@@ -622,8 +620,8 @@ void GuiLauncher::loop_startButton_Pressed() {
 //*******************************
 void GuiLauncher::loop_circleButton_Pressed() {
     if (state == STATE_SET) {
-        if (menu->animationStarted == 0) {
-            menu->transition = TR_MENUON;
+        if (psOptionsMenu->animationStarted == 0) {
+            psOptionsMenu->transition = TR_MENUON;
             switchState(STATE_GAMES, time);
             motionStart = 0;
         }
@@ -636,7 +634,7 @@ void GuiLauncher::loop_circleButton_Pressed() {
         arrow->visible = true;
         sselector->cleanSaveStateImages();
         if (selGameIndexInCarouselGamesIsValid())
-            menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
 
         if (sselector->operation == OP_LOAD) {
             state = STATE_SET;
@@ -723,8 +721,6 @@ void GuiLauncher::loop_squareButton_Pressed() {
 // GuiLauncher::loop_crossButtonPressed
 //*******************************
 void GuiLauncher::loop_crossButton_Pressed() {
-
-
     if (state == STATE_GAMES) {
         loop_crossButtonPressed_STATE_GAMES();
 
@@ -733,7 +729,6 @@ void GuiLauncher::loop_crossButton_Pressed() {
 
     } else if (state == STATE_RESUME) {
         loop_crossButtonPressed_STATE_RESUME();
-
     }
 }
 
@@ -845,16 +840,16 @@ void GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed(PsGamePtr game) {
 //*******************************
 void GuiLauncher::loop_crossButtonPressed_STATE_SET() {
     gui->resumingGui = false;
-    if (menu->selOption == SEL_OPTION_RESUME_FROM_SAVESTATE) {
+    if (psOptionsMenu->selOption == SEL_OPTION_RESUME_FROM_SAVESTATE) {
         loop_crossButtonPressed_STATE_SET__OPT_RESUME_FROM_SAVESTATE();
     }
-    else if (menu->selOption == SEL_OPTION_EDIT_MEMCARD_INFO) {
+    else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_MEMCARD_INFO) {
         loop_crossButtonPressed_STATE_SET__OPT_EDIT_MEMCARD();
     }
-    else if (menu->selOption == SEL_OPTION_EDIT_GAME_SETTINGS) {
+    else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_GAME_SETTINGS) {
         loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS();
     }
-    else if (menu->selOption == SEL_OPTION_AB_SETTINGS) {
+    else if (psOptionsMenu->selOption == SEL_OPTION_AB_SETTINGS) {
         loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS();
     }
 }
@@ -903,7 +898,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
                 setInitialPositions(selGameIndex);
                 updateMeta();
                 if (selGameIndexInCarouselGamesIsValid())
-                    menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+                    psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
             }
         }
 
@@ -916,7 +911,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
         } else {
             gui->loadAssets();
             meta->gameName = "";
-            menu->setResumePic("");
+            psOptionsMenu->setResumePic("");
         }
 
         state = STATE_GAMES;
@@ -984,7 +979,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         setInitialPositions(selGameIndex);
         updateMeta();
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
 
         PsScreenpoint point2;
         point2.x = 640 - 113;
@@ -1114,7 +1109,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
                     _("Resume point saved to slot") + " " + to_string(sselector->selSlot + 1),
                     DefaultShowingTimeout);
 
-            menu->setResumePic(carouselGames[selGameIndex]->findResumePicture(sselector->selSlot));
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture(sselector->selSlot));
 
             if (sselector->operation == OP_LOAD) {
                 state = STATE_SET;

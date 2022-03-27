@@ -164,19 +164,26 @@ void PsMenu::update(long time) {
 // PsMenu::render
 //*******************************
 void PsMenu::render() {
-    int w = 118 * optionscales[0];
-    int h = 118 * optionscales[0];
     SDL_Rect input, output;
-    input.x = 0, input.y = 0;
-    input.h = 118, input.w = 118;
-    output.x = x + xoff[0];
-    output.y = y + yoff[0];
-    output.w = w;
-    output.h = h;
+    int w;
+    int h;
 
-    SDL_RenderCopy(renderer, settings, &input, &output);
+    if (enableMenu[0]) {    // SEL_OPTION_AB_SETTINGS
+        // show AutoBleem Options
+        w = 118 * optionscales[0];
+        h = 118 * optionscales[0];
+        input.x = 0, input.y = 0;
+        input.h = 118, input.w = 118;
+        output.x = x + xoff[0];
+        output.y = y + yoff[0];
+        output.w = w;
+        output.h = h;
 
-    if (!foreign) {
+        SDL_RenderCopy(renderer, settings, &input, &output);
+    }
+
+    // Show Game Edit Parameters
+    if (enableMenu[1]) {    // SEL_OPTION_EDIT_GAME_SETTINGS
         w = 118 * optionscales[1];
         h = 118 * optionscales[1];
 
@@ -188,8 +195,10 @@ void PsMenu::render() {
         output.h = h;
 
         SDL_RenderCopy(renderer, guide, &input, &output);
+    }
 
-
+    // Save Game
+    if (enableMenu[2]) {    // SEL_OPTION_EDIT_MEMCARD_INFO
         w = 118 * optionscales[2];
         h = 118 * optionscales[2];
         input.x = 0, input.y = 0;
@@ -200,7 +209,10 @@ void PsMenu::render() {
         output.h = h;
 
         SDL_RenderCopy(renderer, memcard, &input, &output);
+    }
 
+        // Restore Game
+    if (enableMenu[3]) {    // SEL_OPTION_RESUME_FROM_SAVESTATE
         w = 118 * optionscales[3];
         h = 118 * optionscales[3];
         input.x = 0, input.y = 0;
@@ -211,20 +223,22 @@ void PsMenu::render() {
         output.h = h;
 
         SDL_RenderCopy(renderer, savestate, &input, &output);
+    }
 
-        if (resume != nullptr) {
-            Uint32 format;
-            int access;
-            int tw, th;
-            SDL_QueryTexture(resume, &format, &access, &tw, &th);
-            input.h = th;
-            input.w = tw;
-            output.x = x + 130 * 3 + 25 * optionscales[3] + xoff[3];
-            output.y = y + yoff[3] + 33 * optionscales[3];
-            output.w = 68 * optionscales[3];
-            output.h = 52 * optionscales[3];
-            SDL_RenderCopy(renderer, resume, &input, &output);
-        }
+    // if there is game to resume display the resume point picture
+    if (resume != nullptr && psGame && !psGame->foreign) {
+        Uint32 format;
+        int access;
+        int tw, th;
+        SDL_QueryTexture(resume, &format, &access, &tw, &th);
+        input.h = th;
+        input.w = tw;
+        output.x = x + 130 * 3 + 25 * optionscales[3] + xoff[3];
+        output.y = y + yoff[3] + 33 * optionscales[3];
+        output.w = 68 * optionscales[3];
+        output.h = 52 * optionscales[3];
+
+        SDL_RenderCopy(renderer, resume, &input, &output);
     }
 }
 
