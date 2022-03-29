@@ -362,7 +362,12 @@ void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, t
                                              DefaultShowingTimeout, brightWhite, FONT_22_MED);
                 setInitialPositions(selGameIndex);
                 updateMeta();
-                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+                showOptions();
+                if (selGameIndexInCarouselGamesIsValid()) {
+                    PsGamePtr psGame = GetSelectedCarouselGame();
+                    if (!psGame->foreign)
+                        psOptionsMenu->setResumePic(psGame->findResumePicture());
+                }
             } else {
                 // no change
                 Mix_PlayChannel(-1, gui->cancel, 0);
