@@ -127,10 +127,19 @@ PsGames GuiLauncher::getAllPS1Games(bool includeUSB, bool includeInternal) {
 //*******************************
 // GuiLauncher::getGames_SET_RETROARCH
 //*******************************
-void GuiLauncher::getGames_SET_RETROARCH(const std::string &playlistName, PsGames *gamesList) {
+void GuiLauncher::getGames_SET_RETROARCH(const std::string& playlistName, PsGames* gamesList) {
     cout << "Getting RA games for playlist: " << playlistName << endl;
     if (playlistName != "")
         *gamesList = raIntegrator->getGames(playlistName);
+}
+
+//*******************************
+// GuiLauncher::getGames_SET_LIGHTGUN
+//*******************************
+void GuiLauncher::getGames_SET_LIGHTGUN(PsGames* gamesList) {
+    cout << "Getting Lightgun games" << endl;
+    gui->lightgunGames.PurgeGamesNotFound();
+    *gamesList = gui->lightgunGames.GetAllLightgunGames();
 }
 
 //*******************************
@@ -217,8 +226,12 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet i
             getGames_SET_HISTORY(&gamesList);
         }
 
-    } else if (currentSet == SET_RETROARCH) {
+    }
+    else if (currentSet == SET_RETROARCH) {
         getGames_SET_RETROARCH(currentRAPlaylistName, &gamesList);
+
+    } else if (currentSet == SET_LIGHTGUN) {
+        getGames_SET_LIGHTGUN(&gamesList);
 
     } else if (currentSet == SET_APPS) {
         getGames_SET_APPS(&gamesList);
@@ -278,6 +291,7 @@ void GuiLauncher::switchSet(int newSet, bool noForce) {     // Warning: newSet i
 void GuiLauncher::showSetName() {
     vector<string> setNames = {  "Showing: PS1 games",      // this is a dummy entry. setPS1SubStateNames is used.
                                _("Showing: Retroarch") + " ",
+                               _("Showing: Lightgun Games") + " ",
                                _("Showing: Apps") + " "
     };
     vector<string> setPS1SubStateNames = {_("Showing: All Games") + " ",
@@ -312,7 +326,11 @@ void GuiLauncher::showSetName() {
     } else if (currentSet == SET_RETROARCH) {
         string playlist = DirEntry::getFileNameWithoutExtension(currentRAPlaylistName);
         notificationLines[0].setText(setNames[currentSet] + playlist + " " + numGames, timeout);
-    } else if (currentSet == SET_APPS) {
+    }
+    else if (currentSet == SET_LIGHTGUN) {
+        notificationLines[0].setText(setNames[currentSet] + numGames, timeout);
+    }
+    else if (currentSet == SET_APPS) {
         notificationLines[0].setText(setNames[currentSet] + numGames, timeout);
     }
 }
@@ -758,8 +776,12 @@ void GuiLauncher::nextCarouselGame(int speed) {
         selGameIndex = 0;
     }
     updateMeta();
-    if (selGameIndexInCarouselGamesIsValid())
-        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+    showOptions();
+    if (selGameIndexInCarouselGamesIsValid()) {
+        PsGamePtr psGame = GetSelectedCarouselGame();
+        if (!psGame->foreign)
+            psOptionsMenu->setResumePic(psGame->findResumePicture());
+    }
 }
 
 //*******************************
@@ -774,8 +796,12 @@ void GuiLauncher::prevCarouselGame(int speed) {
         selGameIndex = carouselGames.size() - 1;
     }
     updateMeta();
-    if (selGameIndexInCarouselGamesIsValid())
-        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+    showOptions();
+    if (selGameIndexInCarouselGamesIsValid()) {
+        PsGamePtr psGame = GetSelectedCarouselGame();
+        if (!psGame->foreign)
+            psOptionsMenu->setResumePic(psGame->findResumePicture());
+    }
 }
 
 //*******************************

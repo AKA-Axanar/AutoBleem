@@ -104,7 +104,8 @@ public:
 
     PsGames getAllPS1Games(bool includeUSB, bool includeInternal);
 
-    void getGames_SET_RETROARCH(const std::string& playlistName, PsGames *gamesList);
+    void getGames_SET_RETROARCH(const std::string& playlistName, PsGames* gamesList);
+    void getGames_SET_LIGHTGUN(PsGames* gamesList);
     void getGames_SET_APPS(PsGames* gamesList);
 
     // current USB Game Dir

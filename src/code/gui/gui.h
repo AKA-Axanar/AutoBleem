@@ -36,8 +36,9 @@ enum XAlignment { XALIGN_LEFT, XALIGN_CENTER, XALIGN_RIGHT };
 // if you add a new set also update setNames in gui_launcher.cpp
 #define SET_PS1      0
 #define SET_RETROARCH 1
-#define SET_APPS 2
-#define SET_LAST 2
+#define SET_LIGHTGUN 2
+#define SET_APPS 3
+#define SET_LAST 3
 
 // SET_PS1 select sub states. keep SET_PS1_Games_Subdir last as it's going to be left off the L2+Select menu
 enum { SET_PS1_All_Games=0, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_History, SET_PS1_Games_Subdir };
