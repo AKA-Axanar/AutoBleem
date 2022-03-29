@@ -10,6 +10,7 @@
 #include "engine/database.h"
 #include "gui/gui.h"
 #include "launcher/ra_integrator.h"
+#include <iostream>
 
 using namespace std;
 
@@ -116,13 +117,11 @@ PsGames LightgunGames::GetAllLightgunGames() {
     //sort(games.begin(), games.end(), sortByTitle);
 
     PsGames lightgunGames;
-    copy_if(begin(psgames), end(psgames), end(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
+    copy_if(begin(psgames), end(psgames), back_inserter(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
 
     shared_ptr<RAIntegrator> integrator = RAIntegrator::getInstance();
-    integrator->readGamesFromAllPlaylists();    // updates playlistInfos.  does not return all the games here.
-    for (auto& playlistInfo : integrator->playlistInfos) {
-        copy_if(begin(playlistInfo.psGames), end(playlistInfo.psGames), end(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
-    }
+    PsGames raGames = integrator->getAllRAGames();
+    copy_if(begin(raGames), end(raGames), back_inserter(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
 
     sort(begin(lightgunGames), end(lightgunGames), [] (PsGamePtr game1, PsGamePtr game2) { return game1->title < game2->title; });
 
