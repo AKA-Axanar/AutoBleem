@@ -3,6 +3,7 @@
 #include "../gui/menus/gui_optionsMenu.h"
 #include "../gui/gui_confirm.h"
 #include "../gui/menus/gui_gameEditorMenu.h"
+#include "../gui/menus/gui_gameEditorMenu_RA.h"
 #include "pcsx_interceptor.h"
 #include "gui_btn_guide.h"
 #include <algorithm>
@@ -928,70 +929,113 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
         return;
     }
 
-    Mix_PlayChannel(-1, gui->cursor, 0);
-    GuiEditor *editor = new GuiEditor(renderer);
-    Inifile gameIni;
-    if (selGameIndexInCarouselGamesIsValid()) {
-        editor->internal = carouselGames[selGameIndex]->internal;
-        if (!editor->internal) {
-            editor->gameFolder = carouselGames[selGameIndex]->folder;
+    PsGamePtr psGame = GetSelectedCarouselGame();
+    if (psGame == nullptr) {
+        GuiEditor* editor = new GuiEditor(renderer);
+        editor->show();
+    }
+    //
+    // PS1 Game
+    //
+    else if (!psGame->foreign) {
+        Mix_PlayChannel(-1, gui->cursor, 0);
+        GuiEditor* editor = new GuiEditor(renderer);
+        Inifile gameIni;
+        if (selGameIndexInCarouselGamesIsValid()) {
+            editor->internal = carouselGames[selGameIndex]->internal;
+            if (!editor->internal) {
+                editor->gameFolder = carouselGames[selGameIndex]->folder;
+                editor->gameData = carouselGames[selGameIndex];
+                gameIni.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
+                string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
+                // change "/media/Games/Racing/Driver 2" to "Driver 2"
+                gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
+                editor->gameIni = gameIni;
+            }
+            else {
+                editor->gameData = carouselGames[selGameIndex];
+            }
+        }
+
+        editor->show();
+
+        if (selGameIndexInCarouselGamesIsValid()) {
+            if (!editor->internal) {
+                if (editor->changes) {
+                    gameIni.reload(carouselGames[selGameIndex]->folder + sep + GAME_INI);
+                    gui->db->updateTitle(carouselGames[selGameIndex]->gameId, gameIni.values["title"]);
+                }
+                gui->db->refreshGame(carouselGames[selGameIndex]);
+                if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
+                    editor->gameIni.values["favorite"] == "0") {
+                    gui->lastSet = SET_PS1;
+                    gui->lastPS1_SelectState = SET_PS1_Favorites;
+                    loadAssets();   // reload - one less favorite game in display
+                }
+            }
+            else {
+                if (editor->changes) {
+                    gui->internalDB->updateTitle(carouselGames[selGameIndex]->gameId, editor->lastName);
+                }
+                gui->internalDB->refreshGameInternal(carouselGames[selGameIndex]);
+                if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
+                    editor->gameData->favorite == false) {
+                    gui->lastSet = SET_PS1;
+                    gui->lastPS1_SelectState = SET_PS1_Favorites;
+                    loadAssets();   // reload - one less favorite game in display
+                }
+            }
+        }
+
+        // if the current set is favorites and the user removes the last favorite selGameIndex will be -1
+        if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
+            setInitialPositions(selGameIndex);
+            updateMeta();
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+
+            PsScreenpoint point2;
+            point2.x = 640 - 113;
+            point2.y = 90;
+            point2.scale = 1;
+            point2.shade = 220;
+
+            carouselGames[selGameIndex].destination = point2;
+            carouselGames[selGameIndex].actual = point2;
+            carouselGames[selGameIndex].current = point2;
+        }
+        // fix to put back cover on top position
+    }
+    //
+    // RA Game
+    //
+    else {
+        Mix_PlayChannel(-1, gui->cursor, 0);
+        GuiEditor_RA* editor = new GuiEditor_RA(renderer);
+        if (selGameIndexInCarouselGamesIsValid()) {
             editor->gameData = carouselGames[selGameIndex];
-            gameIni.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
             string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
-            // change "/media/Games/Racing/Driver 2" to "Driver 2"
-            gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
-            editor->gameIni = gameIni;
-        } else {
-            editor->gameData = carouselGames[selGameIndex];
         }
-    }
 
-    editor->show();
+        editor->show();
 
-    if (selGameIndexInCarouselGamesIsValid()) {
-        if (!editor->internal) {
-            if (editor->changes) {
-                gameIni.reload(carouselGames[selGameIndex]->folder + sep + GAME_INI);
-                gui->db->updateTitle(carouselGames[selGameIndex]->gameId, gameIni.values["title"]);
-            }
-            gui->db->refreshGame(carouselGames[selGameIndex]);
-            if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
-                editor->gameIni.values["favorite"] == "0") {
-                gui->lastSet = SET_PS1;
-                gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();   // reload - one less favorite game in display
-            }
-        } else {
-            if (editor->changes) {
-                gui->internalDB->updateTitle(carouselGames[selGameIndex]->gameId, editor->lastName);
-            }
-            gui->internalDB->refreshGameInternal(carouselGames[selGameIndex]);
-            if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
-                editor->gameData->favorite == false) {
-                gui->lastSet = SET_PS1;
-                gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();   // reload - one less favorite game in display
-            }
+        // if the current set is favorites and the user removes the last favorite selGameIndex will be -1
+        if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
+            setInitialPositions(selGameIndex);
+            updateMeta();
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+
+            PsScreenpoint point2;
+            point2.x = 640 - 113;
+            point2.y = 90;
+            point2.scale = 1;
+            point2.shade = 220;
+
+            carouselGames[selGameIndex].destination = point2;
+            carouselGames[selGameIndex].actual = point2;
+            carouselGames[selGameIndex].current = point2;
         }
+        // fix to put back cover on top position
     }
-
-    // if the current set is favorites and the user removes the last favorite selGameIndex will be -1
-    if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
-        setInitialPositions(selGameIndex);
-        updateMeta();
-        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
-
-        PsScreenpoint point2;
-        point2.x = 640 - 113;
-        point2.y = 90;
-        point2.scale = 1;
-        point2.shade = 220;
-
-        carouselGames[selGameIndex].destination = point2;
-        carouselGames[selGameIndex].actual = point2;
-        carouselGames[selGameIndex].current = point2;
-    }
-    // fix to put back cover on top position
 }
 
 //*******************************
