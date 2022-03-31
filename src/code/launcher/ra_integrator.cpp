@@ -282,8 +282,10 @@ PsGames RAIntegrator::getAllRAGames() {
     vector<string> playlists = getPlaylists();
     PsGames psGames;
     for (const auto& playlist : playlists) {
-        PsGames temp = getGames(playlist);
-        copy(begin(temp), end(temp), back_inserter(psGames));
+        if (playlist != historyDisplayName and playlist != favoritesDisplayName) {
+            PsGames temp = getGames(playlist);
+            copy(begin(temp), end(temp), back_inserter(psGames));
+        }
     }
 
     return psGames;
