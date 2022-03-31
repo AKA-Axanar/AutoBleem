@@ -138,7 +138,6 @@ void GuiLauncher::getGames_SET_RETROARCH(const std::string& playlistName, PsGame
 //*******************************
 void GuiLauncher::getGames_SET_LIGHTGUN(PsGames* gamesList) {
     cout << "Getting Lightgun games" << endl;
-    gui->lightgunGames.PurgeGamesNotFound();
     *gamesList = gui->lightgunGames.GetAllLightgunGames();
 }
 

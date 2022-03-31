@@ -112,13 +112,16 @@ void LightgunGames::PurgeGamesNotFound() {
 // GetAllLightgunGames
 //********************
 PsGames LightgunGames::GetAllLightgunGames() {
+    PsGames lightgunGames;
+
+    PurgeGamesNotFound();
+
+    // add PS1 lightgun games
     PsGames psgames;
     Gui::getInstance()->db->getGames(&psgames);
-    //sort(games.begin(), games.end(), sortByTitle);
-
-    PsGames lightgunGames;
     copy_if(begin(psgames), end(psgames), back_inserter(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
 
+    // add RA lightgun games
     shared_ptr<RAIntegrator> integrator = RAIntegrator::getInstance();
     PsGames raGames = integrator->getAllRAGames();
     copy_if(begin(raGames), end(raGames), back_inserter(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
