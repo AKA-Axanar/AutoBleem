@@ -201,7 +201,8 @@ add_executable(
 		src/code/gui/abl.h
 		src/code/LightgunGames.h
 		src/code/LightgunGames.cpp
-		src/code/gui/menus/gui_gameEditorMenu_RA.h src/code/gui/menus/gui_gameEditorMenu_RA.cpp)
+		src/code/gui/menus/gui_gameEditorMenu_RA.h 
+		src/code/gui/menus/gui_gameEditorMenu_RA.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>
