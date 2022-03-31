@@ -999,7 +999,9 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
         if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
             setInitialPositions(selGameIndex);
             updateMeta();
-            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+            psGame = GetSelectedCarouselGame();
+            if (!psGame->foreign)
+                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
 
             PsScreenpoint point2;
             point2.x = 640 - 113;
@@ -1030,7 +1032,9 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
         if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
             setInitialPositions(selGameIndex);
             updateMeta();
-            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+            psGame = GetSelectedCarouselGame();
+            if (!psGame->foreign)
+                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
 
             PsScreenpoint point2;
             point2.x = 640 - 113;
@@ -1043,6 +1047,34 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
             carouselGames[selGameIndex].current = point2;
         }
         // fix to put back cover on top position
+    }
+
+    if (currentSet == SET_LIGHTGUN) {
+        // if the selected game is no longer a lightgun game
+        if (!gui->lightgunGames.IsGameALightgunGame(psGame)) {
+            gui->lastSet = SET_LIGHTGUN;
+            loadAssets();   // reload - one less lightgun game in display
+
+            // if the current set is favorites and the user removes the last favorite selGameIndex will be -1
+            if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
+                setInitialPositions(selGameIndex);
+                updateMeta();
+                psGame = GetSelectedCarouselGame();
+                if (!psGame->foreign)
+                    psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+
+                PsScreenpoint point2;
+                point2.x = 640 - 113;
+                point2.y = 90;
+                point2.scale = 1;
+                point2.shade = 220;
+
+                carouselGames[selGameIndex].destination = point2;
+                carouselGames[selGameIndex].actual = point2;
+                carouselGames[selGameIndex].current = point2;
+            }
+            // fix to put back cover on top position
+        }
     }
 }
 
