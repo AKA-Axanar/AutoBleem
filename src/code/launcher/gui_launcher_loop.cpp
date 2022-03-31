@@ -778,6 +778,9 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
         if (gui->cfg.inifile.values["play_all_psx_with_ra"] == "true")
             return loop_squareButton_Pressed();     // play PSX game in RA
     }
+    else if (currentSet == SET_LIGHTGUN) {
+        return loop_squareButton_Pressed();     // play lightgun games need to play in RA
+    }
 
     if (gui->runningGame->foreign)
     {
