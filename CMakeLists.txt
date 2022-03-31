@@ -207,6 +207,8 @@ add_executable(
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/nlohmann>
+		# comment this line if it causes a problem on another system
+		$<BUILD_INTERFACE:/home/steve/libmamecd_local/include>
 		)
 
 add_executable(starter
