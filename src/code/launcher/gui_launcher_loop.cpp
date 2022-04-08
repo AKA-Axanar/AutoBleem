@@ -694,15 +694,13 @@ void GuiLauncher::loop_triangleButton_Pressed() {
 //*******************************
 void GuiLauncher::loop_squareButton_Pressed() {
 
-
     if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) { // retroarch is a file!!
-
         if (state == STATE_GAMES) {
             if (carouselGames.empty()) {
                 return;
             }
             if (selGameIndexInCarouselGamesIsValid() && carouselGames[selGameIndex]->foreign) {
-                return;
+                return;     // pressing square is only valid for PS1 games
             }
             gui->startingGame = true;
             if (selGameIndexInCarouselGamesIsValid()) {
@@ -751,58 +749,59 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
         gui->runningGame = carouselGames[selGameIndex];
         gui->lastSelIndex = selGameIndex;
     }
+    else
+        return;
+
     gui->resumepoint = -1;
     gui->lastSet = currentSet;
-    if (currentSet == SET_PS1)
+    if (currentSet == SET_PS1) {
         gui->lastPS1_SelectState = currentPS1_SelectState;
-    gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
-    gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
+        gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
+        gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
+    }
     menuVisible = false;
 
-    if (currentSet == SET_PS1)
+    // if PS1 game
+    if (gui->runningGame->isPS1()) {
         addGameToPS1GameHistoryAsLatestGamePlayed(gui->runningGame);
+        gui->emuMode = EMU_PCSX;
 
-    gui->emuMode = EMU_PCSX;
-
-    // if it's a PS1 game see if the user wants to play it in RetroArch instead
-    if (currentSet == SET_PS1) {
-        if (gui->runningGame->internal) {
-            if (gui->runningGame->play_using_ra)
-                return loop_squareButton_Pressed();     // play internal PSX game in RA
-        } else {
+        // if it's a PS1 game see if the user wants to play it in RetroArch instead
+        bool play_using_ra { false };
+        if (currentSet == SET_LIGHTGUN)
+            play_using_ra = true;
+        else if (gui->runningGame->internal && gui->runningGame->play_using_ra)
+            play_using_ra = true;
+        else {
             Inifile gameini;
             gameini.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
             if (gameini.values["play_using_ra"] == "true")
-                return loop_squareButton_Pressed();     // play PSX game in RA
+                play_using_ra = true;
         }
         if (gui->cfg.inifile.values["play_all_psx_with_ra"] == "true")
-            return loop_squareButton_Pressed();     // play PSX game in RA
-    }
-    else if (currentSet == SET_LIGHTGUN) {
-        return loop_squareButton_Pressed();     // play lightgun games need to play in RA
-    }
+            play_using_ra = true;
 
-    if (gui->runningGame->foreign)
-    {
-        if (!gui->runningGame->app) {
-            gui->emuMode = EMU_RETROARCH;
-            gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
-            gui->lastRAPlaylistName = currentRAPlaylistName;
-        } else {
-            auto appStartScreen = new GuiAppStart(gui->renderer);
-            appStartScreen->setGame(gui->runningGame);
-            appStartScreen->show();
-            bool result = appStartScreen->result;
-            delete appStartScreen;
-            // Do not run
-            if (!result)
-            {
-                gui->startingGame = false;
-                menuVisible = true;
+        // if any of the above conditions are true play the PS1 game in RA
+        if (play_using_ra)
+            return loop_squareButton_Pressed();     // play internal PSX game in RA
 
-            }
-            gui->emuMode = EMU_LAUNCHER;
-            }
+    } else if (gui->runningGame->isRA()) {
+        gui->emuMode = EMU_RETROARCH;
+        gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
+        gui->lastRAPlaylistName = currentRAPlaylistName;
+    } else if (gui->runningGame->isApp()) {
+        auto appStartScreen = new GuiAppStart(gui->renderer);
+        appStartScreen->setGame(gui->runningGame);
+        appStartScreen->show();
+        bool result = appStartScreen->result;
+        delete appStartScreen;
+        // Do not run
+        if (!result)
+        {
+            gui->startingGame = false;
+            menuVisible = true;
+        }
+        gui->emuMode = EMU_LAUNCHER;
     }
 }
 
@@ -810,6 +809,9 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
 // GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed
 //*******************************
 void GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed(PsGamePtr game) {
+    if (!game->isPS1())
+        return;
+
     // include the internal games too as they need to be renumbered and possibly have a game dropped from the list
     PsGames gamesList = getAllPS1Games(true, true);
     PsGames histGamesList;
