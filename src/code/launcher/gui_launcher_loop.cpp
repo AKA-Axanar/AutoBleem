@@ -580,6 +580,14 @@ void GuiLauncher::loop_selectButton_Pressed() {
 
             int previousSet = currentSet;
             currentSet++;
+
+            // if there are no games marked as lightgun games then skip displaying the lightgun select screen
+            if (currentSet == SET_LIGHTGUN) {
+                gui->lightgunGames.PurgeGamesNotFound();
+                if (LightgunGames::lightgunGamePaths.size() == 0)
+                    currentSet++;
+            }
+
             if (previousSet == SET_APPS) {
                 menuHead->setText(headers[0], fgColor);
                 menuText->setText(texts[0], fgColor);
