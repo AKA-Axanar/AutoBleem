@@ -593,7 +593,8 @@ void GuiLauncher::loop_selectButton_Pressed() {
                 menuText->setText(texts[0], fgColor);
             }
 
-            if (currentSet > SET_LAST) currentSet = 0;
+            if (currentSet > SET_LAST)
+                currentSet = 0;
             switchSet(currentSet,false);
             showOptions();
             showSetName();
@@ -1007,11 +1008,13 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
 
         // if the current set is favorites and the user removes the last favorites selGameIndex will be -1
         if (selGameIndex == -1) {
+            gui->lastPS1_SelectState = SET_PS1_All_Games;
+            currentPS1_SelectState = SET_PS1_All_Games;
             switchState(STATE_GAMES, time);
             motionStart = 0;
         }
 
-        // if the current set is favorites and the user removes the last favorite selGameIndex will be -1
+        // if there are games in the carousel
         if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
             setInitialPositions(selGameIndex);
             updateMeta();
@@ -1046,11 +1049,13 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
 
         // if the current set is favorites and the user removes the last favorites selGameIndex will be -1
         if (selGameIndex == -1) {
+            gui->lastPS1_SelectState = SET_PS1_All_Games;
+            currentPS1_SelectState = SET_PS1_All_Games;
             switchState(STATE_GAMES, time);
             motionStart = 0;
         }
 
-        // if the current set is favorites and the user removes the last favorite selGameIndex will be -1
+        // if there are games in the carousel
         if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
             setInitialPositions(selGameIndex);
             updateMeta();
@@ -1079,11 +1084,14 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
 
             // if the current set is lightguns and the user removes the last lightgun selGameIndex will be -1
             if (selGameIndex == -1) {
+                gui->lastSet = SET_PS1;
+                gui->lastPS1_SelectState = SET_PS1_All_Games;
+                currentPS1_SelectState = SET_PS1_All_Games;
                 switchState(STATE_GAMES, time);
                 motionStart = 0;
             }
 
-            // if the current set is lightguns and the user removes the last lightgun selGameIndex will be -1
+            // if there are games in the carousel
             if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
                 setInitialPositions(selGameIndex);
                 updateMeta();
