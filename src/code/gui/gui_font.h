@@ -46,5 +46,21 @@ public:
     void openAllFonts(const std::string &_rootPath, SDL_Shared<SDL_Renderer> renderer);
 };
 
+//********************
+// SizesOfBoldThemeFont
+// If you ever need to change this to handle both bold and medium fonts change the map key to pair<FontType, pointSize>
+// This class is used by ps_meta.cpp to make the game title font smaller if the game name is do long that it 
+// displays beyond the right edge of the screen.
+//********************
+class SizesOfBoldThemeFont {
+    std::map<int, FC_Font_Shared> boldFonts;
+
+public:
+    SizesOfBoldThemeFont() {};
+    void Init() { boldFonts.clear(); }
+    FC_Font_Shared AddFont(int size, FC_Font_Shared boldFont);
+    FC_Font_Shared GetFont(int size, const Fonts& fonts);
+};
+
 using FC_Point = SDL_Point;
 struct FC_Size { int w=0, h=0; };

@@ -71,25 +71,6 @@ FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) 
     return font;
 }
 
-#if 0
-//********************
-// Fonts::openNewSharedTTFFont
-// low level open shared font.  filename is the full path to the ttf file.  fontSize is the font point size.
-//********************
-TTF_Font_Shared Fonts::openNewSharedTTFFont(const string &filename, int fontSize) {
-    TTF_Font_Shared font = TTF_Font_Shared(TTF_OpenFont(filename.c_str(), fontSize));
-    if (font) {
-        cout << "Success opening font " << filename << " of size " << fontSize << endl;
-    } else {
-        cout << "FAILURE opening font " << filename << " of size " << fontSize << endl;
-        font = nullptr;
-        assert(false);
-    }
-
-    return font;
-}
-#endif
-
 //********************
 // Fonts::openAllFonts
 //********************
@@ -109,3 +90,40 @@ void Fonts::openAllFonts(const std::string &_rootPath, SDL_Shared<SDL_Renderer> 
         fontInfos[fontInfo.fontEnum] = fontInfo;
     }
 }
+
+//********************
+// SizesOfBoldThemeFont::AddFont
+// If you ever need to change this to handle both bold and medium fonts change the map key to pair<FontType, pointSize>
+// This class is used by ps_meta.cpp to make the game title font smaller if the game name is do long that it 
+// displays beyond the right edge of the screen.
+//********************
+
+//********************
+// SizesOfBoldThemeFont::AddFont
+//********************
+FC_Font_Shared SizesOfBoldThemeFont::AddFont(int size, FC_Font_Shared font)
+{
+    auto it = boldFonts.find(size);
+    if (it != boldFonts.end())
+        return it->second;
+    else {
+        boldFonts[size] = font; // add the passed font as a new font size font
+        return font;
+    }
+}
+
+//********************
+// SizesOfBoldThemeFont::GetFont
+//********************
+FC_Font_Shared SizesOfBoldThemeFont::GetFont(int size, const Fonts& fonts)
+{
+    auto it = boldFonts.find(size);
+    if (it != boldFonts.end())
+        return it->second;     // we already have that size
+    else {
+        FC_Font_Shared font = fonts.openSpecificSharedCachedFont(FONT_BOLD, size);
+        boldFonts[size] = font;
+        return font;
+    }
+}
+

@@ -137,19 +137,21 @@ void PsMeta::render() {
         auto nameFont = fonts[FONT_28_BOLD];
         auto otherFont = fonts[FONT_15_BOLD];
 
+        gui->sizesOfBoldThemeFont.AddFont(28, nameFont);
+
         int yOffset = 0;
         // game name line
         // if the game name goes off the end of the screen use a smaller font
         int textWidth = FC_GetWidth(nameFont, gameName.c_str());
         if (x + textWidth > SCREEN_WIDTH) {
             int miniMe = 28.0 * ((float)(SCREEN_WIDTH - x) / (float)(textWidth)) + 0.5;
-            nameFont = Fonts::openSpecificSharedCachedFont(FONT_BOLD, miniMe);
+            nameFont = gui->sizesOfBoldThemeFont.GetFont(miniMe, gui->themeFonts);
 
             // if it's still a bit over the right edge go down one more font size
             textWidth = FC_GetWidth(nameFont, gameName.c_str());
             if (x + textWidth > SCREEN_WIDTH) {
                 --miniMe;
-                nameFont = Fonts::openSpecificSharedCachedFont(FONT_BOLD, miniMe);
+                nameFont = gui->sizesOfBoldThemeFont.GetFont(miniMe, gui->themeFonts);
             }
         }
         gui->renderText(nameFont, gameName, x, y + yOffset);

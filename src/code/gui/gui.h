@@ -52,6 +52,7 @@ public:
     SDL_Shared<SDL_Renderer> renderer;
 
     Fonts themeFonts;
+    SizesOfBoldThemeFont sizesOfBoldThemeFont;  // the different sizes are used for the game name in the carousel
     Fonts sonyFonts;
     Config cfg;
     bool inGuiLauncher = false;

@@ -383,6 +383,7 @@ void GuiLauncher::loadAssets() {
     }
 
     gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath(), renderer);
+    gui->sizesOfBoldThemeFont.Init();   // the different sizes are used for the game name in the carousel
 
     // count, x_start, y_start, fontEnum, fontHeight, separationBetweenLines
     notificationLines.createAndSetDefaults(2, 10, 10, FONT_22_MED, 24, 8);
