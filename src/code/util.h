@@ -57,5 +57,7 @@ public:
 
     static unsigned int getRandomNumber();
     static unsigned int getRandomIndex(unsigned int size);
-};
 
+    static std::vector<std::string> ReadTextFileAsAStringArray(const std::string& filePath, bool removeCRLF);
+    static bool WriteStringsToTextFile(const std::vector<std::string>& strings, const std::string& filePath, bool appendLineEnding);
+};

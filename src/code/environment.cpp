@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <climits>
+#include <assert.h>
 
 using namespace std;
 
@@ -116,7 +117,9 @@ string Environment::getWorkingPath() {
 //*******************************
 string Environment::getSonyPath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
-    return getWorkingPath() + sep + "sony";
+    string sonypath =getWorkingPath() + sep + "sony";
+    assert(DirEntry::exists(sonypath));
+    return sonypath;
 #else
     return "/usr/sony/share/data";
 #endif

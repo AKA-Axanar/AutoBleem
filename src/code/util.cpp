@@ -375,3 +375,51 @@ unsigned int Util::getRandomNumber() {
 unsigned int Util::getRandomIndex(unsigned int size) {
     return getRandomNumber() % size;
 }
+
+//*******************************
+// Read File
+// Return the contents of a text file in a vector of string.
+// note: CR's and LF's are removed.
+//*******************************
+vector<string> Util::ReadTextFileAsAStringArray(const string& filePath, bool removeCRLF) {
+    ifstream file;
+    string line;
+    vector<string> contents;
+
+    file.open(filePath);
+    if (!file.good()) {
+        cout << "Error opening file: " << filePath << endl;
+        return contents;
+    }
+
+    while (getline(file, line)) {
+        if (removeCRLF)
+            removeCRLFFromString(line);
+
+        contents.emplace_back(line);
+    };
+    file.close();
+
+    return contents;
+}
+
+//*******************************
+// WriteStringsToTextFile
+// Writes a vector of strings to a file.
+// true for success
+//*******************************
+bool Util::WriteStringsToTextFile(const vector<string>& strings, const std::string& filePath, bool appendLineEnding) {
+    ofstream os(filePath, ios_base::trunc);
+    if (!os.is_open())
+        return false;
+
+    for (const string& s : strings) {
+        if (appendLineEnding)
+            os << s << endl;
+        else
+            os << s;
+    }
+    os << flush;
+    return true;
+}
+

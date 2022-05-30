@@ -104,7 +104,8 @@ public:
 
     PsGames getAllPS1Games(bool includeUSB, bool includeInternal);
 
-    void getGames_SET_RETROARCH(const std::string& playlistName, PsGames *gamesList);
+    void getGames_SET_RETROARCH(const std::string& playlistName, PsGames* gamesList);
+    void getGames_SET_LIGHTGUN(PsGames* gamesList);
     void getGames_SET_APPS(PsGames* gamesList);
 
     // current USB Game Dir
@@ -134,7 +135,7 @@ public:
     PsObj *xButton;
     PsObj *oButton;
     PsObj *tButton;
-    PsMenu *menu;
+    PsMenu *psOptionsMenu;
     PsStateSelector * sselector= nullptr;
 
     SDL_Color fgColor { 255, 255, 255, SDL_ALPHA_OPAQUE };
@@ -166,6 +167,7 @@ public:
     std::vector<PsCarouselGame> carouselGames;
     int selGameIndex = 0;
     bool selGameIndexInCarouselGamesIsValid() { return ((selGameIndex >= 0) && (selGameIndex < carouselGames.size())); }
+    PsGamePtr GetSelectedCarouselGame() { if (selGameIndexInCarouselGamesIsValid()) return carouselGames[selGameIndex]; else return nullptr; }
 
     std::shared_ptr<RAIntegrator> raIntegrator;
     std::vector<std::string> raPlaylists;
@@ -179,8 +181,7 @@ public:
     void updatePositions();
     void updateVisibility();
     void switchState(int state, int time);
-    void forceSettingsOnly();
-    void showAllOptions();
+    void showOptions();
 
     static bool sortByTitle(const PsGamePtr &i, const PsGamePtr &j) { return SortByCaseInsensitive(i->title, j->title); }
 };

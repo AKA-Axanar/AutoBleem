@@ -97,7 +97,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetRenderTarget(renderer, nullptr);
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         }
-    } else {
+    } else {    // foreign
         if (coverPng == nullptr) {
             SDL_Shared<SDL_Texture> renderSurface = SDL_CreateTexture(renderer,
                                                                       SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET,
@@ -114,7 +114,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
             SDL_SetRenderTarget(renderer, nullptr);
             string imagePath;
-            if (!(*this)->app) {
+            if (!(*this)->app) {    // RA Game
                 auto makeBoxArtPath = [&] (const string& boxartDir) -> string
                         { return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
                         DirEntry::getFileNameWithoutExtension((*this)->db_name) + sep +
@@ -137,7 +137,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                     cout << "boxart image NOT found for " << imagePath << endl;
                     coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
                 }
-            } else
+            } else      // App
             {
                 imagePath = (*this)->image_path;
 

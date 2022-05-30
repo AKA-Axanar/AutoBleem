@@ -12,22 +12,24 @@
 #include "../../lang.h"
 #include <sstream>
 #include "../../environment.h"
+#include "../../LightgunGames.h"
 
 using namespace std;
 
 #define OPT_FIRST           5
 #define OPT_FAVORITE        5
-#define OPT_PLAY_USING_RA   6
-#define OPT_LOCK            7
-#define OPT_HIGHRES         8
-#define OPT_SPEEDHACK       9
-#define OPT_SCANLINES       10
-#define OPT_SCANLINELV      11
-#define OPT_CLOCK_PSX       12
-#define OPT_FRAMESKIP       13
-#define OPT_PLUGIN          14
-#define OPT_INTERPOLATION   15
-#define OPT_LAST            15
+#define OPT_LIGHTGUN        6
+#define OPT_PLAY_USING_RA   7
+#define OPT_LOCK            8
+#define OPT_HIGHRES         9
+#define OPT_SPEEDHACK       10
+#define OPT_SCANLINES       11
+#define OPT_SCANLINELV      12
+#define OPT_CLOCK_PSX       13
+#define OPT_FRAMESKIP       14
+#define OPT_PLUGIN          15
+#define OPT_INTERPOLATION   16
+#define OPT_LAST            16
 
 //*******************************
 // GuiEditor::processOptionChange
@@ -72,7 +74,47 @@ void GuiEditor::processOptionChange(bool direction) {
             }
             break;
 
+        case OPT_LIGHTGUN:
+        {
+            auto &lightgunGames = Gui::getInstance()->lightgunGames;
+            bool isLightgun = lightgunGames.IsGameALightgunGame(gameData);
+            bool changeRA = false;
+
+            if (direction == true) {
+                if (isLightgun == false) {
+                    lightgunGames.AddGame(gameData);
+                    isLightgun = true;
+                    gameData->play_using_ra = true;
+                    changeRA = true;
+                }
+            } else {
+                if (isLightgun == true) {
+                    lightgunGames.RemoveGame(gameData);
+                    isLightgun = false;
+                    gameData->play_using_ra = false;
+                    changeRA = true;
+                }
+            }
+
+            if (changeRA) {
+                gameData->play_using_ra = isLightgun;
+                if (internal)
+                    gui->internalDB->updatePlayUsingRA(gameData->gameId, gameData->play_using_ra);
+                else {
+                    gameIni.values["play_using_ra"] = (isLightgun) ? "true" : "false";
+                    gameIni.save(gameIni.path);
+                }
+            }
+        }
+            break;
+
         case OPT_PLAY_USING_RA:
+        {
+            auto &lightgunGames = Gui::getInstance()->lightgunGames;
+            bool isLightgun = lightgunGames.IsGameALightgunGame(gameData);
+            if (isLightgun)
+                break;  // islightgun setting is on you can't change using_ra.
+
             if (internal) {
                 if (direction == true) {
                     if (gameData->play_using_ra == false) {
@@ -98,6 +140,7 @@ void GuiEditor::processOptionChange(bool direction) {
                 }
                 gameIni.save(gameIni.path);
             }
+        }
             break;
 
         case OPT_LOCK:
@@ -387,6 +430,10 @@ void GuiEditor::render() {
                 _("Favorite:") + (gameIni.values["favorite"] == "1" ? string("|@Check|") : string("|@Uncheck|")),
                     OPT_FAVORITE, yoffset, XALIGN_LEFT, 300);
     }
+
+    gui->renderTextLineOptions(
+                _("Lightgun Game:") + (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gameData) ? string("|@Check|") : string("|@Uncheck|")),
+                OPT_LIGHTGUN, yoffset, XALIGN_LEFT, 300);
 
     if (gameData->internal) {
         gui->renderTextLineOptions(

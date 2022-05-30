@@ -195,11 +195,20 @@ add_executable(
         src/code/util.h
         src/code/ver_migration.cpp
         src/code/ver_migration.h
-        src/code/util_time.h src/code/util_time.cpp src/code/gui/abl.c src/code/gui/abl.h)
+        src/code/util_time.h
+		src/code/util_time.cpp
+		src/code/gui/abl.c
+		src/code/gui/abl.h
+		src/code/LightgunGames.h
+		src/code/LightgunGames.cpp
+		src/code/gui/menus/gui_gameEditorMenu_RA.h 
+		src/code/gui/menus/gui_gameEditorMenu_RA.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/nlohmann>
+		# comment this line if it causes a problem on another system
+		$<BUILD_INTERFACE:/home/steve/libmamecd_local/include>
 		)
 
 add_executable(starter

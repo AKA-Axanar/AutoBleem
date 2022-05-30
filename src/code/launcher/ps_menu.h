@@ -30,13 +30,15 @@ public:
 
     float maxZoom = 1.5;
 
-    int selOption=0;
+    int selOption=0;    // SEL_OPTION_AB_SETTINGS=0, SEL_OPTION_EDIT_GAME_SETTINGS, SEL_OPTION_EDIT_MEMCARD_INFO, SEL_OPTION_RESUME_FROM_SAVESTATE
     int animationStarted=0;
     int targety = 0;
     int duration = 0;
     bool active = false;
 
-    bool foreign = false;
+    PsGamePtr psGame;
+    std::vector<bool> enableMenu { true, false, false, false };    // SEL_OPTION_AB_SETTINGS=0, SEL_OPTION_EDIT_GAME_SETTINGS, SEL_OPTION_EDIT_MEMCARD_INFO, SEL_OPTION_RESUME_FROM_SAVESTATE
+    int enableMenuLastIndex = 3;
     int direction = 0;
 
     std::string path;

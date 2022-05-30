@@ -27,7 +27,7 @@ std::shared_ptr<RAIntegrator> RAIntegrator::getInstance() {
     static bool firstTime {true};
     if (firstTime) {
         singleInstance->initCoreInfo();
-        singleInstance->readGamesFromAllPlaylists();
+        singleInstance->readGamesFromAllPlaylistsIntoRAPlaylistInfos();
         firstTime = false;
     }
     return singleInstance;
@@ -203,10 +203,10 @@ void RAIntegrator::reloadHistory() {
 }
 
 //********************
-// RAIntegrator::readGamesFromAllPlaylists
+// RAIntegrator::readGamesFromAllPlaylistsIntoRAPlaylistInfos
 //********************
 // reads all the playlist info into RAPlaylistInfos
-void RAIntegrator::readGamesFromAllPlaylists() {
+void RAIntegrator::readGamesFromAllPlaylistsIntoRAPlaylistInfos() {
     assert(playlistInfos.size() == 0);
     if (playlistInfos.size() != 0) {
         reloadFavorites();  // playlists already read.  only need to update favorites in case changed in RA.
@@ -273,6 +273,22 @@ PsGames RAIntegrator::getGames(string playlist) {
     if (found)
         games = playlistInfos[index].psGames;
     return games;
+}
+
+//********************
+// RAIntegrator::getAllRAGames
+//********************
+PsGames RAIntegrator::getAllRAGames() {
+    vector<string> playlists = getPlaylists();
+    PsGames psGames;
+    for (const auto& playlist : playlists) {
+        if (playlist != historyDisplayName && playlist != favoritesDisplayName) {
+            PsGames temp = getGames(playlist);
+            copy(begin(temp), end(temp), back_inserter(psGames));
+        }
+    }
+
+    return psGames;
 }
 
 //********************

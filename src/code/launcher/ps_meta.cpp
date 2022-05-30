@@ -11,6 +11,7 @@
 #include "../engine/inifile.h"
 #include "../DirEntry.h"
 #include "../environment.h"
+#include "../LightgunGames.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ using namespace std;
 void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt, const string & yearTxt,
                          const string & serial, const string & region, const string & playersTxt, bool internal,
                          bool hd, bool locked, int discs, bool favorite, bool play_using_ra, bool foreign, bool app,
-                         const string& last_played,
+                         const string& last_played, const std::string& _gamePathForLightgunGamesFile,
                          SDL_Color _textColor) {
     this->discs = discs;
     this->internal = internal;
@@ -37,6 +38,8 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
     this->foreign = foreign;
     this->app = app;
     this->last_played = last_played;
+    this->gamePathForLightgunGamesFile = _gamePathForLightgunGamesFile;
+
     textColor = _textColor;
     textColor.a = SDL_ALPHA_OPAQUE; // if you're rendering with a different color you need this or it will be transparent
 
@@ -51,6 +54,9 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
 // PsMeta::updateTexts
 //*******************************
 void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
+    if (psGame == nullptr)
+        return;
+
     string appendText = psGame->players == 1 ? _("Player") : _("Players");
     if (!psGame->foreign) {
         if (psGame->serial == "") {
@@ -62,7 +68,8 @@ void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                     to_string(psGame->players) + " " + appendText,
                     psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
-                    psGame->foreign, psGame->app, UtilTime::timeToDisplayTimeString(psGame->last_played),
+                    psGame->foreign, psGame->app, UtilTime::timeToDisplayTimeString(psGame->last_played), 
+                    psGame->folder, // ps1 game path in /Games
                     _textColor);
     } else
     {
@@ -74,7 +81,7 @@ void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
-                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
+                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played), "", 
                         _textColor);
         } else {
             psGame->serial = "";
@@ -83,7 +90,8 @@ void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText,
                         psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
-                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played),
+                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played), 
+                        psGame->image_path, // Retroarch roms image path
                         _textColor);
         }
     }
@@ -115,6 +123,8 @@ void PsMeta::render() {
         cdTex =          IMG_LoadTexture(renderer, (curPath + "evoimg/cd.png").c_str());
         favoriteTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/favorite.png").c_str());
         raTex =          IMG_LoadTexture(renderer, (curPath + "evoimg/ra.png").c_str());
+        lightgunTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun.png").c_str());
+        lightgun2Tex =   IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun2.png").c_str());
     }
 
     if (visible) {
@@ -161,8 +171,14 @@ void PsMeta::render() {
         if (Env::autobleemKernel)
             gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #endif
-
         yOffset += 22;
+
+        int xoffset = 190, spread = 40;
+        int spreadCount = 1;
+
+        //
+        // if PS1
+        //
         if (!foreign) {
             // PS1 icons line
             gui->renderText(otherFont, players, x + 35, y + yOffset);
@@ -179,7 +195,6 @@ void PsMeta::render() {
             fullRect.h = h;
             SDL_RenderCopy(renderer, tex, &fullRect, &rect);
 
-            int xoffset = 190, spread = 40;
             // render internal icon
             rect.x = x + 135;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
@@ -203,7 +218,6 @@ void PsMeta::render() {
                 SDL_RenderCopy(renderer, internalOffTex, &fullRect, &rect);
             }
 
-            int spreadCount = 1;
             rect.x = x + xoffset + (spread * spreadCount);
             if (hd) {
                 SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
@@ -227,9 +241,18 @@ void PsMeta::render() {
                 rect.x = x + xoffset + (spread * spreadCount);
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
             }
-        } else
-        {
+            if (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gamePathForLightgunGamesFile)) {
+                ++spreadCount;
+                rect.x = x + xoffset + (spread * spreadCount);
+                if (players.size() > 0 && players[0] >= '2')
+                    SDL_RenderCopy(renderer, lightgun2Tex, &fullRect, &rect);
+                else
+                    SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
+            }
+        } else {
+            //
             // retroarch icon
+            //
             if (!app) {
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
                 rect.x = x;
@@ -242,6 +265,11 @@ void PsMeta::render() {
                 fullRect.w = w;
                 fullRect.h = h;
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
+ 
+                if (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gamePathForLightgunGamesFile)) {
+                    rect.x = x + spread;
+                    SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
+                }
             }
         }
     }

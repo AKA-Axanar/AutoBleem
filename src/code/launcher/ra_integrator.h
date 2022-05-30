@@ -65,7 +65,7 @@ public:
     std::tuple<bool,int> playlistNameToIndex(const std::string& name);  // returns true if name found, and the index
 
     PsGames readGamesFromPlaylistFile(const std::string& path);         // read one lpl file
-    void readGamesFromAllPlaylists();                                   // reads all the playlist info into playlistInfos
+    void readGamesFromAllPlaylistsIntoRAPlaylistInfos();                                   // reads all the playlist info into playlistInfos
 
     std::string findFavoritesPlaylistPath();                            // returns "" if not found
     std::string findHistoryPlaylistPath();                              // returns "" if not found
@@ -74,6 +74,7 @@ public:
 
     vector<string> getPlaylists();
     PsGames getGames(string playlist);
+    PsGames getAllRAGames();
     int getGamesNumber(string playlist);
 
     bool autoDetectCorePath(PsGamePtr game, string& core_name, string& core_path);

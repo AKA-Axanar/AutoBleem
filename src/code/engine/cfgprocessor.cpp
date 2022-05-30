@@ -84,13 +84,13 @@ string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property
                     value.pop_back();   // remove the trailing /r
                 }
                 trim(value);    // remove leading and trailing spaces
-                cout << "  return: '" << value << "'" << endl;
+                //cout << "  return: '" << value << "'" << endl;
                 return value;
             }
         }
         file.close();
     }
-    cout << "  return: ''" << endl;
+    //cout << "  return: ''" << endl;
     return "";
 }
 

@@ -3,6 +3,7 @@
 #include "../gui/menus/gui_optionsMenu.h"
 #include "../gui/gui_confirm.h"
 #include "../gui/menus/gui_gameEditorMenu.h"
+#include "../gui/menus/gui_gameEditorMenu_RA.h"
 #include "pcsx_interceptor.h"
 #include "gui_btn_guide.h"
 #include <algorithm>
@@ -45,7 +46,7 @@ void GuiLauncher::loop() {
             obj->update(time);
         }
 
-        menu->update(time);
+        psOptionsMenu->update(time);
         updatePositions();
         render();
 
@@ -162,16 +163,16 @@ void GuiLauncher::loop_joyMoveLeft() {
         }
     } else if (state == STATE_SET) {
 
-        if (!menu->foreign) {
-            if (menu->selOption != SEL_OPTION_AB_SETTINGS) {
-                if (menu->animationStarted == 0) {
+        if (psOptionsMenu->enableMenu[1]) {     // if more than one menu
+            if (psOptionsMenu->selOption != SEL_OPTION_AB_SETTINGS) {
+                if (psOptionsMenu->animationStarted == 0) {
                     Mix_PlayChannel(-1, gui->cursor, 0);
-                    menu->transition = TR_OPTION;
-                    menu->direction = 0;
-                    menu->duration = 100;
-                    menuHead->setText(headers[menu->selOption - 1], fgColor);
-                    menuText->setText(texts[menu->selOption - 1], fgColor);
-                    menu->animationStarted = time;
+                    psOptionsMenu->transition = TR_OPTION;
+                    psOptionsMenu->direction = 0;
+                    psOptionsMenu->duration = 100;
+                    menuHead->setText(headers[psOptionsMenu->selOption - 1], fgColor);
+                    menuText->setText(texts[psOptionsMenu->selOption - 1], fgColor);
+                    psOptionsMenu->animationStarted = time;
                 }
             }
         }
@@ -199,18 +200,16 @@ void GuiLauncher::loop_joyMoveRight() {
             nextCarouselGame(110);
         }
     } else if (state == STATE_SET) {
-
-        if (!menu->foreign) {
-            if (menu->selOption != SEL_OPTION_RESUME_FROM_SAVESTATE) {
-                if (menu->animationStarted == 0) {
-                    Mix_PlayChannel(-1, gui->cursor, 0);
-                    menu->transition = TR_OPTION;
-                    menu->direction = 1;
-                    menu->duration = 100;
-                    menuHead->setText(headers[menu->selOption + 1], fgColor);
-                    menuText->setText(texts[menu->selOption + 1], fgColor);
-                    menu->animationStarted = time;
-                }
+        // if there is an option menu item to the right
+        if (psOptionsMenu->selOption != psOptionsMenu->enableMenuLastIndex && psOptionsMenu->enableMenu[psOptionsMenu->selOption+1]) {
+            if (psOptionsMenu->animationStarted == 0) {
+                Mix_PlayChannel(-1, gui->cursor, 0);
+                psOptionsMenu->transition = TR_OPTION;
+                psOptionsMenu->direction = 1;
+                psOptionsMenu->duration = 100;
+                menuHead->setText(headers[psOptionsMenu->selOption + 1], fgColor);
+                menuText->setText(texts[psOptionsMenu->selOption + 1], fgColor);
+                psOptionsMenu->animationStarted = time;
             }
         }
 
@@ -230,8 +229,8 @@ void GuiLauncher::loop_joyMoveUp() {
         return;
     }
     if (state == STATE_SET) {
-        if (menu->animationStarted == 0) {
-            menu->transition = TR_MENUON;
+        if (psOptionsMenu->animationStarted == 0) {
+            psOptionsMenu->transition = TR_MENUON;
             switchState(STATE_GAMES, time);
             motionStart = 0;
         }
@@ -246,8 +245,8 @@ void GuiLauncher::loop_joyMoveDown() {
         return;
     }
     if (state == STATE_GAMES) {
-        if (menu->animationStarted == 0) {
-            menu->transition = TR_MENUON;
+        if (psOptionsMenu->animationStarted == 0) {
+            psOptionsMenu->transition = TR_MENUON;
             switchState(STATE_SET, time);
             motionStart = 0;
         }
@@ -363,7 +362,12 @@ void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, t
                                              DefaultShowingTimeout, brightWhite, FONT_22_MED);
                 setInitialPositions(selGameIndex);
                 updateMeta();
-                menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+                showOptions();
+                if (selGameIndexInCarouselGamesIsValid()) {
+                    PsGamePtr psGame = GetSelectedCarouselGame();
+                    if (!psGame->foreign)
+                        psOptionsMenu->setResumePic(psGame->findResumePicture());
+                }
             } else {
                 // no change
                 Mix_PlayChannel(-1, gui->cancel, 0);
@@ -501,7 +505,7 @@ void GuiLauncher::loop_chooseGameDir() {
     showSetName();
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         updateMeta();
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
     } else {
         updateMeta();
     }
@@ -551,7 +555,7 @@ void GuiLauncher::loop_chooseRAPlaylist() {
     showSetName();
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         updateMeta();
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+        psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
     } else {
         updateMeta();
     }
@@ -576,18 +580,27 @@ void GuiLauncher::loop_selectButton_Pressed() {
 
             int previousSet = currentSet;
             currentSet++;
+
+            // if there are no games marked as lightgun games then skip displaying the lightgun select screen
+            if (currentSet == SET_LIGHTGUN) {
+                gui->lightgunGames.PurgeGamesNotFound();
+                if (LightgunGames::lightgunGamePaths.size() == 0)
+                    currentSet++;
+            }
+
             if (previousSet == SET_APPS) {
-                showAllOptions();
                 menuHead->setText(headers[0], fgColor);
                 menuText->setText(texts[0], fgColor);
             }
 
-            if (currentSet > SET_LAST) currentSet = 0;
+            if (currentSet > SET_LAST)
+                currentSet = 0;
             switchSet(currentSet,false);
+            showOptions();
             showSetName();
             if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
                 updateMeta();
-                menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
             } else {
                 updateMeta();
             }
@@ -612,7 +625,7 @@ void GuiLauncher::loop_startButton_Pressed() {
             Mix_PlayChannel(-1, gui->cursor, 0);
             setInitialPositions(selGameIndex);
             updateMeta();
-            menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
         }
     }
 }
@@ -622,8 +635,8 @@ void GuiLauncher::loop_startButton_Pressed() {
 //*******************************
 void GuiLauncher::loop_circleButton_Pressed() {
     if (state == STATE_SET) {
-        if (menu->animationStarted == 0) {
-            menu->transition = TR_MENUON;
+        if (psOptionsMenu->animationStarted == 0) {
+            psOptionsMenu->transition = TR_MENUON;
             switchState(STATE_GAMES, time);
             motionStart = 0;
         }
@@ -636,7 +649,7 @@ void GuiLauncher::loop_circleButton_Pressed() {
         arrow->visible = true;
         sselector->cleanSaveStateImages();
         if (selGameIndexInCarouselGamesIsValid())
-            menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
 
         if (sselector->operation == OP_LOAD) {
             state = STATE_SET;
@@ -690,15 +703,13 @@ void GuiLauncher::loop_triangleButton_Pressed() {
 //*******************************
 void GuiLauncher::loop_squareButton_Pressed() {
 
-
     if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) { // retroarch is a file!!
-
         if (state == STATE_GAMES) {
             if (carouselGames.empty()) {
                 return;
             }
             if (selGameIndexInCarouselGamesIsValid() && carouselGames[selGameIndex]->foreign) {
-                return;
+                return;     // pressing square is only valid for PS1 games
             }
             gui->startingGame = true;
             if (selGameIndexInCarouselGamesIsValid()) {
@@ -723,8 +734,6 @@ void GuiLauncher::loop_squareButton_Pressed() {
 // GuiLauncher::loop_crossButtonPressed
 //*******************************
 void GuiLauncher::loop_crossButton_Pressed() {
-
-
     if (state == STATE_GAMES) {
         loop_crossButtonPressed_STATE_GAMES();
 
@@ -733,7 +742,6 @@ void GuiLauncher::loop_crossButton_Pressed() {
 
     } else if (state == STATE_RESUME) {
         loop_crossButtonPressed_STATE_RESUME();
-
     }
 }
 
@@ -750,55 +758,59 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
         gui->runningGame = carouselGames[selGameIndex];
         gui->lastSelIndex = selGameIndex;
     }
+    else
+        return;
+
     gui->resumepoint = -1;
     gui->lastSet = currentSet;
-    if (currentSet == SET_PS1)
+    if (currentSet == SET_PS1) {
         gui->lastPS1_SelectState = currentPS1_SelectState;
-    gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
-    gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
+        gui->lastUSBGameDirIndex = currentUSBGameDirIndex;
+        gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
+    }
     menuVisible = false;
 
-    if (currentSet == SET_PS1)
+    // if PS1 game
+    if (gui->runningGame->isPS1()) {
         addGameToPS1GameHistoryAsLatestGamePlayed(gui->runningGame);
+        gui->emuMode = EMU_PCSX;
 
-    gui->emuMode = EMU_PCSX;
-
-    // if it's a PS1 game see if the user wants to play it in RetroArch instead
-    if (currentSet == SET_PS1) {
-        if (gui->runningGame->internal) {
-            if (gui->runningGame->play_using_ra)
-                return loop_squareButton_Pressed();     // play internal PSX game in RA
-        } else {
+        // if it's a PS1 game see if the user wants to play it in RetroArch instead
+        bool play_using_ra { false };
+        if (currentSet == SET_LIGHTGUN)
+            play_using_ra = true;
+        else if (gui->runningGame->internal && gui->runningGame->play_using_ra)
+            play_using_ra = true;
+        else {
             Inifile gameini;
             gameini.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
             if (gameini.values["play_using_ra"] == "true")
-                return loop_squareButton_Pressed();     // play PSX game in RA
+                play_using_ra = true;
         }
         if (gui->cfg.inifile.values["play_all_psx_with_ra"] == "true")
-            return loop_squareButton_Pressed();     // play PSX game in RA
-    }
+            play_using_ra = true;
 
-    if (gui->runningGame->foreign)
-    {
-        if (!gui->runningGame->app) {
-            gui->emuMode = EMU_RETROARCH;
-            gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
-            gui->lastRAPlaylistName = currentRAPlaylistName;
-        } else {
-            auto appStartScreen = new GuiAppStart(gui->renderer);
-            appStartScreen->setGame(gui->runningGame);
-            appStartScreen->show();
-            bool result = appStartScreen->result;
-            delete appStartScreen;
-            // Do not run
-            if (!result)
-            {
-                gui->startingGame = false;
-                menuVisible = true;
+        // if any of the above conditions are true play the PS1 game in RA
+        if (play_using_ra)
+            return loop_squareButton_Pressed();     // play internal PSX game in RA
 
-            }
-            gui->emuMode = EMU_LAUNCHER;
-            }
+    } else if (gui->runningGame->isRA()) {
+        gui->emuMode = EMU_RETROARCH;
+        gui->lastRAPlaylistIndex = currentRAPlaylistIndex;
+        gui->lastRAPlaylistName = currentRAPlaylistName;
+    } else if (gui->runningGame->isApp()) {
+        auto appStartScreen = new GuiAppStart(gui->renderer);
+        appStartScreen->setGame(gui->runningGame);
+        appStartScreen->show();
+        bool result = appStartScreen->result;
+        delete appStartScreen;
+        // Do not run
+        if (!result)
+        {
+            gui->startingGame = false;
+            menuVisible = true;
+        }
+        gui->emuMode = EMU_LAUNCHER;
     }
 }
 
@@ -806,6 +818,9 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
 // GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed
 //*******************************
 void GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed(PsGamePtr game) {
+    if (!game->isPS1())
+        return;
+
     // include the internal games too as they need to be renumbered and possibly have a game dropped from the list
     PsGames gamesList = getAllPS1Games(true, true);
     PsGames histGamesList;
@@ -845,16 +860,16 @@ void GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed(PsGamePtr game) {
 //*******************************
 void GuiLauncher::loop_crossButtonPressed_STATE_SET() {
     gui->resumingGui = false;
-    if (menu->selOption == SEL_OPTION_RESUME_FROM_SAVESTATE) {
+    if (psOptionsMenu->selOption == SEL_OPTION_RESUME_FROM_SAVESTATE) {
         loop_crossButtonPressed_STATE_SET__OPT_RESUME_FROM_SAVESTATE();
     }
-    else if (menu->selOption == SEL_OPTION_EDIT_MEMCARD_INFO) {
+    else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_MEMCARD_INFO) {
         loop_crossButtonPressed_STATE_SET__OPT_EDIT_MEMCARD();
     }
-    else if (menu->selOption == SEL_OPTION_EDIT_GAME_SETTINGS) {
+    else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_GAME_SETTINGS) {
         loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS();
     }
-    else if (menu->selOption == SEL_OPTION_AB_SETTINGS) {
+    else if (psOptionsMenu->selOption == SEL_OPTION_AB_SETTINGS) {
         loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS();
     }
 }
@@ -903,7 +918,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
                 setInitialPositions(selGameIndex);
                 updateMeta();
                 if (selGameIndexInCarouselGamesIsValid())
-                    menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+                    psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
             }
         }
 
@@ -916,7 +931,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
         } else {
             gui->loadAssets();
             meta->gameName = "";
-            menu->setResumePic("");
+            psOptionsMenu->setResumePic("");
         }
 
         state = STATE_GAMES;
@@ -933,70 +948,170 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
         return;
     }
 
-    Mix_PlayChannel(-1, gui->cursor, 0);
-    GuiEditor *editor = new GuiEditor(renderer);
-    Inifile gameIni;
-    if (selGameIndexInCarouselGamesIsValid()) {
-        editor->internal = carouselGames[selGameIndex]->internal;
-        if (!editor->internal) {
-            editor->gameFolder = carouselGames[selGameIndex]->folder;
+    PsGamePtr psGame = GetSelectedCarouselGame();
+    if (psGame == nullptr) {
+        GuiEditor* editor = new GuiEditor(renderer);
+        editor->show();
+    }
+    //
+    // PS1 Game
+    //
+    else if (!psGame->foreign) {
+        Mix_PlayChannel(-1, gui->cursor, 0);
+        GuiEditor* editor = new GuiEditor(renderer);
+        Inifile gameIni;
+        if (selGameIndexInCarouselGamesIsValid()) {
+            editor->internal = carouselGames[selGameIndex]->internal;
+            if (!editor->internal) {
+                editor->gameFolder = carouselGames[selGameIndex]->folder;
+                editor->gameData = carouselGames[selGameIndex];
+                gameIni.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
+                string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
+                // change "/media/Games/Racing/Driver 2" to "Driver 2"
+                gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
+                editor->gameIni = gameIni;
+            }
+            else {
+                editor->gameData = carouselGames[selGameIndex];
+            }
+        }
+
+        editor->show();
+
+        if (selGameIndexInCarouselGamesIsValid()) {
+            if (!editor->internal) {
+                if (editor->changes) {
+                    gameIni.reload(carouselGames[selGameIndex]->folder + sep + GAME_INI);
+                    gui->db->updateTitle(carouselGames[selGameIndex]->gameId, gameIni.values["title"]);
+                }
+                gui->db->refreshGame(carouselGames[selGameIndex]);
+                if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
+                    editor->gameIni.values["favorite"] == "0") {
+                    gui->lastSet = SET_PS1;
+                    gui->lastPS1_SelectState = SET_PS1_Favorites;
+                    loadAssets();   // reload - one less favorite game in display
+                }
+            }
+            else {
+                if (editor->changes) {
+                    gui->internalDB->updateTitle(carouselGames[selGameIndex]->gameId, editor->lastName);
+                }
+                gui->internalDB->refreshGameInternal(carouselGames[selGameIndex]);
+                if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
+                    editor->gameData->favorite == false) {
+                    gui->lastSet = SET_PS1;
+                    gui->lastPS1_SelectState = SET_PS1_Favorites;
+                    loadAssets();   // reload - one less favorite game in display
+                }
+            }
+        }
+
+        // if the current set is favorites and the user removes the last favorites selGameIndex will be -1
+        if (selGameIndex == -1) {
+            gui->lastPS1_SelectState = SET_PS1_All_Games;
+            currentPS1_SelectState = SET_PS1_All_Games;
+            switchState(STATE_GAMES, time);
+            motionStart = 0;
+        }
+
+        // if there are games in the carousel
+        if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
+            setInitialPositions(selGameIndex);
+            updateMeta();
+            psGame = GetSelectedCarouselGame();
+            if (!psGame->foreign)
+                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+
+            PsScreenpoint point2;
+            point2.x = 640 - 113;
+            point2.y = 90;
+            point2.scale = 1;
+            point2.shade = 220;
+
+            carouselGames[selGameIndex].destination = point2;
+            carouselGames[selGameIndex].actual = point2;
+            carouselGames[selGameIndex].current = point2;
+        }
+        // fix to put back cover on top position
+    }
+    //
+    // RA Game
+    //
+    else {
+        Mix_PlayChannel(-1, gui->cursor, 0);
+        GuiEditor_RA* editor = new GuiEditor_RA(renderer);
+        if (selGameIndexInCarouselGamesIsValid()) {
             editor->gameData = carouselGames[selGameIndex];
-            gameIni.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
             string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
-            // change "/media/Games/Racing/Driver 2" to "Driver 2"
-            gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
-            editor->gameIni = gameIni;
-        } else {
-            editor->gameData = carouselGames[selGameIndex];
+        }
+
+        editor->show();
+
+        // if the current set is favorites and the user removes the last favorites selGameIndex will be -1
+        if (selGameIndex == -1) {
+            gui->lastPS1_SelectState = SET_PS1_All_Games;
+            currentPS1_SelectState = SET_PS1_All_Games;
+            switchState(STATE_GAMES, time);
+            motionStart = 0;
+        }
+
+        // if there are games in the carousel
+        if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
+            setInitialPositions(selGameIndex);
+            updateMeta();
+            psGame = GetSelectedCarouselGame();
+            if (!psGame->foreign)
+                psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+
+            PsScreenpoint point2;
+            point2.x = 640 - 113;
+            point2.y = 90;
+            point2.scale = 1;
+            point2.shade = 220;
+
+            carouselGames[selGameIndex].destination = point2;
+            carouselGames[selGameIndex].actual = point2;
+            carouselGames[selGameIndex].current = point2;
+        }
+        // fix to put back cover on top position
+    }
+
+    if (currentSet == SET_LIGHTGUN) {
+        // if the selected game is no longer a lightgun game
+        if (!gui->lightgunGames.IsGameALightgunGame(psGame)) {
+            gui->lastSet = SET_LIGHTGUN;
+            loadAssets();   // reload - one less lightgun game in display
+
+            // if the current set is lightguns and the user removes the last lightgun selGameIndex will be -1
+            if (selGameIndex == -1) {
+                gui->lastSet = SET_PS1;
+                gui->lastPS1_SelectState = SET_PS1_All_Games;
+                currentPS1_SelectState = SET_PS1_All_Games;
+                switchState(STATE_GAMES, time);
+                motionStart = 0;
+            }
+
+            // if there are games in the carousel
+            if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
+                setInitialPositions(selGameIndex);
+                updateMeta();
+                psGame = GetSelectedCarouselGame();
+                if (!psGame->foreign)
+                    psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
+
+                PsScreenpoint point2;
+                point2.x = 640 - 113;
+                point2.y = 90;
+                point2.scale = 1;
+                point2.shade = 220;
+
+                carouselGames[selGameIndex].destination = point2;
+                carouselGames[selGameIndex].actual = point2;
+                carouselGames[selGameIndex].current = point2;
+            }
+            // fix to put back cover on top position
         }
     }
-
-    editor->show();
-
-    if (selGameIndexInCarouselGamesIsValid()) {
-        if (!editor->internal) {
-            if (editor->changes) {
-                gameIni.reload(carouselGames[selGameIndex]->folder + sep + GAME_INI);
-                gui->db->updateTitle(carouselGames[selGameIndex]->gameId, gameIni.values["title"]);
-            }
-            gui->db->refreshGame(carouselGames[selGameIndex]);
-            if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
-                editor->gameIni.values["favorite"] == "0") {
-                gui->lastSet = SET_PS1;
-                gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();   // reload - one less favorite game in display
-            }
-        } else {
-            if (editor->changes) {
-                gui->internalDB->updateTitle(carouselGames[selGameIndex]->gameId, editor->lastName);
-            }
-            gui->internalDB->refreshGameInternal(carouselGames[selGameIndex]);
-            if (currentSet == SET_PS1 && currentPS1_SelectState == SET_PS1_Favorites &&
-                editor->gameData->favorite == false) {
-                gui->lastSet = SET_PS1;
-                gui->lastPS1_SelectState = SET_PS1_Favorites;
-                loadAssets();   // reload - one less favorite game in display
-            }
-        }
-    }
-
-    // if the current set is favorites and the user removes the last favorite selGameIndex will be -1
-    if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
-        setInitialPositions(selGameIndex);
-        updateMeta();
-        menu->setResumePic(carouselGames[selGameIndex]->findResumePicture());
-
-        PsScreenpoint point2;
-        point2.x = 640 - 113;
-        point2.y = 90;
-        point2.scale = 1;
-        point2.shade = 220;
-
-        carouselGames[selGameIndex].destination = point2;
-        carouselGames[selGameIndex].actual = point2;
-        carouselGames[selGameIndex].current = point2;
-    }
-    // fix to put back cover on top position
 }
 
 //*******************************
@@ -1114,7 +1229,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
                     _("Resume point saved to slot") + " " + to_string(sselector->selSlot + 1),
                     DefaultShowingTimeout);
 
-            menu->setResumePic(carouselGames[selGameIndex]->findResumePicture(sselector->selSlot));
+            psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture(sselector->selSlot));
 
             if (sselector->operation == OP_LOAD) {
                 state = STATE_SET;
