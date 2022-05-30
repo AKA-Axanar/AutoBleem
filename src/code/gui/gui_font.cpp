@@ -17,70 +17,6 @@ Fonts::FontInfo Fonts::allFontInfos[] = {
         { FONT_28_BOLD, 28, FONT_BOLD }
 };
 
-#if 0
-//********************
-// Fonts::Fonts
-//********************
-Fonts::Fonts() { }
-
-//********************
-// Fonts::openNewSharedFont
-// low level open shared font.  filename is the full path to the ttf file.  fontSize is the font point size.
-//********************
-FC_Font_Shared Fonts::openNewSharedFont(const string &filename, int fontSize) {
-    FC_Font_Shared font = FC_Font_Shared(TTF_OpenFont(filename.c_str(), fontSize));
-    if (font) {
-        cout << "Success opening font " << filename << " of size " << fontSize << endl;
-    } else {
-        cout << "FAILURE opening font " << filename << " of size " << fontSize << endl;
-        font = nullptr;
-        assert(false);
-    }
-
-    return font;
-}
-
-//********************
-// Fonts::openAllFonts
-//********************
-void Fonts::openAllFonts(const std::string &_rootPath) {
-    fonts.clear();
-    rootPath = _rootPath;
-    medPath = rootPath + sep + "SST-Medium.ttf";
-    boldPath = rootPath + sep + "SST-Bold.ttf";
-
-    for (auto fontInfo : allFontInfos) {
-        string path;
-        if (fontInfo.fontType == FONT_MED)
-            path = medPath;
-        else
-            path = boldPath;
-        fonts[fontInfo.fontEnum] = openNewSharedFont(path, fontInfo.size);
-        fontInfos[fontInfo.fontEnum] = fontInfo;
-    }
-}
-
-//********************
-// Fonts::openAllFonts
-//********************
-void Fonts::openAllFonts(const std::string &_rootPath) {
-    fonts.clear();
-    rootPath = _rootPath;
-    medPath = rootPath + sep + "SST-Medium.ttf";
-    boldPath = rootPath + sep + "SST-Bold.ttf";
-
-    for (auto fontInfo : allFontInfos) {
-        string path;
-        if (fontInfo.fontType == FONT_MED)
-            path = medPath;
-        else
-            path = boldPath;
-        fonts[fontInfo.fontEnum] = openNewSharedFont(path, fontInfo.size);
-        fontInfos[fontInfo.fontEnum] = fontInfo;
-    }
-}
-#endif
-
 //********************
 // Fonts::Fonts
 //********************
@@ -108,7 +44,7 @@ FC_Font_Shared Fonts::openNewSharedCachedFont(const string &filename, int fontSi
 
 //********************
 // Fonts::openSpecificSharedCachedFont
-// low level open shared font.  filename is the full path to the ttf file.  fontSize is the font point size.
+// low level open shared font.  type is the font type (FONT_MED, FONT_BOLD).  fontSize is the font point size.
 //********************
 FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) {
     auto gui = Gui::getInstance();
