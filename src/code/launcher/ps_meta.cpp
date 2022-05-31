@@ -158,7 +158,7 @@ void PsMeta::render() {
 
         yOffset += 35;
         // publisher line
-        gui->renderText(otherFont, publisher, x, y + yOffset);
+        gui->renderText(otherFont, publisher + ", " + year, x, y + yOffset);
 
         yOffset += 21;
         // serial number line
