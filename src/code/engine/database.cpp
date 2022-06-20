@@ -954,6 +954,7 @@ bool Database::commit() {
 
 //*******************************
 // Database::truncate
+// delete all data in all tables
 //*******************************
 bool Database::truncate() {
     executeStatement((char *) DELETE_GAME_DATA, "Truncating all data", "Error truncating data");

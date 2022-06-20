@@ -114,12 +114,22 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
     shared_ptr<Gui> gui(Gui::getInstance());
     shared_ptr<Scanner> scanner(Scanner::getInstance());
 
+    // create the db tables in case they don't already exist
     if (!db->createInitialDatabase()) {
         cout << "Error creating db structure" << endl;
 
         return EXIT_FAILURE;
     };
 
+    // save the history and last_played for any games that have it
+    PsGames gamesWithHistoryOrLastPlayed;
+    if (db->getGames(&gamesWithHistoryOrLastPlayed)) {
+        auto noDataToSave = [](PsGamePtr psGame) { return (psGame->history == 0) && (psGame->last_played == 0); };
+        auto it = remove_if(begin(gamesWithHistoryOrLastPlayed), end(gamesWithHistoryOrLastPlayed), noDataToSave);
+        gamesWithHistoryOrLastPlayed.erase(it, end(gamesWithHistoryOrLastPlayed));
+    }
+
+    // delete all data in all tables
     if (!db->truncate())
     {
         gui->drawText("ERROR IN DB");
@@ -129,6 +139,17 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
 
     scanner->scanUSBGamesDirectory(gamesHierarchy);
     scanner->updateRegionalDB(gamesHierarchy, gui->db);
+
+    // restore the history and last_played for any games that still exist in the db
+    PsGames psGames;
+    db->getGames(&psGames);
+    for (PsGamePtr savedGame : gamesWithHistoryOrLastPlayed) {
+        auto it = find_if(begin(psGames), end(psGames), [&](PsGamePtr psGame) { return psGame->folder == savedGame->folder; });
+        if (it != end(psGames)) {
+            db->updateHistory((*it)->gameId, savedGame->history);
+            db->updateDatePlayed((*it)->gameId, savedGame->last_played);
+        }
+    }
 
     gui->drawText(_("Total:") + " " + to_string(scanner->gamesToAddToDB.size()) + " " + _("games scanned") + ".");
     sleep(1);

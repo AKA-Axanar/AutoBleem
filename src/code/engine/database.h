@@ -51,7 +51,7 @@ public:
     void addPlayUsingRAColumn();
     void addHistoryColumn();
     void addLastPlayedColumn();
-    bool truncate();
+    bool truncate();    // delete all data in all tables
 
     bool beginTransaction();
     bool commit();
