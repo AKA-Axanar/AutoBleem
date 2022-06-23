@@ -375,7 +375,7 @@ void USBGame::updateObj() {
     tmp = valueOrDefault("highres","0");
     if (Util::isInteger(tmp.c_str())) highRes = atoi(tmp.c_str()); else highRes = 0;
     favorite = valueOrDefault("favorite", "0", false);  // favorite is a new field that didn't exist before so
-    play_using_ra = valueOrDefault("play_us_ra", "false", false);  // favorite is a new field that didn't exist before so
+    play_using_ra = valueOrDefault("play_using_ra", "false", false);  // favorite is a new field that didn't exist before so
     // don't set automationUsed if it doesn't exist
 
     tmp = valueOrDefault("discs", "");
