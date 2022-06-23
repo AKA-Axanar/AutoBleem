@@ -394,18 +394,20 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
             if (game->gameIniFound)
                 game->readIni(gameIniPath); // read it in now in case we need to create or update the serial/region
 
-            game->serial = SerialScanner::scanSerial(game->imageType, game->fullPath + sep, game->firstBinPath);
-            game->region = SerialScanner::serialToRegion(game->serial);
-            //cout << "serial: " << game->serial << ", region: " << game->region << ", " << game->title <<endl;
-            //cout << "Last Played: " << Util::timeToDisplayTimeString(game->last_played) << endl;
-
             // if there was no ini file before, get the values for the ini, create the cover file if needed, and create/update the game.ini file
             if ( !game->gameIniFound || game->automationUsed || (game->discs.size()==0) ) {
 
                 if (game->discs.size()==0)
                     game->recoverMissingFiles();
 
-				if (!game->serial.empty()) {
+                if (game->automationUsed) {
+                    game->serial = SerialScanner::scanSerial(game->imageType, game->fullPath + sep, game->firstBinPath);
+                    game->region = SerialScanner::serialToRegion(game->serial);
+                    //cout << "serial: " << game->serial << ", region: " << game->region << ", " << game->title <<endl;
+                    //cout << "Last Played: " << Util::timeToDisplayTimeString(game->last_played) << endl;
+                }
+
+                if (!game->serial.empty()) {
 					//cout << "Accessing metadata for serial: " << game->serial << endl;
 					Metadata md;
 					if (md.lookupBySerial(game->serial)) {

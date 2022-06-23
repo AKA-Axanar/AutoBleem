@@ -59,19 +59,19 @@ bool USBGame::validateCue(string cuePath, string path) {
 //*******************************
 string USBGame::valueOrDefault(string name, string def, bool setAutomationIfDefaultUsed) {
     string value;
-    if (iniValues.find(name) != iniValues.end()) {
+    if (iniValues.find(name) != iniValues.end()) {  // name is in the ini file
         value = trim(iniValues.find(name)->second);
-        if (value.length() == 0) {
+        if (value.length() == 0) {                  // name is in the ini file but the value is empty
             if (setAutomationIfDefaultUsed)
                 automationUsed = true;
-            return def;
+            return def;                             // return default
         }
-    } else {
+    } else {                                        // name is not in the ini file
         if (setAutomationIfDefaultUsed)
             automationUsed = true;
-        value = def;
+        value = def;                                // return default
     }
-    return value;
+    return value;                                   // return value in ini file
 }
 
 //*******************************
@@ -360,6 +360,9 @@ void USBGame::updateObj() {
     discs.clear();
     title = valueOrDefault("title", gameDirName);
     memcard = valueOrDefault("memcard", "");
+
+    region = valueOrDefault("region", "");
+    serial = valueOrDefault("serial", "");
 
     publisher = valueOrDefault("publisher", "Other");
     string automation = valueOrDefault("automation", "0");
