@@ -140,7 +140,9 @@ void PsMeta::render() {
         gui->sizesOfBoldThemeFont.AddFont(28, nameFont);
 
         int yOffset = 0;
+        //
         // game name line
+        //
         // if the game name goes off the end of the screen use a smaller font
         int textWidth = FC_GetWidth(nameFont, gameName.c_str());
         if (x + textWidth > SCREEN_WIDTH) {
@@ -156,24 +158,38 @@ void PsMeta::render() {
         }
         gui->renderText(nameFont, gameName, x, y + yOffset);
 
-        yOffset += 35;
+        //
         // publisher line
-        gui->renderText(otherFont, publisher + ", " + year, x, y + yOffset);
+        //
+        yOffset += 35;
+        if (!foreign)
+            gui->renderText(otherFont, publisher + ", " + year, x, y + yOffset);
+        else
+            gui->renderText(otherFont, publisher, x, y + yOffset);
 
-        yOffset += 21;
-        // serial number line
-        gui->renderText(otherFont, _("Serial:") + " " + serial + ", " + _("Region:") + " " + region, x, y + yOffset);
+        //
+        // if PS1
+        //
+        if (!foreign) {
+            //
+            // serial number line
+            //
+            yOffset += 21;
+            gui->renderText(otherFont, _("Serial:") + " " + serial + ", " + _("Region:") + " " + region, x, y + yOffset);
 
-        yOffset += 21;
-        // last played line
+            //
+            // last played line
+            //
+            yOffset += 21;
 #if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
-        // the devel system has time
-        gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
-#else
-        if (Env::autobleemKernel)
+            // the devel system has time
             gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
+#else
+            if (Env::autobleemKernel)
+                gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #endif
-        yOffset += 22;
+            yOffset += 22;
+        }
 
         int xoffset = 190, spread = 40;
         int spreadCount = 1;
@@ -182,7 +198,9 @@ void PsMeta::render() {
         // if PS1
         //
         if (!foreign) {
-            // PS1 icons line
+            //
+            // num players
+            //
             gui->renderText(otherFont, players, x + 35, y + yOffset);
 
             SDL_QueryTexture(tex, &format, &access, &w, &h);
@@ -197,7 +215,9 @@ void PsMeta::render() {
             fullRect.h = h;
             SDL_RenderCopy(renderer, tex, &fullRect, &rect);
 
+            //
             // render internal icon
+            //
             rect.x = x + 135;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
 
@@ -220,12 +240,19 @@ void PsMeta::render() {
                 SDL_RenderCopy(renderer, internalOffTex, &fullRect, &rect);
             }
 
+            //
+            // HD icon
+            //
             rect.x = x + xoffset + (spread * spreadCount);
             if (hd) {
                 SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
             } else {
                 SDL_RenderCopy(renderer, hdOffTex, &fullRect, &rect);
             }
+
+            //
+            // lock icon
+            //
             ++spreadCount;
             rect.x = x + xoffset + (spread * spreadCount);
             if (locked) {
@@ -233,16 +260,28 @@ void PsMeta::render() {
             } else {
                 SDL_RenderCopy(renderer, lockOffTex, &fullRect, &rect);
             }
+
+            //
+            // favorite icon
+            //
             if (favorite) {
                 ++spreadCount;
                 rect.x = x + xoffset + (spread * spreadCount);
                 SDL_RenderCopy(renderer, favoriteTex, &fullRect, &rect);
             }
+
+            //
+            // play using RA icon
+            //
             if (play_using_ra) {
                 ++spreadCount;
                 rect.x = x + xoffset + (spread * spreadCount);
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
             }
+
+            //
+            // light gun icon
+            //
             if (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gamePathForLightgunGamesFile)) {
                 ++spreadCount;
                 rect.x = x + xoffset + (spread * spreadCount);
@@ -253,9 +292,13 @@ void PsMeta::render() {
             }
         } else {
             //
-            // retroarch icon
+            // if RA game
             //
             if (!app) {
+                //
+                // retroarch icon
+                //
+                yOffset += 21;
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
                 rect.x = x;
                 rect.y = y + yOffset - 2;
@@ -268,8 +311,19 @@ void PsMeta::render() {
                 fullRect.h = h;
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
  
+                //
+                // favorite icon
+                //
+                if (favorite) {
+                    rect.x += spread;
+                    SDL_RenderCopy(renderer, favoriteTex, &fullRect, &rect);
+                }
+
+                //
+                // light gun icon
+                //
                 if (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gamePathForLightgunGamesFile)) {
-                    rect.x = x + spread;
+                    rect.x += spread;
                     SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
                 }
             }
