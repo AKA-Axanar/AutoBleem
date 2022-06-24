@@ -1,5 +1,24 @@
 
                                        *****************************
+                                       Autobleem 1.0.0 Release Notes
+                                       *****************************
+									   
+1) Better game controller support.  Game controllers in the file gamecontrollerdb.txt should be automatically 
+detected.
+
+2) Support for CHD game files.
+
+3) You can now set a game as a lightgun game in the Edit Game Parameters menu.  There is now an Edit Game 
+Parameters menu for Retroarch games.  Added a Select screen for all the games that are marked as lightgun games.  
+Note: Gun4IR lightguns work on the PSC.  PS1 games must be played with Retroarch as the pcsx emulator cannot 
+handle lightgun games.  Setting a game as a lightgun game will also set the game to "play with RA".  Sinden 
+lightguns will not work on the PSC.  The Sinden app has to run on the system and this is impossible on the 
+PSC for multiple reasons.
+
+4) Bug fixes.
+   
+
+                                       *****************************
                                        Autobleem-0.9.0 Release Notes
                                        *****************************
 									   
@@ -205,9 +224,11 @@ Fixes two problems in 0.8.0.
 2) Fixes always forcing a rescan if there are games that failed the verify 
    step and were removed from the game list display.
 
-In addition Autobleem now splashes a message on screen if a game fails the 
-verify.  The reason or reasons the game failed to verify are also output to 
+3) Autobleem splashes a message on screen if a game fails the verify.  
+The reason or reasons the game failed to verify are also output to 
 /Autobleem/bin/autobleem/gamesThatFailedVerifyCheck.txt.
+
+4) Bug fixes.
 
 
                                        *****************************
