@@ -1,5 +1,7 @@
-Controls
---------
+Eduke32
+-------
+
+Controls:
 
 D-Pad: Move / Turn
 Cross:  Fire (Double press for Alt Fire)
@@ -14,9 +16,7 @@ Select: Map (Double press to toggle Autorun)
 Start: Menu
 
 
-Music Support
--------------
-
+Music Support:  
 Music support requires an additional download.  You can get music
 packs at http://hrp.duke4.net/download.php
 
@@ -24,9 +24,9 @@ Music packs can be added by placing the zip in the /retroarch/apps/eduke32 folde
 
 This package supports the following music packs:
 
- - duke3d_music-adlib.zip
- - duke3d_music-arachno.zip
- - duke3d_music-fluidr3.zip
- - duke3d_music-gus+.zip
- - duke3d_music-mcwane.zip
- - duke3d_music-sc55.zip
+duke3d_music-adlib.zip
+duke3d_music-arachno.zip
+duke3d_music-fluidr3.zip
+duke3d_music-gus+.zip
+duke3d_music-mcwane.zip
+duke3d_music-sc55.zip

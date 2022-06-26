@@ -1,9 +1,9 @@
-Controls  
---------
+SDLPoP - SDL Prince of Persia
+-----------------------------
 
-D-Pad Left/Right - Move
-D-Pad Up/Triangle - Jump, Climb Up, Block
-D-Pad Down/Cross - Duck, Climb Down
-Square - Step, Grab Ledges, Swing Sword
-Start - Pause
-Select - Menu
+Controls:  
+D-Pad - Move, Jump, Duck
+Triangle - Jump
+Square - Grab, Swing Sword
+Cross - Duck
+Start/Select - Pause

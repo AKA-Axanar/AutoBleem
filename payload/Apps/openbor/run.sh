@@ -1,7 +1,10 @@
-export HOME=/media/Apps/openbor
-export LD_LIBRARY_PATH=/tmp/lib
+#! /bin/sh
+# Retroboot App Launcher
 
-cd /media/Apps/openbor/OpenBOR
-rm -rf ./Logs/*
-./OpenBOR-psc 1>/dev/null 2>/dev/null
-
+if [ -z "${RB_LIBRARY_PATH}" ]; then
+	source /media/retroarch/retroboot/bin/loadconfig.sh
+fi
+if [ ! -d "${RB_LIBRARY_PATH}" ]; then
+	sh /media/retroarch/retroboot/bin/init_libs.sh
+fi
+sh "/media/retroarch/apps/openbor/launchopenbor.sh"

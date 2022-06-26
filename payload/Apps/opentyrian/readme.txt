@@ -1,3 +1,6 @@
+OpenTyrian v2.1rb
+-----------------
+
 OpenTyrian is an open-source port of the DOS game Tyrian.
 
 Tyrian is an arcade-style vertical scrolling shooter.  The story is set

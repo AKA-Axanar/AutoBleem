@@ -1,5 +1,7 @@
-Controls
---------
+Shadow Warrior
+--------------
+
+Controls:
 
 D-Pad: Move / Turn
 Cross:  Crouch (Double press to toggle run mode)
