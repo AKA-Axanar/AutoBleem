@@ -83,7 +83,6 @@ void GuiOptions::fill() {
 
     lines.emplace_back(CFG_THEME, _("AutoBleem Theme:"), "theme", false, getThemes());
     lines.emplace_back(CFG_SHOW_ORIGAMES, _("Show Internal Games:"), "origames", true, vector<string> ({ "false", "true" }) );
-    lines.emplace_back(CFG_UI, _("UI:"), "ui", false, vector<string> ({ "classic", "EvolutionUI" }) );
     lines.emplace_back(CFG_JEWEL, _("Cover Style:"), "jewel", false, getJewels());
     lines.emplace_back(CFG_MUSIC, _("Music:"), "music", false, getMusic());
     lines.emplace_back(CFG_ENABLE_BACKGROUND_MUSIC, _("Background Music:"), "nomusic", true, vector<string> ({ "true", "false" }) );

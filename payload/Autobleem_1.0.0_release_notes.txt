@@ -10,7 +10,7 @@ detected.
 
 3) You can now set a game as a lightgun game in the Edit Game Parameters menu.  There is now an Edit Game 
 Parameters menu for Retroarch games.  Added a Select screen for all the games that are marked as lightgun games.  
-Note: Gun4IR lightguns work on the PSC.  PS1 games must be played with Retroarch as the pcsx emulator cannot 
+Note: Gun4IR and AE lightguns work on the PSC.  PS1 games must be played with Retroarch as the pcsx emulator cannot 
 handle lightgun games.  Setting a game as a lightgun game will also set the game to "play with RA".  Sinden 
 lightguns will not work on the PSC.  The Sinden app has to run on the system and this is impossible on the 
 PSC for multiple reasons.
