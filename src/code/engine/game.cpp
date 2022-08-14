@@ -296,7 +296,7 @@ void USBGame::recoverMissingFiles() {
                     metadataLoaded = true;
                     cout << "Updating cover in recoverMissingFiles()" << destination << endl;
                     ofstream pngFile;
-                    pngFile.open(destination);
+                    pngFile.open(destination, std::ios::out | std::ios::binary);
                     pngFile.write(md.bytes, md.dataSize);
                     pngFile.flush();
                     pngFile.close();
